@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ModernTech | Payroll</title>
+    <link rel="stylesheet" href="payroll-style.css" />
+  </head>
+
+  <body>
+    <div class="nav">
+      <div class="logo">Modern<span>Tech</span></div>
+      <div class="nav-bar">
+        <ul class="nav-content">
+          <li>Dashboard</li>
+          <li>Employees</li>
+          <li>Payroll</li>
+          <li>Time Off</li>
+          <li>Attendance</li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="cards-grid" class="payroll-container"></div>
+
+    <script>
+      const data = {
+        "payrollData": [
+          { "employeeId": 1, "hoursWorked": 160, "leaveDeductions": 8, "finalSalary": 69500 },
+          { "employeeId": 2, "hoursWorked": 150, "leaveDeductions": 10, "finalSalary": 79000 },
+          { "employeeId": 3, "hoursWorked": 170, "leaveDeductions": 4, "finalSalary": 54800 },
+          { "employeeId": 4, "hoursWorked": 165, "leaveDeductions": 6, "finalSalary": 59700 },
+          { "employeeId": 5, "hoursWorked": 158, "leaveDeductions": 5, "finalSalary": 57850 },
+          { "employeeId": 6, "hoursWorked": 168, "leaveDeductions": 2, "finalSalary": 64800 },
+          { "employeeId": 7, "hoursWorked": 175, "leaveDeductions": 3, "finalSalary": 71800 },
+          { "employeeId": 8, "hoursWorked": 160, "leaveDeductions": 0, "finalSalary": 56000 },
+          { "employeeId": 9, "hoursWorked": 155, "leaveDeductions": 5, "finalSalary": 61500 },
+          { "employeeId": 10, "hoursWorked": 162, "leaveDeductions": 4, "finalSalary": 57750 }
+        ]
+      };
+
+      const container = document.getElementById("cards-grid");
+      let cardsHTML = "";
+
+      data.payrollData.forEach((item) => {
+        cardsHTML += `
+            <div class="card">
+                <div class="card-content">
+                    <h3 class="card-title">Employee ID: #${item.employeeId}</h3>
+                    <p class="card-info"><strong>Hours Worked:</strong> ${item.hoursWorked} hrs</p>
+                    <p class="card-info"><strong>Leave Deductions:</strong> ${item.leaveDeductions} hrs</p>
+                    <div class="card-salary">
+                      <span>Final Salary:</span> 
+                      <strong>R${item.finalSalary.toLocaleString()}</strong>
+                    </div>
+                </div>
+            </div>
+        `;
+      });
+
+      container.innerHTML = cardsHTML;
+    </script>
+  </body>
+</html> 
