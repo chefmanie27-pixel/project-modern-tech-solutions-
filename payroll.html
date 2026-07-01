@@ -12,53 +12,113 @@
       <div class="logo">Modern<span>Tech</span></div>
       <div class="nav-bar">
         <ul class="nav-content">
-          <li>Dashboard</li>
-          <li>Employees</li>
-          <li>Payroll</li>
-          <li>Time Off</li>
-          <li>Attendance</li>
+          <li href="dashboard.html">Dashboard</li>
+          <li href="employees.html">Employees</li>
+          <li href="payroll.html" class="active">Payroll</li>
+          <li href="time-off.html">Time Off</li>
+          <li href="attendance.html">Attendance</li>
         </ul>
       </div>
     </div>
 
-    <div id="cards-grid" class="payroll-container"></div>
+    <div class="main-content">
+      <div class="header">
+        <h1>Payroll</h1>
+        <p>View and manage employee payroll information.</p>
+      </div>
+
+      <div class="information-cards">
+        <div class="card">
+          <h2>Gross Pay</h2>
+          <p>R 1,200,000</p>
+        </div>
+
+        <div class="card">
+          <h2>Deductions</h2>
+          <p>R 150,000</p>
+        </div>
+
+        <div class="card">
+          <h2>Net Pay</h2>
+          <p>R 1,050,000</p>
+        </div>
+      </div>
+
+      <div class="payroll-container">
+        <table class="payroll-table">
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Hours Worked</th>
+              <th>Leave Deductions</th>
+              <th>Final Salary</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="table-rows">
+            </tbody>
+        </table>
+      </div>
+    </div>
 
     <script>
       const data = {
-        "payrollData": [
-          { "employeeId": 1, "hoursWorked": 160, "leaveDeductions": 8, "finalSalary": 69500 },
-          { "employeeId": 2, "hoursWorked": 150, "leaveDeductions": 10, "finalSalary": 79000 },
-          { "employeeId": 3, "hoursWorked": 170, "leaveDeductions": 4, "finalSalary": 54800 },
-          { "employeeId": 4, "hoursWorked": 165, "leaveDeductions": 6, "finalSalary": 59700 },
-          { "employeeId": 5, "hoursWorked": 158, "leaveDeductions": 5, "finalSalary": 57850 },
-          { "employeeId": 6, "hoursWorked": 168, "leaveDeductions": 2, "finalSalary": 64800 },
-          { "employeeId": 7, "hoursWorked": 175, "leaveDeductions": 3, "finalSalary": 71800 },
-          { "employeeId": 8, "hoursWorked": 160, "leaveDeductions": 0, "finalSalary": 56000 },
-          { "employeeId": 9, "hoursWorked": 155, "leaveDeductions": 5, "finalSalary": 61500 },
-          { "employeeId": 10, "hoursWorked": 162, "leaveDeductions": 4, "finalSalary": 57750 }
+        payrollData: [
+          { employeeId: 1, employeeName: "Sibongile NKosi", hoursWorked: 160, leaveDeductions: 8, finalSalary: 69500 },
+          { employeeId: 2, employeeName: "Lungile Moyo", hoursWorked: 150, leaveDeductions: 10, finalSalary: 79000 },
+          { employeeId: 3, employeeName: "Thabo Molefe", hoursWorked: 170, leaveDeductions: 4, finalSalary: 54800 },
+          { employeeId: 4, employeeName: "Keshav Naidoo", hoursWorked: 165, leaveDeductions: 6, finalSalary: 59700 },
+          { employeeId: 5, employeeName: "Zanele Khumalo", hoursWorked: 158, leaveDeductions: 5, finalSalary: 57850 },
+          { employeeId: 6, employeeName: "Sipho Zulu", hoursWorked: 168, leaveDeductions: 2, finalSalary: 64800 },
+          { employeeId: 7, employeeName: "Naledi Moeketsi", hoursWorked: 175, leaveDeductions: 3, finalSalary: 71800 },
+          { employeeId: 8, employeeName: "Farai Gumbo", hoursWorked: 160, leaveDeductions: 0, finalSalary: 56000 },
+          { employeeId: 9, employeeName: "Karabo Dlamini", hoursWorked: 155, leaveDeductions: 5, finalSalary: 61500 },
+          { employeeId: 10, employeeName: "Fatima Patel", hoursWorked: 162, leaveDeductions: 4, finalSalary: 57750 }
         ]
       };
 
-      const container = document.getElementById("cards-grid");
-      let cardsHTML = "";
+      const tableBody = document.getElementById("table-rows");
+      let rowsHTML = "";
 
       data.payrollData.forEach((item) => {
-        cardsHTML += `
-            <div class="card">
-                <div class="card-content">
-                    <h3 class="card-title">Employee ID: #${item.employeeId}</h3>
-                    <p class="card-info"><strong>Hours Worked:</strong> ${item.hoursWorked} hrs</p>
-                    <p class="card-info"><strong>Leave Deductions:</strong> ${item.leaveDeductions} hrs</p>
-                    <div class="card-salary">
-                      <span>Final Salary:</span> 
-                      <strong>R${item.finalSalary.toLocaleString()}</strong>
-                    </div>
+        const hourlyRate = (item.finalSalary / (item.hoursWorked - item.leaveDeductions)).toFixed(2);
+
+        // 1. Main Data Row
+        rowsHTML += `
+          <tr class="main-row" onclick="toggleRow(this, 'details-${item.employeeId}')">
+            <td><strong>#${item.employeeId} ${item.employeeName}</strong></td>
+            <td>${item.hoursWorked} hrs</td>
+            <td>${item.leaveDeductions} hrs</td>
+            <td class="salary-cell">R ${item.finalSalary.toLocaleString()}</td>
+            <td class="arrow-cell"><span class="toggle-arrow">▶</span></td>
+          </tr>
+        `;
+
+        // 2. Expandable Detail Box
+        rowsHTML += `
+          <tr id="details-${item.employeeId}" class="detail-row">
+            <td colspan="5">
+              <div class="breakdown-wrapper">
+                <div class="breakdown-box">
+                  <div class="breakdown-line"><span>Hours worked</span> <span>${item.hoursWorked}hrs x R${hourlyRate}/hr</span></div>
+                  <div class="breakdown-line"><span>Basic salary</span> <span>R ${item.finalSalary.toLocaleString()}</span></div>
+                  <div class="breakdown-line deductions"><span>- Leave Deductions</span> <span>${item.leaveDeductions} hrs</span></div>
+                  <div class="breakdown-line net-pay"><span>Net Pay</span> <span>R ${item.finalSalary.toLocaleString()}</span></div>
                 </div>
-            </div>
+              </div>
+            </td>
+          </tr>
         `;
       });
 
-      container.innerHTML = cardsHTML;
+      tableBody.innerHTML = rowsHTML;
+
+      // Dropdown Toggle Logic
+      function toggleRow(mainRow, detailRowId) {
+        const detailRow = document.getElementById(detailRowId);
+        mainRow.classList.toggle("open");
+        detailRow.classList.toggle("open");
+      }
     </script>
   </body>
-</html> 
+</html>

@@ -2,8 +2,9 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   background-color: #f4f6f9;
+  color: #333;
 }
 
 /* Simple Navigation Styling */
@@ -43,67 +44,160 @@ body {
   opacity: 1;
 }
 
-/* Grid layout target class (fixed to match HTML) */
-.payroll-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 30px;
 }
 
-/* Individual Cards */
-.card {
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-}
-
-.card-content {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.card-title {
-  font-size: 1.1rem;
-  color: #2c3e50;
+.header h1 {
   margin: 0 0 5px 0;
-  border-bottom: 1px solid #edf2f7;
-  padding-bottom: 10px;
+  font-size: 2rem;
 }
 
-.card-info {
+.header p {
+  margin: 0 0 25px 0;
+  color: #666;
+}
+
+/* Unified Metrics Cards */
+.information-cards {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #ffffff;
+  border: solid 1px #e0e0e0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.card h2 {
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: #666;
+  letter-spacing: 0.5px;
+}
+
+.card p {
   margin: 0;
-  color: #4a5568;
-  font-size: 0.95rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #111;
 }
 
-.card-salary {
-  margin-top: 10px;
+/* Table Container Layout */
+.payroll-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px; /* Creates spacing between card rows */
+}
+
+.payroll-table th {
+  padding: 12px 16px;
+  text-align: left;
+  color: #666;
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Main Row styling */
+.main-row {
+  background: #ffffff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.main-row:hover {
+  background: #fafafa;
+}
+
+.main-row td {
+  padding: 16px;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  color: #333;
+}
+
+.main-row td:first-child {
+  border-left: 1px solid #e0e0e0;
+  border-radius: 6px 0 0 6px;
+}
+
+.main-row td:last-child {
+  border-right: 1px solid #e0e0e0;
+  border-radius: 0 6px 6px 0;
+}
+
+.salary-cell {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.arrow-cell {
+  text-align: right;
+  color: #888;
+}
+
+/* CSS Arrow Rotation */
+.toggle-arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+  font-size: 12px;
+}
+
+.main-row.open .toggle-arrow {
+  transform: rotate(90deg);
+}
+
+/* Detail Row Styling */
+.detail-row {
+  display: none;
+  background: #f8fafc; 
+}
+
+.detail-row.open {
+  display: table-row;
+}
+
+.detail-row td {
+  padding: 20px 32px;
+  border-radius: 0 0 6px 6px;
+  border: 1px solid #e0e0e0;
+  border-top: none;
+}
+
+/* Internal Breakdown Layout */
+.breakdown-box {
+  width: 320px;
+}
+
+.breakdown-line {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  background-color: #f7fafc;
-  padding: 10px;
-  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #666;
 }
 
-.card-salary span {
-  color: #718096;
-  font-size: 0.9rem;
+.deductions {
+  color: #c0392b;
 }
 
-.card-salary strong {
-  color: #2f855a;
-  font-size: 1.2rem;
+.net-pay {
+  font-weight: bold;
+  color: #111;
+  border-top: 1px solid #ccc;
+  padding-top: 8px;
+  margin-top: 8px;
+  font-size: 15px;
 }
