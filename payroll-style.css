@@ -40,6 +40,12 @@ body {
   transition: opacity 0.2s;
 }
 
+.nav-content li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
 .nav-content li:hover {
   opacity: 1;
 }
