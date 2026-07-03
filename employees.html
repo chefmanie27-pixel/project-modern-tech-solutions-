@@ -6,13 +6,15 @@
     <title>ModernTech | Employee Management</title>
     <link rel="stylesheet" href="employees-style.css" />
   </head>
+
   <body>
+    <!-- Top Navigation -->
     <div class="nav">
       <div class="logo">Modern<span>Tech</span></div>
       <div class="nav-bar">
         <ul class="nav-content">
           <li><a href="dashboard.html">Dashboard</a></li>
-          <li><a href="employees.html">Employees</a></li>
+          <li class="active"><a href="employees.html">Employees</a></li>
           <li><a href="payroll.html">Payroll</a></li>
           <li><a href="time-off.html">Time Off</a></li>
           <li><a href="attendance.html">Attendance</a></li>
@@ -20,12 +22,19 @@
       </div>
     </div>
 
+    <!-- Core Title Headers -->
     <div class="header">
-        <h1>Employee Management</h1>
-        <p>View and manage employee information.</p>
+      <h1>Employee Management</h1>
+      <p>View, edit, and maintain active employee listings.</p>
     </div>
 
-    <!-- 1. Added a container and a table structure to hold the data -->
+    <!-- Interface Control Action Block -->
+    <div class="action-container">
+      <button class="btn btn-edit-mode" id="employeeBtn">Edit Employees</button>
+      <button class="btn btn-add" id="addEmployeeBtn">+ Add Employee</button>
+    </div>
+
+    <!-- Main Content Presentation Table Wrapper -->
     <div class="main-content">
       <table class="employee-table">
         <thead>
@@ -37,128 +46,193 @@
             <th>Salary</th>
             <th>Employment History</th>
             <th>Contact</th>
+            <th class="text-center">Actions</th>
           </tr>
         </thead>
-        <tbody id="employee-rows">
-        </tbody>
+        <tbody id="employee-rows"></tbody>
       </table>
     </div>
 
+    <!-- Hidden Creative Input Overlay Container (Modal) -->
+    <div class="modal" id="addModal">
+      <div class="modal-content">
+        <h3>Add New Employee</h3>
+        <form id="addEmployeeForm">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="newName" placeholder="e.g. John Doe" required />
+          </div>
+          <div class="form-group">
+            <label>Position</label>
+            <input type="text" id="newPosition" placeholder="e.g. Backend Developer" required />
+          </div>
+          <div class="form-group">
+            <label>Department</label>
+            <input type="text" id="newDepartment" placeholder="e.g. Engineering" required />
+          </div>
+          <div class="form-group">
+            <label>Salary (R)</label>
+            <input type="number" id="newSalary" placeholder="e.g. 65000" required />
+          </div>
+          <div class="form-group">
+            <label>Employment History</label>
+            <input type="text" id="newHistory" placeholder="e.g., Joined in 2026" required />
+          </div>
+          <div class="form-group">
+            <label>Contact Email</label>
+            <input type="email" id="newContact" placeholder="e.g. john.doe@moderntech.com" required />
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-cancel" id="closeModalBtn">Cancel</button>
+            <button type="submit" class="btn btn-add">Save Employee</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script>
-      
-      const data = {
+      let data = {
         employeeInformation: [
-          {
-              "employeeId": 1,
-              "name": "Sibongile Nkosi",
-              "position": "Software Engineer",
-              "department": "Development",
-              "salary": 70000,
-              "employmentHistory": "Joined in 2015, promoted to Senior in 2018",
-              "contact": "sibongile.nkosi@moderntech.com"
-          },
-          {
-              "employeeId": 2,
-              "name": "Lungile Moyo",
-              "position": "HR Manager",
-              "department": "HR",
-              "salary": 80000,
-              "employmentHistory": "Joined in 2013, promoted to Manager in 2017",
-              "contact": "lungile.moyo@moderntech.com"
-          },
-          {
-              "employeeId": 3,
-              "name": "Thabo Molefe",
-              "position": "Quality Analyst",
-              "department": "QA",
-              "salary": 55000,
-              "employmentHistory": "Joined in 2018",
-              "contact": "thabo.molefe@moderntech.com"
-          },
-          {
-              "employeeId": 4,
-              "name": "Keshav Naidoo",
-              "position": "Sales Representative",
-              "department": "Sales",
-              "salary": 60000,
-              "employmentHistory": "Joined in 2020",
-              "contact": "keshav.naidoo@moderntech.com"
-          },
-          {
-              "employeeId": 5,
-              "name": "Zanele Khumalo",
-              "position": "Marketing Specialist",
-              "department": "Marketing",
-              "salary": 58000,
-              "employmentHistory": "Joined in 2019",
-              "contact": "zanele.khumalo@moderntech.com"
-          },
-          {
-              "employeeId": 6,
-              "name": "Sipho Zulu",
-              "position": "UI/UX Designer",
-              "department": "Design",
-              "salary": 65000,
-              "employmentHistory": "Joined in 2016",
-              "contact": "sipho.zulu@moderntech.com"
-          },
-          {
-              "employeeId": 7,
-              "name": "Naledi Moeketsi",
-              "position": "DevOps Engineer",
-              "department": "IT",
-              "salary": 72000,
-              "employmentHistory": "Joined in 2017",
-              "contact": "naledi.moeketsi@moderntech.com"
-          },
-          {
-              "employeeId": 8,
-              "name": "Farai Gumbo",
-              "position": "Content Strategist",
-              "department": "Marketing",
-              "salary": 56000,
-              "employmentHistory": "Joined in 2021",
-              "contact": "farai.gumbo@moderntech.com"
-          },
-          {
-              "employeeId": 9,
-              "name": "Karabo Dlamini",
-              "position": "Accountant",
-              "department": "Finance",
-              "salary": 62000,
-              "employmentHistory": "Joined in 2018",
-              "contact": "karabo.dlamini@moderntech.com"
-          },
-          {
-              "employeeId": 10,
-              "name": "Fatima Patel",
-              "position": "Customer Support Lead",
-              "department": "Support",
-              "salary": 58000,
-              "employmentHistory": "Joined in 2016",
-              "contact": "fatima.patel@moderntech.com"
-          }
+          { employeeId: 1, name: "Sibongile Nkosi", position: "Software Engineer", department: "Development", salary: 70000, employmentHistory: "Joined in 2015, promoted to Senior in 2018", contact: "sibongile.nkosi@moderntech.com" },
+          { employeeId: 2, name: "Lungile Moyo", position: "HR Manager", department: "HR", salary: 80000, employmentHistory: "Joined in 2013, promoted to Manager in 2017", contact: "lungile.moyo@moderntech.com" },
+          { employeeId: 3, name: "Thabo Molefe", position: "Quality Analyst", department: "QA", salary: 55000, employmentHistory: "Joined in 2018", contact: "thabo.molefe@moderntech.com" },
+          { employeeId: 4, name: "Keshav Naidoo", position: "Sales Representative", department: "Sales", salary: 60000, employmentHistory: "Joined in 2020", contact: "keshav.naidoo@moderntech.com" },
+          { employeeId: 5, name: "Zanele Khumalo", position: "Marketing Specialist", department: "Marketing", salary: 58000, employmentHistory: "Joined in 2019", contact: "zanele.khumalo@moderntech.com" },
+          { employeeId: 6, name: "Sipho Zulu", position: "UI/UX Designer", department: "Design", salary: 65000, employmentHistory: "Joined in 2016", contact: "sipho.zulu@moderntech.com" },
+          { employeeId: 7, name: "Naledi Moeketsi", position: "DevOps Engineer", department: "IT", salary: 72000, employmentHistory: "Joined in 2017", contact: "naledi.moeketsi@moderntech.com" },
+          { employeeId: 8, name: "Farai Gumbo", position: "Content Strategist", department: "Marketing", salary: 56000, employmentHistory: "Joined in 2021", contact: "farai.gumbo@moderntech.com" },
+          { employeeId: 9, name: "Karabo Dlamini", position: "Accountant", department: "Finance", salary: 62000, employmentHistory: "Joined in 2018", contact: "karabo.dlamini@moderntech.com" },
+          { employeeId: 10, name: "Fatima Patel", position: "Customer Support Lead", department: "Support", salary: 58000, employmentHistory: "Joined in 2016", contact: "fatima.patel@moderntech.com" }
         ]
       };
 
-      // 3. Script to dynamically target the table body and generate rows
-      const tableBody = document.getElementById('employee-rows');
-      
-      data.employeeInformation.forEach(employee => {
-        const row = document.createElement('tr');
-        
-        row.innerHTML = `
-          <td>${employee.employeeId}</td>
-          <td><strong>${employee.name}</strong></td>
-          <td>${employee.position}</td>
-          <td><span class="dept-tag">${employee.department}</span></td>
-          <td>R ${employee.salary.toLocaleString()}</td>
-          <td>${employee.employmentHistory}</td>
-          <td><a href="mailto:${employee.contact}">${employee.contact}</a></td>
-        `;
-        
-        tableBody.appendChild(row);
+      const tableBody = document.getElementById("employee-rows");
+      const employeeBtn = document.getElementById("employeeBtn");
+      const addEmployeeBtn = document.getElementById("addEmployeeBtn");
+      const addModal = document.getElementById("addModal");
+      const closeModalBtn = document.getElementById("closeModalBtn");
+      const addEmployeeForm = document.getElementById("addEmployeeForm");
+
+      let isEditing = false;
+
+      function renderTable() {
+        tableBody.innerHTML = "";
+        data.employeeInformation.forEach((employee) => {
+          const row = document.createElement("tr");
+
+          if (isEditing) {
+            row.innerHTML = `
+              <td>${employee.employeeId}</td>
+              <td><input type="text" class="edit-input" data-id="${employee.employeeId}" data-field="name" value="${employee.name}"></td>
+              <td><input type="text" class="edit-input" data-id="${employee.employeeId}" data-field="position" value="${employee.position}"></td>
+              <td><input type="text" class="edit-input" data-id="${employee.employeeId}" data-field="department" value="${employee.department}"></td>
+              <td><input type="number" class="edit-input" data-id="${employee.employeeId}" data-field="salary" value="${employee.salary}"></td>
+              <td><input type="text" class="edit-input" data-id="${employee.employeeId}" data-field="employmentHistory" value="${employee.employmentHistory}"></td>
+              <td><input type="email" class="edit-input" data-id="${employee.employeeId}" data-field="contact" value="${employee.contact}"></td>
+              <td class="text-center">
+                <button class="btn-delete" onclick="deleteEmployee(${employee.employeeId})">Delete</button>
+              </td>
+            `;
+          } else {
+            row.innerHTML = `
+              <td>${employee.employeeId}</td>
+              <td><strong>${employee.name}</strong></td>
+              <td>${employee.position}</td>
+              <td><span class="dept-tag">${employee.department}</span></td>
+              <td>R ${employee.salary.toLocaleString()}</td>
+              <td>${employee.employmentHistory}</td>
+              <td><a href="mailto:${employee.contact}">${employee.contact}</a></td>
+              <td class="text-center">
+                <button class="btn-delete" onclick="deleteEmployee(${employee.employeeId})">Delete</button>
+              </td>
+            `;
+          }
+          tableBody.appendChild(row);
+        });
+      }
+
+      function deleteEmployee(id) {
+        const targetEmployee = data.employeeInformation.find((emp) => emp.employeeId === id);
+        if (!targetEmployee) return;
+
+        const confirmDelete = confirm(`Are you sure you want to remove ${targetEmployee.name} from the system?`);
+        if (confirmDelete) {
+          data.employeeInformation = data.employeeInformation.filter((emp) => emp.employeeId !== id);
+          renderTable();
+        }
+      }
+
+      function saveChanges() {
+        const inputs = document.querySelectorAll(".edit-input");
+        inputs.forEach((input) => {
+          const id = parseInt(input.getAttribute("data-id"));
+          const field = input.getAttribute("data-field");
+          let value = input.value;
+          const employee = data.employeeInformation.find((emp) => emp.employeeId === id);
+          if (employee) {
+            if (field === "salary") value = parseFloat(value) || 0;
+            employee[field] = value;
+          }
+        });
+      }
+
+      employeeBtn.addEventListener("click", () => {
+        if (!isEditing) {
+          isEditing = true;
+          employeeBtn.textContent = "Save Changes";
+          employeeBtn.style.backgroundColor = "var(--success)";
+          employeeBtn.style.color = "#ffffff";
+          employeeBtn.style.borderColor = "transparent";
+          renderTable();
+        } else {
+          saveChanges();
+          isEditing = false;
+          employeeBtn.textContent = "Edit Employees";
+          employeeBtn.style.backgroundColor = "";
+          employeeBtn.style.color = "";
+          employeeBtn.style.borderColor = "";
+          renderTable();
+        }
       });
+
+      addEmployeeBtn.addEventListener("click", () => {
+        if (isEditing) {
+          alert("Please save your current edits before adding a new employee.");
+          return;
+        }
+        addModal.style.display = "flex";
+      });
+
+      closeModalBtn.addEventListener("click", () => {
+        addModal.style.display = "none";
+        addEmployeeForm.reset();
+      });
+
+      addEmployeeForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const nextId = data.employeeInformation.length > 0
+            ? Math.max(...data.employeeInformation.map((emp) => emp.employeeId)) + 1
+            : 1;
+
+        const newEmployee = {
+          employeeId: nextId,
+          name: document.getElementById("newName").value,
+          position: document.getElementById("newPosition").value,
+          department: document.getElementById("newDepartment").value,
+          salary: parseFloat(document.getElementById("newSalary").value) || 0,
+          employmentHistory: document.getElementById("newHistory").value,
+          contact: document.getElementById("newContact").value,
+        };
+
+        data.employeeInformation.push(newEmployee);
+        renderTable();
+
+        addModal.style.display = "none";
+        addEmployeeForm.reset();
+      });
+
+      renderTable();
     </script>
   </body>
 </html>

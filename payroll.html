@@ -55,8 +55,7 @@
               <th></th>
             </tr>
           </thead>
-          <tbody id="table-rows">
-            </tbody>
+          <tbody id="table-rows"></tbody>
         </table>
       </div>
     </div>
@@ -64,24 +63,87 @@
     <script>
       const data = {
         payrollData: [
-          { employeeId: 1, employeeName: "Sibongile NKosi", hoursWorked: 160, leaveDeductions: 8, finalSalary: 69500 },
-          { employeeId: 2, employeeName: "Lungile Moyo", hoursWorked: 150, leaveDeductions: 10, finalSalary: 79000 },
-          { employeeId: 3, employeeName: "Thabo Molefe", hoursWorked: 170, leaveDeductions: 4, finalSalary: 54800 },
-          { employeeId: 4, employeeName: "Keshav Naidoo", hoursWorked: 165, leaveDeductions: 6, finalSalary: 59700 },
-          { employeeId: 5, employeeName: "Zanele Khumalo", hoursWorked: 158, leaveDeductions: 5, finalSalary: 57850 },
-          { employeeId: 6, employeeName: "Sipho Zulu", hoursWorked: 168, leaveDeductions: 2, finalSalary: 64800 },
-          { employeeId: 7, employeeName: "Naledi Moeketsi", hoursWorked: 175, leaveDeductions: 3, finalSalary: 71800 },
-          { employeeId: 8, employeeName: "Farai Gumbo", hoursWorked: 160, leaveDeductions: 0, finalSalary: 56000 },
-          { employeeId: 9, employeeName: "Karabo Dlamini", hoursWorked: 155, leaveDeductions: 5, finalSalary: 61500 },
-          { employeeId: 10, employeeName: "Fatima Patel", hoursWorked: 162, leaveDeductions: 4, finalSalary: 57750 }
-        ]
+          {
+            employeeId: 1,
+            employeeName: "Sibongile NKosi",
+            hoursWorked: 160,
+            leaveDeductions: 8,
+            finalSalary: 69500,
+          },
+          {
+            employeeId: 2,
+            employeeName: "Lungile Moyo",
+            hoursWorked: 150,
+            leaveDeductions: 10,
+            finalSalary: 79000,
+          },
+          {
+            employeeId: 3,
+            employeeName: "Thabo Molefe",
+            hoursWorked: 170,
+            leaveDeductions: 4,
+            finalSalary: 54800,
+          },
+          {
+            employeeId: 4,
+            employeeName: "Keshav Naidoo",
+            hoursWorked: 165,
+            leaveDeductions: 6,
+            finalSalary: 59700,
+          },
+          {
+            employeeId: 5,
+            employeeName: "Zanele Khumalo",
+            hoursWorked: 158,
+            leaveDeductions: 5,
+            finalSalary: 57850,
+          },
+          {
+            employeeId: 6,
+            employeeName: "Sipho Zulu",
+            hoursWorked: 168,
+            leaveDeductions: 2,
+            finalSalary: 64800,
+          },
+          {
+            employeeId: 7,
+            employeeName: "Naledi Moeketsi",
+            hoursWorked: 175,
+            leaveDeductions: 3,
+            finalSalary: 71800,
+          },
+          {
+            employeeId: 8,
+            employeeName: "Farai Gumbo",
+            hoursWorked: 160,
+            leaveDeductions: 0,
+            finalSalary: 56000,
+          },
+          {
+            employeeId: 9,
+            employeeName: "Karabo Dlamini",
+            hoursWorked: 155,
+            leaveDeductions: 5,
+            finalSalary: 61500,
+          },
+          {
+            employeeId: 10,
+            employeeName: "Fatima Patel",
+            hoursWorked: 162,
+            leaveDeductions: 4,
+            finalSalary: 57750,
+          },
+        ],
       };
 
       const tableBody = document.getElementById("table-rows");
       let rowsHTML = "";
 
       data.payrollData.forEach((item) => {
-        const hourlyRate = (item.finalSalary / (item.hoursWorked - item.leaveDeductions)).toFixed(2);
+        const hourlyRate = (
+          item.finalSalary /
+          (item.hoursWorked - item.leaveDeductions)
+        ).toFixed(2);
 
         // 1. Main Data Row
         rowsHTML += `
