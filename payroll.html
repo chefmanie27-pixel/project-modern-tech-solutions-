@@ -8,42 +8,61 @@
   </head>
 
   <body>
+    <!-- Navigation Module -->
     <div class="nav">
       <div class="logo">Modern<span>Tech</span></div>
       <div class="nav-bar">
         <ul class="nav-content">
           <li><a href="dashboard.html">Dashboard</a></li>
           <li><a href="employees.html">Employees</a></li>
-          <li><a href="payroll.html">Payroll</a></li>
+          <li class="active"><a href="payroll.html">Payroll</a></li>
           <li><a href="time-off.html">Time Off</a></li>
           <li><a href="attendance.html">Attendance</a></li>
         </ul>
       </div>
     </div>
 
+    <!-- Main Content Container -->
     <div class="main-content">
       <div class="header">
-        <h1>Payroll</h1>
-        <p>View and manage employee payroll information.</p>
+        <h1>Payroll Management</h1>
+        <p>
+          Analyze, filter, and approve employee payroll pipelines dynamically.
+        </p>
       </div>
 
+      <!-- Real-Time Metrics Header Panel -->
       <div class="information-cards">
         <div class="card">
           <h2>Gross Pay</h2>
-          <p>R 1,200,000</p>
+          <p id="total-gross">R 0</p>
         </div>
-
         <div class="card">
           <h2>Deductions</h2>
-          <p>R 150,000</p>
+          <p id="total-deductions">R 0</p>
         </div>
-
         <div class="card">
           <h2>Net Pay</h2>
-          <p>R 1,050,000</p>
+          <p id="total-net">R 0</p>
         </div>
       </div>
 
+      <!-- Action Toolbar (Filtering Matrix) -->
+      <div class="toolbar">
+        <input
+          type="text"
+          id="table-search"
+          placeholder="🔍 Search employee name..."
+          aria-label="Search employee payroll records"
+        />
+        <select id="table-filter" aria-label="Filter payroll statistics">
+          <option value="all">All Employee Records</option>
+          <option value="deductions">Has Active Leave Deductions</option>
+          <option value="perfect">Perfect Attendance (0 Deductions)</option>
+        </select>
+      </div>
+
+      <!-- Main Spreadsheet Grid -->
       <div class="payroll-container">
         <table class="payroll-table">
           <thead>
@@ -51,16 +70,23 @@
               <th>Employee</th>
               <th>Hours Worked</th>
               <th>Leave Deductions</th>
-              <th>Final Salary</th>
+              <th>Final Net Salary</th>
               <th></th>
             </tr>
           </thead>
           <tbody id="table-rows"></tbody>
         </table>
+
+        <!-- Missing/Empty Query Interceptor -->
+        <div id="empty-state" style="display: none">
+          No matching payroll records discovered.
+        </div>
       </div>
     </div>
 
+    <!-- Application Controller Logic -->
     <script>
+      // Single Source of Truth Local Dataset
       const data = {
         payrollData: [
           {
@@ -137,50 +163,181 @@
       };
 
       const tableBody = document.getElementById("table-rows");
-      let rowsHTML = "";
+      const emptyState = document.getElementById("empty-state");
 
-      data.payrollData.forEach((item) => {
-        const hourlyRate = (
-          item.finalSalary /
-          (item.hoursWorked - item.leaveDeductions)
-        ).toFixed(2);
+      // Dynamic Calculation Engine for Core Cards
+      function calculateGlobalMetrics() {
+        let totalGross = 0;
+        let totalDeductions = 0;
+        let totalNet = 0;
 
-        // 1. Main Data Row
-        rowsHTML += `
-          <tr class="main-row" onclick="toggleRow(this, 'details-${item.employeeId}')">
-            <td><strong>#${item.employeeId} ${item.employeeName}</strong></td>
-            <td>${item.hoursWorked} hrs</td>
-            <td>${item.leaveDeductions} hrs</td>
-            <td class="salary-cell">R ${item.finalSalary.toLocaleString()}</td>
-            <td class="arrow-cell"><span class="toggle-arrow">▶</span></td>
-          </tr>
-        `;
+        data.payrollData.forEach((item) => {
+          const hourlyRate = item.finalSalary / item.hoursWorked;
+          const leaveLoss = item.leaveDeductions * hourlyRate;
+          const gross = item.finalSalary + leaveLoss;
 
-        // 2. Expandable Detail Box
-        rowsHTML += `
-          <tr id="details-${item.employeeId}" class="detail-row">
-            <td colspan="5">
-              <div class="breakdown-wrapper">
-                <div class="breakdown-box">
-                  <div class="breakdown-line"><span>Hours worked</span> <span>${item.hoursWorked}hrs x R${hourlyRate}/hr</span></div>
-                  <div class="breakdown-line"><span>Basic salary</span> <span>R ${item.finalSalary.toLocaleString()}</span></div>
-                  <div class="breakdown-line deductions"><span>- Leave Deductions</span> <span>${item.leaveDeductions} hrs</span></div>
-                  <div class="breakdown-line net-pay"><span>Net Pay</span> <span>R ${item.finalSalary.toLocaleString()}</span></div>
+          totalGross += gross;
+          totalDeductions += leaveLoss;
+          totalNet += item.finalSalary;
+        });
+
+        document.getElementById("total-gross").textContent =
+          `R ${Math.round(totalGross).toLocaleString()}`;
+        document.getElementById("total-deductions").textContent =
+          `R ${Math.round(totalDeductions).toLocaleString()}`;
+        document.getElementById("total-net").textContent =
+          `R ${Math.round(totalNet).toLocaleString()}`;
+      }
+
+      // Secure DOM Presentation Layer Generator
+      function renderTable() {
+        tableBody.innerHTML = data.payrollData
+          .map((item) => {
+            const hourlyRate = (item.finalSalary / item.hoursWorked).toFixed(2);
+            const leaveCost = (item.leaveDeductions * hourlyRate).toFixed(2);
+            const basicSalary = (
+              item.finalSalary + parseFloat(leaveCost)
+            ).toFixed(2);
+
+            const badgeHTML =
+              item.leaveDeductions === 0
+                ? `<span class="badge badge-success">Perfect Run</span>`
+                : "";
+
+            return `
+            <tr class="main-row" data-target="details-${item.employeeId}" data-deductions="${item.leaveDeductions}" tabindex="0" role="button" aria-expanded="false">
+              <td class="emp-name">#${item.employeeId} ${item.employeeName} ${badgeHTML}</td>
+              <td>${item.hoursWorked} hrs</td>
+              <td>${item.leaveDeductions} hrs</td>
+              <td class="salary-cell">R ${item.finalSalary.toLocaleString()}</td>
+              <td class="arrow-cell"><span class="toggle-arrow">▶</span></td>
+            </tr>
+            <tr id="details-${item.employeeId}" class="detail-row" style="display: none;">
+              <td colspan="5">
+                <div class="breakdown-wrapper">
+                  <div class="breakdown-box">
+                    <div class="breakdown-line"><span>Base Tracked Hours</span> <span>${item.hoursWorked} hrs @ R${hourlyRate}/hr</span></div>
+                    <div class="breakdown-line"><span>Calculated Gross Salary</span> <span>R ${parseFloat(basicSalary).toLocaleString()}</span></div>
+                    <div class="breakdown-line deductions"><span>- Unpaid Leave Deductions</span> <span>-${item.leaveDeductions} hrs (-R ${parseFloat(leaveCost).toLocaleString()})</span></div>
+                    <div class="breakdown-line net-pay"><span>Calculated Net Pay</span> <span>R ${item.finalSalary.toLocaleString()}</span></div>
+                  </div>
+                  <div class="breakdown-actions">
+                    <button class="btn btn-primary" onclick="alert('Payout Processed for ${item.employeeName}')">Approve Payout</button>
+                    <button class="btn btn-secondary" onclick="simulateEmailSlip('${item.employeeName}')">Email Slip</button>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-        `;
+              </td>
+            </tr>
+          `;
+          })
+          .join("");
+      }
+
+      // Row Drawer Animation/Expansion Toggle Trigger
+      function toggleRow(mainRow) {
+        const targetId = mainRow.getAttribute("data-target");
+        const detailRow = document.getElementById(targetId);
+
+        const isOpen = mainRow.classList.toggle("open");
+        detailRow.classList.toggle("open");
+
+        detailRow.style.display = isOpen ? "table-row" : "none";
+        mainRow.setAttribute("aria-expanded", isOpen);
+      }
+
+      // Search & Complex Parameter Filtering Engine
+      function filterTable() {
+        const searchTerm = document
+          .getElementById("table-search")
+          .value.toLowerCase();
+        const filterValue = document.getElementById("table-filter").value;
+        const mainRows = document.querySelectorAll(".main-row");
+        let visibleCount = 0;
+
+        mainRows.forEach((row) => {
+          const name = row.querySelector(".emp-name").textContent.toLowerCase();
+          const deductions = parseInt(row.getAttribute("data-deductions"), 10);
+          const targetId = row.getAttribute("data-target");
+          const detailRow = document.getElementById(targetId);
+
+          const matchesSearch = name.includes(searchTerm);
+          let matchesFilter = true;
+
+          if (filterValue === "deductions") matchesFilter = deductions > 0;
+          if (filterValue === "perfect") matchesFilter = deductions === 0;
+
+          if (matchesSearch && matchesFilter) {
+            row.style.display = "table-row";
+            visibleCount++;
+          } else {
+            row.style.display = "none";
+            detailRow.style.display = "none";
+            detailRow.classList.remove("open");
+            row.classList.remove("open");
+          }
+        });
+
+        emptyState.style.display = visibleCount === 0 ? "block" : "none";
+      }
+
+      // Simulated Client-Side Email Workflow
+      function simulateEmailSlip(employeeName) {
+        // Prompt user for email input
+        const recipientEmail = prompt(
+          `Enter the email address to send the payslip for ${employeeName}:`,
+        );
+
+        // Handle cancel option or completely blank entry inputs
+        if (recipientEmail === null) return;
+        if (recipientEmail.trim() === "") {
+          alert("Email dispatch cancelled: Email address cannot be empty.");
+          return;
+        }
+
+        // Fast structural check to evaluate basic input string format
+        if (!recipientEmail.includes("@") || !recipientEmail.includes(".")) {
+          alert("Invalid email format. Please verify and try again.");
+          return;
+        }
+
+        // Immediate responsive mockup confirmation message
+        alert(
+          `Payslip generated successfully! A copy has been simulated and sent to ${recipientEmail.trim()}.`,
+        );
+      }
+
+      // Context Centralized Event Group Mapping
+      tableBody.addEventListener("click", (e) => {
+        const mainRow = e.target.closest(".main-row");
+        if (
+          mainRow &&
+          !e.target.closest(".breakdown-actions") &&
+          !e.target.closest(".breakdown-box")
+        ) {
+          toggleRow(mainRow);
+        }
       });
 
-      tableBody.innerHTML = rowsHTML;
+      tableBody.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          const mainRow = e.target.closest(".main-row");
+          if (mainRow) {
+            e.preventDefault();
+            toggleRow(mainRow);
+          }
+        }
+      });
 
-      // Dropdown Toggle Logic
-      function toggleRow(mainRow, detailRowId) {
-        const detailRow = document.getElementById(detailRowId);
-        mainRow.classList.toggle("open");
-        detailRow.classList.toggle("open");
-      }
+      document
+        .getElementById("table-search")
+        .addEventListener("input", filterTable);
+      document
+        .getElementById("table-filter")
+        .addEventListener("change", filterTable);
+
+      // Lifecycle Run Initializer
+      calculateGlobalMetrics();
+      renderTable();
     </script>
   </body>
 </html>
