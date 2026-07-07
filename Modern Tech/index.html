@@ -48,12 +48,7 @@
                             <i class="bi bi-person-check"></i> Attendance
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" :class="{ active: activeTab === 'leaves' }"
-                           href="#" @click.prevent="activeTab = 'leaves'">
-                            <i class="bi bi-envelope-paper"></i> Leave Requests
-                        </a>
-                    </li>
+                   
                 </ul>
             </div>
         </div>
@@ -192,75 +187,11 @@
     </section>
 
   
-    <section v-if="activeTab === 'leaves'">
-        <div class="table-card">
-            <div class="card-header-custom">
-                <h5><i class="bi bi-envelope-paper me-2 text-secondary"></i> Leave Request Management</h5>
-                <div class="d-flex gap-2 flex-wrap">
-                    
-                    <select class="filter-input" v-model="leaveFilterStatus" style="min-width:130px;">
-                        <option value="all">All Status</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Denied">Denied</option>
-                    </select>
-                   
-                    <input type="text" class="filter-input" v-model="leaveFilterSearch"
-                           placeholder="Search..." style="min-width:140px;" />
-                </div>
-            </div>
-            <div class="table-wrapper">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Employee</th>
-                            <th>Date</th>
-                            <th>Reason</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="req in filteredLeaveRequests" :key="req._uid">
-                            <td><strong>{{ req.employeeName }}</strong></td>
-                            <td>{{ formatDate(req.date) }}</td>
-                            <td>{{ req.reason }}</td>
-                            <td class="text-center">
-                                <span class="badge-status" :class="getLeaveStatusClass(req.status)">
-                                    {{ req.status }}
-                                </span>
-                            </td>
-                            <td class="text-center">
-                                
-                                <template v-if="req.status === 'Pending'">
-                                    <button class="btn-approve me-1" @click="approveLeave(req._uid)">
-                                        <i class="bi bi-check2"></i> Approve
-                                    </button>
-                                    <button class="btn-deny" @click="denyLeave(req._uid)">
-                                        <i class="bi bi-x"></i> Deny
-                                    </button>
-                                </template>
-                                <span v-else class="text-muted small">—</span>
-                            </td>
-                        </tr>
-                        
-                        <tr v-if="filteredLeaveRequests.length === 0">
-                            <td colspan="5">
-                                <div class="empty-state">
-                                    <i class="bi bi-inbox"></i>
-                                    <p class="mb-0">No leave requests match your filters.</p>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
+
 
     
     <div class="text-center text-muted small mt-4">
-        <i class="bi bi-database me-1"></i> All data is client-side dummy data · ModernTech Solutions
+        <i class="bi bi-database me-1"></i> All data is client-side dummy data. ModernTech Solutions
     </div>
 </div>
 

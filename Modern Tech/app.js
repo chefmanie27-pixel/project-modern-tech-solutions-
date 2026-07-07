@@ -112,24 +112,7 @@ const app = createApp({
         });
 
         
-        const filteredLeaveRequests = computed(() => {
-            let list = leaveRequests.value;
 
-            
-            if (leaveFilterStatus.value !== 'all') {
-                list = list.filter(l => l.status === leaveFilterStatus.value);
-            }
-
-            
-            const search = leaveFilterSearch.value.toLowerCase().trim();
-            if (search) {
-                list = list.filter(l =>
-                    l.employeeName.toLowerCase().includes(search) ||
-                    l.reason.toLowerCase().includes(search)
-                );
-            }
-            return list;
-        });
 
        
 
@@ -260,18 +243,18 @@ const app = createApp({
             activeTab,
             dashboardFilter,
             attendanceFilter,
-            leaveFilterStatus,
-            leaveFilterSearch,
+            
+            
             employees,
             attendanceRecords,
-            leaveRequests,
+            
             weekDays,
             presentToday,
             absentToday,
             pendingLeavesCount,
             filteredDashboardEmployees,
             filteredAttendanceEmployees,
-            filteredLeaveRequests,
+            
             getTodayStatus,
             getTodayStatusClass,
             getDayStatusClass,
