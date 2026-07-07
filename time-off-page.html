@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mordern Tech HR Portal - Time Off</title>
+    <link rel="stylesheet" href="style3.css" />
+  </head>
+  <body>
+    <main class="main">
+      <div class="header">
+        <div>
+          <h1>Time Off</h1>
+          <p>Manage leave requests and approvals</p>
+        </div>
+        <button class="btn-primary" id="newRequestBtn">+ New Request</button>
+      </div>
+
+      <div class="tabs" id="tabs">
+        <button class="tab active" data-filter="all">
+          All <span id="count-all">13</span>
+        </button>
+        <button class="tab" data-filter="pending">
+          Pending <span id="count-pending">5</span>
+        </button>
+        <button class="tab" data-filter="approved">
+          Approved <span id="count-approved">6</span>
+        </button>
+        <button class="tab" data-filter="denied">
+          Denied <span id="count-denied">2</span>
+        </button>
+      </div>
+
+      <div id="cards-container">
+        <!-- Card 1: Approved -->
+        <div class="leave-card" data-status="approved">
+          <div class="card-top">
+            <div class="user-row">
+              <div class="avatar-sm" style="background: #ede9fe">SN</div>
+              <div>
+                <div class="name">Sibongile Nkosi</div>
+                <div class="role">Software Engineer - Development</div>
+              </div>
+            </div>
+            <div class="badge approved">✓ Approved</div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Type</label>
+              <div>Sick Leave</div>
+            </div>
+            <div>
+              <label>Duration</label>
+              <div>2 days</div>
+            </div>
+            <div>
+              <label>From</label>
+              <div>2025-07-22</div>
+            </div>
+            <div>
+              <label>To</label>
+              <div>2025-07-25</div>
+            </div>
+          </div>
+
+          <div class="reason"><strong>Reason:</strong>Not feeling well</div>
+          <div class="reviewed">Reviewed on 2025-07-22</div>
+        </div>
+
+        <!-- Card 2: Pending -->
+        <div class="leave-card" data-status="pending">
+          <div class="card-top">
+            <div class="user-row">
+              <div class="avatar-sm" style="background: #dbeafe">NM</div>
+              <div>
+                <div class="name">Naledi Moeketsi</div>
+                <div class="role">DevOps Engineer - IT</div>
+              </div>
+            </div>
+            <div class="badge pending">⏳ Pending</div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Type</label>
+              <div>Annual Leave</div>
+            </div>
+            <div>
+              <label>Duration</label>
+              <div>13 days</div>
+            </div>
+            <div>
+              <label>From</label>
+              <div>2025-07-22</div>
+            </div>
+            <div>
+              <label>To</label>
+              <div>2025-08-05</div>
+            </div>
+          </div>
+
+          <div class="reason"><strong>Reason:</strong> Family vacation</div>
+
+          <div class="actions">
+            <button class="btn approve">✓ Approve</button>
+            <button class="btn deny">✕ Deny</button>
+          </div>
+        </div>
+
+        <!-- Card 3: Approved -->
+        <div class="leave-card" data-status="approved">
+          <div class="card-top">
+            <div class="user-row">
+              <div class="avatar-sm" style="background: #ede9fe">KN</div>
+              <div>
+                <div class="name">Keshav Naidoo</div>
+                <div class="role">Sales Representative - Sales</div>
+              </div>
+            </div>
+            <div class="badge approved">✓ Approved</div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Type</label>
+              <div>Annual leave</div>
+            </div>
+            <div>
+              <label>Duration</label>
+              <div>5 days</div>
+            </div>
+            <div>
+              <label>From</label>
+              <div>2025-07-20</div>
+            </div>
+            <div>
+              <label>To</label>
+              <div>2025-07-25</div>
+            </div>
+          </div>
+
+          <div class="reason"><strong>Reason:</strong> Bereavement</div>
+          <div class="reviewed">Reviewed on 2025-07-20</div>
+        </div>
+
+        <!-- Card 4:Denied -->
+        <div class="leave-card" data-status="denied">
+          <div class="card-top">
+            <div class="user-row">
+              <div class="avatar-sm" style="background: #ede9fe">KD</div>
+              <div>
+                <div class="name">Karabo Dlamini</div>
+                <div class="role">Accountant - Finance</div>
+              </div>
+            </div>
+            <div class="badge denied">⦸ Denied</div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Type</label>
+              <div>Annual Leave</div>
+            </div>
+            <div>
+              <label>Duration</label>
+              <div>3 days</div>
+            </div>
+            <div>
+              <label>From</label>
+              <div>2025-07-19</div>
+            </div>
+            <div>
+              <label>To</label>
+              <div>2025-07-22</div>
+            </div>
+          </div>
+
+          <div class="reason"><strong>Reason:</strong>Vacation</div>
+          <div class="reviewed">Reviewed on 1015-07-18</div>
+        </div>
+
+        <!-- Card 5:Approved -->
+        <div class="leave-card" data-status="approved">
+          <div class="card-top">
+            <div class="user-row">
+              <div class="avatar-sm" style="background: #ede9fe">SZ</div>
+              <div>
+                <div class="name">Sipho Zulu</div>
+                <div class="role">UI/UX Designer - Design</div>
+              </div>
+            </div>
+            <div class="badge approved">✓ Approved</div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Type</label>
+              <div>Sick Leave</div>
+            </div>
+            <div>
+              <label>Duration</label>
+              <div>3 days</div>
+            </div>
+            <div>
+              <label>From</label>
+              <div>2025-07-18</div>
+            </div>
+            <div>
+              <label>To</label>
+              <div>2025-07-21</div>
+            </div>
+          </div>
+
+          <div class="reason"><strong>Reason:</strong> Not feeling well</div>
+          <div class="reviewed">Reviewed on 2025-07-18</div>
+        </div>
+
+        <!-- Card 6:Denied -->
+        <div class="leave-card" data-status="denied">
+          <div class="card-top">
+            <div class="user-row">
+              <div class="avatar-sm" style="background: #ede9fe">LM</div>
+              <div>
+                <div class="name">Lungile Moyo</div>
+                <div class="role">HR Management - HR</div>
+              </div>
+            </div>
+            <div class="badge denied">⦸ Denied</div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Type</label>
+              <div>Family Responsibilty Leave</div>
+            </div>
+            <div>
+              <label>Duration</label>
+              <div>2 days</div>
+            </div>
+            <div>
+              <label>From</label>
+              <div>2025-07-15</div>
+            </div>
+            <div>
+              <label>To</label>
+              <div>2025-07-17</div>
+            </div>
+          </div>
+
+          <div class="reason"><strong>Reason:</strong>Family</div>
+          <div class="reviewed">Reviewed on 2025-07-15</div>
+        </div>
+
+        <!-- Card 7:Approved -->
+        <div class="leave-card" data-status="approved">
+          <div class="card-top">
+            <div class="user-row">
+              <div class="avatar-sm" style="background: #ede9fe">TM</div>
+              <div>
+                <div class="name">Thabo Molefe</div>
+                <div class="role">Quality Analyst - QA</div>
+              </div>
+            </div>
+            <div class="badge approved">✓ Approved</div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Type</label>
+              <div>Sick Leave</div>
+            </div>
+            <div>
+              <label>Duration</label>
+              <div>1 days</div>
+            </div>
+            <div>
+              <label>From</label>
+              <div>2025-01-10</div>
+            </div>
+            <div>
+              <label>To</label>
+              <div>2025-07-11</div>
+            </div>
+          </div>
+
+          <div class="reason"><strong>Reason:</strong> Medical appointment</div>
+          <div class="reviewed">Reviewed on 2025-07-10</div>
+        </div>
+
+        <!-- Card 8:Pending-->
+        <div class="leave-card" data-status="pending">
+          <div class="card-top">
+            <div class="user-row">
+              <div class="avatar-sm" style="background: #dbeafe">SN</div>
+              <div>
+                <div class="name">Thabo Molefe</div>
+                <div class="role">Quality Analyst - QA</div>
+              </div>
+            </div>
+            <div class="badge pending">⏳ Pending</div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Type</label>
+              <div>Unpaid Leave</div>
+            </div>
+            <div>
+              <label>Duration</label>
+              <div>2 days</div>
+            </div>
+            <div>
+              <label>From</label>
+              <div>2024-12-05</div>
+            </div>
+            <div>
+              <label>To</label>
+              <div>2024-12-07</div>
+            </div>
+          </div>
+
+          <div class="reason"><strong>Reason:</strong> Personal</div>
+
+          <div class="actions">
+            <button class="btn approve">✓ Approve</button>
+            <button class="btn deny">✕ Deny</button>
+          </div>
+        </div>
+
+        <!-- Card 9:Pending -->
+        <div class="leave-card" data-status="pending">
+          <div class="card-top">
+            <div class="user-row">
+              <div class="avatar-sm" style="background: #dbeafe">FP</div>
+              <div>
+                <div class="name">Fatima Patel</div>
+                <div class="role">Customer Support Lead - Support</div>
+              </div>
+            </div>
+            <div class="badge pending">⏳ Pending</div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Type</label>
+              <div>Annual Leave</div>
+            </div>
+            <div>
+              <label>Duration</label>
+              <div>10 days</div>
+            </div>
+            <div>
+              <label>From</label>
+              <div>2024-12-03</div>
+            </div>
+            <div>
+              <label>To</label>
+              <div>2024-12-13</div>
+            </div>
+          </div>
+
+          <div class="reason"><strong>Reason:</strong>Vacation</div>
+
+          <div class="actions">
+            <button class="btn approve">✓ Approve</button>
+            <button class="btn deny">✕ Deny</button>
+          </div>
+        </div>
+
+        <!-- Card 10:Approved -->
+        <div class="leave-card" data-status="approved">
+          <div class="card-top">
+            <div class="user-row">
+              <div class="avatar-sm" style="background: #ede9fe">FG</div>
+              <div>
+                <div class="name">Farai Gumbo</div>
+                <div class="role">Content Strategist - Marketing</div>
+              </div>
+            </div>
+            <div class="badge approved">✓ Approved</div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Type</label>
+              <div>Sick Leave</div>
+            </div>
+            <div>
+              <label>Duration</label>
+              <div>1 day</div>
+            </div>
+            <div>
+              <label>From</label>
+              <div>2024-12-02</div>
+            </div>
+            <div>
+              <label>To</label>
+              <div>2024-12-03</div>
+            </div>
+          </div>
+
+          <div class="reason"><strong>Reason:</strong> Medical appointment</div>
+          <div class="reviewed">Reviewed on</div>
+        </div>
+
+        <!-- Card 11:Approved -->
+        <div class="leave-card" data-status="approved">
+          <div class="card-top">
+            <div class="user-row">
+              <div class="avatar-sm" style="background: #ede9fe">LM</div>
+              <div>
+                <div class="name">Lungile Moyo</div>
+                <div class="role">HR Management - HR</div>
+              </div>
+            </div>
+            <div class="badge approved">✓ Approved</div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Type</label>
+              <div>Annual Leave</div>
+            </div>
+            <div>
+              <label>Duration</label>
+              <div>8 days</div>
+            </div>
+            <div>
+              <label>From</label>
+              <div>2024-12-02</div>
+            </div>
+            <div>
+              <label>To</label>
+              <div>2024-12-10</div>
+            </div>
+          </div>
+
+          <div class="reason"><strong>Reason:</strong>Vacation</div>
+          <div class="reviewed">Reviewed on 2024-12-02</div>
+        </div>
+
+        <!-- Card 12:Pending -->
+        <div class="leave-card" data-status="pending">
+          <div class="card-top">
+            <div class="user-row">
+              <div class="avatar-sm" style="background: #dbeafe">ZK</div>
+              <div>
+                <div class="name">Zanele Khumalo</div>
+                <div class="role">Marketing Strategist - Marketing</div>
+              </div>
+            </div>
+            <div class="badge pending">⏳ Pending</div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Type</label>
+              <div>Family Responsibility Leave</div>
+            </div>
+            <div>
+              <label>Duration</label>
+              <div>5 days</div>
+            </div>
+            <div>
+              <label>From</label>
+              <div>2024-12-01</div>
+            </div>
+            <div>
+              <label>To</label>
+              <div>2024-12-06</div>
+            </div>
+          </div>
+
+          <div class="reason"><strong>Reason:</strong>Childcare</div>
+
+          <div class="actions">
+            <button class="btn approve">✓ Approve</button>
+            <button class="btn deny">✕ Deny</button>
+          </div>
+        </div>
+
+        <!-- Card 13:Pending-->
+        <div class="leave-card" data-status="pending">
+          <div class="card-top">
+            <div class="user-row">
+              <div class="avatar-sm" style="background: #dbeafe">SN</div>
+              <div>
+                <div class="name">Sibongile Nkosi</div>
+                <div class="role">Software Engineer - Development</div>
+              </div>
+            </div>
+            <div class="badge pending">⏳ Pending</div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Type</label>
+              <div>Unpaid Leave</div>
+            </div>
+            <div>
+              <label>Duration</label>
+              <div>2 days</div>
+            </div>
+            <div>
+              <label>From</label>
+              <div>2024-12-01</div>
+            </div>
+            <div>
+              <label>To</label>
+              <div>2024-12-03</div>
+            </div>
+          </div>
+
+          <div class="reason"><strong>Reason:</strong> Family vacation</div>
+
+          <div class="actions">
+            <button class="btn approve">✓ Approve</button>
+            <button class="btn deny">✕ Deny</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- New Request Modal -->
+    <div id="requestModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>New Leave Request</h2>
+          <span class="close">&times;</span>
+        </div>
+
+        <form id="leaveForm">
+          <label>Employee</label>
+          <select required>
+            <option>Sibongile Nkosi(Software Engineer)</option>
+            <option>Lungile Moyo(HR Manager)</option>
+            <option>Thabo Molefe(Quality Analyst)</option>
+            <option>Keshav Naidoo(Sales Representative)</option>
+            <option>Zanele Khumalo(Marketing Specialist)</option>
+            <option>Sipho Zulu(UI/UX Designer)</option>
+            <option>Naledi Moeketsi(DevOps Engineer)</option>
+            <option>Farai Gumbo(Content Strategist)</option>
+            <option>Karabo Dlamini(Accountant)</option>
+            <option>Fatima Patel(Customer Support Lead)</option>
+          </select>
+
+          <label>Leave Type</label>
+          <select required>
+            <option>Annual Leave</option>
+            <option>Sick Leave</option>
+            <option>Family Responsibility</option>
+            <option>Study Leave</option>
+          </select>
+
+          <div class="date-row">
+            <div>
+              <label>Start Date</label>
+              <input type="date" required />
+            </div>
+
+            <div>
+              <label>End Date</label>
+              <input type="date" required />
+            </div>
+          </div>
+
+          <label>Reason</label>
+          <textarea
+            rows="4"
+            placeholder="Brief reason for leave request..."
+            required
+          ></textarea>
+
+          <div class="modal-buttons">
+            <button type="button" class="cancel-btn">Cancel</button>
+
+            <button type="submit" class="submit-btn">Submit Request</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      const container = document.getElementById("cards-container");
+      const tabs = document.querySelectorAll(".tab");
+      let currentFilter = "all";
+
+      // 1. Update counts
+      function updateCounts() {
+        const cards = container.querySelectorAll(".leave-card");
+        const counts = {
+          all: cards.length,
+          pending: 0,
+          approved: 0,
+          denied: 0,
+        };
+        cards.forEach((c) => counts[c.dataset.status]++);
+
+        document.getElementById("count-all").textContent = counts.all;
+        document.getElementById("count-pending").textContent = counts.pending;
+        document.getElementById("count-approved").textContent = counts.approved;
+        document.getElementById("count-denied").textContent = counts.denied;
+      }
+
+      // 2. Filter tabs
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+          currentFilter = tab.dataset.filter;
+          filterCards();
+        });
+      });
+
+      function filterCards() {
+        container.querySelectorAll(".leave-card").forEach((card) => {
+          card.style.display =
+            currentFilter === "all" || card.dataset.status === currentFilter
+              ? "block"
+              : "none";
+        });
+      }
+
+      // 3. Approve/Deny click logic
+      container.addEventListener("click", (e) => {
+        const card = e.target.closest(".leave-card");
+        if (!card) return;
+
+        if (e.target.classList.contains("approve")) {
+          card.dataset.status = "approved";
+          card.querySelector(".badge").className = "badge approved";
+          card.querySelector(".badge").innerHTML = "✓ Approved";
+          card.querySelector(".actions").remove(); // remove buttons
+          if (!card.querySelector(".reviewed")) {
+            card.insertAdjacentHTML(
+              "beforeend",
+              `<div class="reviewed">Reviewed on ${new Date().toISOString().slice(0, 10)}</div>`,
+            );
+          }
+        }
+
+        if (e.target.classList.contains("deny")) {
+          card.dataset.status = "denied";
+          card.querySelector(".badge").className = "badge denied";
+          card.querySelector(".badge").innerHTML = "⦸ Denied";
+          card.querySelector(".actions").remove();
+          if (!card.querySelector(".reviewed")) {
+            card.insertAdjacentHTML(
+              "beforeend",
+              `<div class="reviewed">Reviewed on ${new Date().toISOString().slice(0, 10)}</div>`,
+            );
+          }
+        }
+
+        updateCounts();
+        filterCards(); // re-apply current tab filter
+      });
+
+      updateCounts(); // init
+
+      //modal//
+
+      const modal = document.getElementById("requestModal");
+
+      const newRequestBtn = document.getElementById("newRequestBtn");
+
+      const closeBtn = document.querySelector(".close");
+
+      const cancelBtn = document.querySelector(".cancel-btn");
+
+      newRequestBtn.onclick = () => {
+        modal.style.display = "flex";
+      };
+
+      closeBtn.onclick = () => {
+        modal.style.display = "none";
+      };
+
+      cancelBtn.onclick = () => {
+        modal.style.display = "none";
+      };
+
+      window.onclick = (e) => {
+        if (e.target === modal) {
+          modal.style.display = "none";
+        }
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Tech | HR Management System</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="login.css" />
+  </head>
+  <body>
+    <!-- Background Shapes -->
+    <div class="shape shape1"></div>
+    <div class="shape shape2"></div>
+
+    <section id="welcome-screen" class="screen">
+      <div class="welcome-content">
+        <!-- Logo (Replace with image later if you want) -->
+        <h2 class="logo">Modern <span>Tech</span></h2>
+
+        <h1>Welcome Back!</h1>
+
+        <h3>HR Management System</h3>
+
+        <button id="accessBtn" class="btn">Access HR Portal</button>
+      </div>
+    </section>
+
+    <section id="login-screen" class="screen hidden">
+      <div class="login-card">
+        <h2 class="logo">Modern <span>Tech</span></h2>
+
+        <h1>Sign In</h1>
+
+        <p>Please enter your credentials.</p>
+
+        <form id="loginForm">
+          <div class="input-group">
+            <label>Email</label>
+
+            <div class="input-box">
+              <i class="fa-solid fa-envelope"></i>
+
+              <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Password</label>
+
+            <div class="input-box">
+              <i class="fa-solid fa-lock"></i>
+
+              <input
+                type="password"
+                id="password"
+                placeholder="Enter your password"
+                required
+              />
+
+              <i class="fa-solid fa-eye" id="togglePassword"></i>
+            </div>
+          </div>
+
+          <button class="btn login-btn" type="submit">Sign In</button>
+        </form>
+      </div>
+    </section>
+
+    <script src="login.js"></script>
+  </body>
+</html>
