@@ -55,26 +55,125 @@
 
       <div class="card-row-2">
         <div class="attendance-overview">
-          <h3>Attendance Overview</h3>
-          <p>Last 10 working days</p>
+        <h3>Attendance Overview</h3>
+        <p>Last 10 working days</p>
 
-          <div class="chart-container"></div>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot present"></span>Present</span>
+          <span class="legend-item"><span class="legend-dot absent"></span>Absent</span>
+          <span class="legend-item"><span class="legend-dot leave"></span>On Leave</span>
+        </div>
+
+        <div class="chart-container">
+          <div class="bar-chart" id="attendanceChart">
+            <div class="bar-group">
+              <div class="bar-cluster">
+                <div class="bar present" style="--pct: 60"></div>
+                <div class="bar absent" style="--pct: 33"></div>
+                <div class="bar leave" style="--pct: 7"></div>
+              </div>
+              <span class="bar-label">06-22</span>
+            </div>
+
+            <div class="bar-group">
+              <div class="bar-cluster">
+                <div class="bar present" style="--pct: 87"></div>
+                <div class="bar absent" style="--pct: 7"></div>
+                <div class="bar leave" style="--pct: 6"></div>
+              </div>
+              <span class="bar-label">06-23</span>
+            </div>
+
+            <!-- repeat bar-group per day, 10 total -->
+          </div>
         </div>
 
         <div class="department-headcount">
           <h3>Department Headcount</h3>
           <p>Employee distribution across departments</p>
 
-          <div class="chart-container"></div>
+          <div class="chart-container">
+            <div class="dept-list" id="deptHeadcount">
+              <div class="dept-bar-row">
+                <span class="dept-name">Engineering</span>
+                <div class="bar-track">
+                  <div class="bar-fill" style="--pct: 30"></div>
+                </div>
+                <span class="dept-count">3</span>
+              </div>
+
+              <div class="dept-bar-row">
+                <span class="dept-name">Customer Support</span>
+                <div class="bar-track">
+                  <div class="bar-fill" style="--pct: 20"></div>
+                </div>
+                <span class="dept-count">2</span>
+              </div>
+
+              <div class="dept-bar-row">
+                <span class="dept-name">Marketing</span>
+                <div class="bar-track">
+                  <div class="bar-fill" style="--pct: 20"></div>
+                </div>
+                <span class="dept-count">2</span>
+              </div>
+
+              <div class="dept-bar-row">
+                <span class="dept-name">Human Resources</span>
+                <div class="bar-track">
+                  <div class="bar-fill" style="--pct: 10"></div>
+                </div>
+                <span class="dept-count">1</span>
+              </div>
+
+              <div class="dept-bar-row">
+                <span class="dept-name">Quality Assurance</span>
+                <div class="bar-track">
+                  <div class="bar-fill" style="--pct: 10"></div>
+                </div>
+                <span class="dept-count">1</span>
+              </div>
+
+              <div class="dept-bar-row">
+                <span class="dept-name">Sales</span>
+                <div class="bar-track">
+                  <div class="bar-fill" style="--pct: 10"></div>
+                </div>
+                <span class="dept-count">1</span>
+              </div>
+            </div>
+
+            <div class="dept-total-row">
+              <span>Total</span>
+              <span id="deptTotal">10</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="card-row-3">
         <div class="payroll-trend">
           <h3>Payroll Trend</h3>
-          <p>Monthly payroll over the last 6 months</p>
+          <p>Total net pay Jan - Jun 2026</p>
 
-          <div class="chart-container"></div>
+          <div class="chart-container">
+            <svg class="line-chart" id="payrollChart" viewBox="0 0 600 300" preserveAspectRatio="none">
+              <!-- gridlines / y-axis labels can go here later -->
+              <polyline
+                class="trend-line"
+                points="30,220 130,180 230,175 330,140 430,110 530,60"
+              />
+              <circle class="trend-dot" cx="30" cy="220" r="5"></circle>
+              <circle class="trend-dot" cx="130" cy="180" r="5"></circle>
+              <circle class="trend-dot" cx="230" cy="175" r="5"></circle>
+              <circle class="trend-dot" cx="330" cy="140" r="5"></circle>
+              <circle class="trend-dot" cx="430" cy="110" r="5"></circle>
+              <circle class="trend-dot" cx="530" cy="60" r="5"></circle>
+            </svg>
+            <div class="x-axis-labels">
+              <span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span>
+            </div>
+          </div>
         </div>
 
         <div class="pending-leave">
@@ -93,5 +192,7 @@
         </div>
       </div>
     </div>
+
+    <script src="dashboard.js"></script>
   </body>
 </html>

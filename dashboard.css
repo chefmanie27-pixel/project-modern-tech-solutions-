@@ -1,0 +1,383 @@
+/* ---- Base ---- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: #f5f6fa;
+  color: #2d2f36;
+}
+
+/* ---- Header ---- */
+.header {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 32px 24px 0;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* ---- Layout ---- */
+.dashboard-container {
+  max-width: 1300px;
+  margin: 24px auto 0;
+  padding: 0 24px 32px;
+}
+
+/* ==========================================================================
+   Row 1 — KPI cards
+   ========================================================================== */
+
+.card-row-1 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.card-row-1 > div {
+  border-radius: 10px;
+  padding: 20px 22px;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.card-row-1 h3 {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 14px;
+}
+
+.card-row-1 h2 {
+  font-size: 30px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 6px;
+}
+
+.card-row-1 p {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+
+.card-row-1 .icon {
+  float: right;
+}
+
+.card-row-1 .icon img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+}
+
+.active-emplpoyees {
+  background-color: #e5484d;
+}
+.monthly-payroll {
+  background-color: #f0883e;
+}
+.pending-requests {
+  background-color: #3b82f6;
+}
+.avg-attendance {
+  background-color: #22a06b;
+}
+
+/* ==========================================================================
+   Shared card look (row 2 + row 3 panels)
+   ========================================================================== */
+
+.card-row-2,
+.card-row-3 {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+  align-items: start;
+}
+
+.card-row-2 > div,
+.card-row-3 > div {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+}
+
+.card-row-2 h3,
+.card-row-3 h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.card-row-2 p,
+.card-row-3 p {
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.chart-container {
+  background-color: #f9fafb;
+  border: 1px solid #eef0f3;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+/* ==========================================================================
+   Attendance chart (grouped bars)
+   ========================================================================== */
+
+.chart-legend {
+  display: flex;
+  gap: 18px;
+  margin: -6px 0 14px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-dot.present {
+  background-color: #4f46e5;
+}
+.legend-dot.absent {
+  background-color: #e5e7eb;
+}
+.legend-dot.leave {
+  background-color: #a5b4fc;
+}
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 8px;
+  height: 220px;
+}
+
+.bar-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.bar-cluster {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 100%;
+}
+
+.bar {
+  width: 14px;
+  height: calc(var(--pct) * 1%);
+  border-radius: 2px 2px 0 0;
+}
+
+.bar.present {
+  background-color: #4f46e5;
+}
+.bar.absent {
+  background-color: #e5e7eb;
+}
+.bar.leave {
+  background-color: #a5b4fc;
+}
+
+.bar-label {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* ==========================================================================
+   Department headcount — horizontal bar list
+   ========================================================================== */
+
+.dept-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dept-bar-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 28px;
+  align-items: center;
+  gap: 12px;
+}
+
+.dept-name {
+  font-size: 13px;
+  color: #2d2f36;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar-track {
+  background-color: #f3f4f6;
+  border-radius: 6px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  width: calc(var(--pct) * 1%);
+  border-radius: 6px;
+  background-color: #4f46e5;
+  transition: width 0.3s ease;
+}
+
+.dept-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2d2f36;
+  text-align: right;
+}
+
+.dept-total-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #eef0f3;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Payroll trend — line chart
+   ========================================================================== */
+
+.line-chart {
+  width: 100%;
+  height: 220px;
+  overflow: visible;
+}
+
+.trend-line {
+  fill: none;
+  stroke: #4f46e5;
+  stroke-width: 2;
+}
+
+.trend-dot {
+  fill: #4f46e5;
+}
+
+.x-axis-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* ==========================================================================
+   Pending leave
+   ========================================================================== */
+
+.view-more {
+  text-align: right;
+  margin: -30px 0 14px;
+}
+
+.view-more a {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.view-more a:hover {
+  text-decoration: underline;
+}
+
+.employee-cards {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background-color: #f9fafb;
+  border: 1px solid #eef0f3;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.avatar-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.employee-cards h1 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  width: 100%;
+}
+
+.employee-cards p {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 1100px) {
+  .card-row-1 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .card-row-2,
+  .card-row-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .card-row-1 {
+    grid-template-columns: 1fr;
+  }
+  .dept-bar-row {
+    grid-template-columns: 90px 1fr 24px;
+  }
+}
