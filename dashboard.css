@@ -1,49 +1,167 @@
+/* ==========================================================================
+   Design System & Tokens (shared with employee directory / reviews pages)
+   ========================================================================== */
+:root {
+  --primary: #0b2e59;          /* Premium Deep Navy */
+  --primary-hover: #071f3d;
+  --accent: #f7941d;           /* Vibrant Orange */
+  --accent-hover: #df8414;
+
+  --success: #10b981;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --violet: #8b5cf6;
+
+  --neutral-dark: #0b2e59;
+  --neutral-light: #fafbfc;
+  --text-main: #333333;
+  --text-muted: #666666;
+  --border-color: #d9d9d9;
+
+  --radius-md: 10px;
+  --radius-lg: 20px;
+  --radius-pill: 50px;
+
+  --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 12px 25px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 45px rgba(0, 0, 0, 0.08);
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: "Segoe UI", Arial, sans-serif;
-  background-color: #fafafa;
-  color: #2d2f36;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #ffffff;
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-.icon svg {
-  width: 20px;
-  height: 20px;
-  opacity: 0.9;
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--primary);
+  padding: 20px 40px;
+  box-shadow: var(--shadow-sm);
 }
 
-.active-emplpoyees .icon svg {
-  color: #e5484d;
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #ffffff;
 }
 
-.monthly-payroll .icon svg {
-  color: #f0883e;
+.logo span {
+  color: var(--accent);
 }
 
-.pending-requests .icon svg {
-  color: #3b82f6;
+.nav-bar {
+  display: flex;
 }
 
-.avg-attendance .icon svg {
-  color: #22a06b;
+.nav-content {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 28px;
+}
+
+.nav-content li a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-content li a:hover,
+.nav-content li.active a {
+  color: #ffffff;
 }
 
 .header {
+  margin: 0;
+  padding: 0;
+}
+
+/* .nav lives inside .header on this page; let it bleed full width instead
+   of inheriting a max-width/padding constraint meant for the title area. */
+.header .nav {
+  margin: 0;
+}
+
+/* Everything in .header that isn't the nav bar (title, subtitle, or a
+   wrapper div around them) gets the normal content-width treatment. */
+.header > *:not(.nav) {
   max-width: 1300px;
-  margin: 0 auto;
-  padding: 32px 24px 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.header .nav + * {
+  margin-top: 40px;
+}
+
+.header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0 0 8px 0;
+}
+
+.header .subtitle,
+.header p {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  margin: 0;
 }
 
 .dashboard-container {
   max-width: 1300px;
   margin: 24px auto 0;
-  padding: 0 24px 32px;
+  padding: 0 24px 60px;
 }
 
-/* Row 1 - KPI cards */
+/* ==========================================================================
+   Icons
+   ========================================================================== */
+.icon svg {
+  width: 20px;
+  height: 20px;
+  opacity: 0.95;
+}
+
+.active-emplpoyees .icon svg {
+  color: var(--danger);
+}
+
+.monthly-payroll .icon svg {
+  color: var(--accent);
+}
+
+.pending-requests .icon svg {
+  color: var(--info);
+}
+
+.avg-attendance .icon svg {
+  color: var(--success);
+}
+
+/* ==========================================================================
+   Row 1 - KPI cards
+   ========================================================================== */
 .card-row-1 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -52,68 +170,72 @@ body {
 }
 
 .card-row-1 > div {
-  border-width: 2px;
+  border-width: 1px;
   border-style: solid;
-  border-radius: 8px;
-  padding: 20px;
+  border-radius: var(--radius-lg);
+  padding: 22px;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  background-color: #ffffff;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
 }
 
 .active-emplpoyees {
-  border-color: #e5484d;
+  border-color: rgba(239, 68, 68, 0.35);
   background-color: #fdecec;
 }
 
 .monthly-payroll {
-  border-color: #f0883e;
-  background-color: #fdf0e4;
+  border-color: rgba(247, 148, 29, 0.35);
+  background-color: #fdf1e2;
 }
 
 .pending-requests {
-  border-color: #3b82f6;
+  border-color: rgba(59, 130, 246, 0.35);
   background-color: #e9f1fe;
 }
 
 .avg-attendance {
-  border-color: #22a06b;
+  border-color: rgba(16, 185, 129, 0.35);
   background-color: #e6f6ef;
 }
 
-.active-emplpoyees h2 { color: #e5484d; }
-.monthly-payroll h2   { color: #f0883e; }
-.pending-requests h2  { color: #3b82f6; }
-.avg-attendance h2    { color: #22a06b; }
+.active-emplpoyees h2 { color: var(--danger); font-weight: 700; }
+.monthly-payroll h2   { color: var(--accent); font-weight: 700; }
+.pending-requests h2  { color: var(--info); font-weight: 700; }
+.avg-attendance h2    { color: var(--success); font-weight: 700; }
 
 .card-row-1 > div:hover {
-  transform: translateY(-6px) scale(1.03);
+  transform: translateY(-6px);
 }
 
 .card-row-1 > div:active {
-  transform: translateY(-2px) scale(1.01);
+  transform: translateY(-2px);
 }
 
 .active-emplpoyees:hover {
-  box-shadow: 0 10px 24px rgba(229, 72, 77, 0.35);
+  box-shadow: 0 12px 25px rgba(239, 68, 68, 0.25);
   background-color: #fce0e0;
 }
 
 .monthly-payroll:hover {
-  box-shadow: 0 10px 24px rgba(240, 136, 62, 0.35);
-  background-color: #fce6d5;
+  box-shadow: 0 12px 25px rgba(247, 148, 29, 0.3);
+  background-color: #fce6d0;
 }
 
 .pending-requests:hover {
-  box-shadow: 0 10px 24px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 12px 25px rgba(59, 130, 246, 0.25);
   background-color: #dbe9fd;
 }
 
 .avg-attendance:hover {
-  box-shadow: 0 10px 24px rgba(34, 160, 107, 0.35);
+  box-shadow: 0 12px 25px rgba(16, 185, 129, 0.25);
   background-color: #d9f2e6;
 }
 
-/* Row 2 + 3 - panels */
+/* ==========================================================================
+   Row 2 + 3 - panels
+   ========================================================================== */
 .card-row-2,
 .card-row-3 {
   display: grid;
@@ -124,32 +246,34 @@ body {
 
 .card-row-2 > div,
 .card-row-3 > div {
-  background: #fff;
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  padding: 20px;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 22px;
 }
 
 .card-row-2 h3,
 .card-row-3 h3 {
   font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
   margin: 0 0 4px;
 }
 
 .card-row-2 p,
 .card-row-3 p {
   font-size: 13px;
-  color: #6b7280;
-  margin: 0 0 14px;
+  color: var(--text-muted);
+  margin: 0 0 16px;
 }
 
 /* Chart container background */
 .chart-container {
-  background-color: #f9fafb;
-  border: 1px solid #eef0f3;
-  border-radius: 8px;
-  padding: 16px 20px;
+  background-color: var(--neutral-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
 }
 
 /* Shared y-axis + chart row layout */
@@ -164,7 +288,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   font-size: 11px;
-  color: #9ca3af;
+  color: var(--text-muted);
   padding-bottom: 20px;
 }
 
@@ -197,12 +321,12 @@ body {
 .bar {
   width: 14px;
   height: calc(var(--pct) * 1%);
-  border-radius: 2px 2px 0 0;
+  border-radius: 3px 3px 0 0;
   position: relative;
 }
 
 .bar.present {
-  background-color: #4f46e5;
+  background-color: var(--primary);
 }
 
 .bar.absent {
@@ -210,12 +334,13 @@ body {
 }
 
 .bar.leave {
-  background-color: #a5b4fc;
+  background-color: var(--accent);
+  opacity: 0.55;
 }
 
 .bar-label {
   font-size: 11px;
-  color: #9ca3af;
+  color: var(--text-muted);
 }
 
 /* Hover tooltips (bar chart + department bars) */
@@ -226,11 +351,11 @@ body {
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(-6px);
-  background-color: #2d2f36;
+  background-color: var(--primary);
   color: #fff;
   font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
@@ -255,7 +380,7 @@ body {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 .legend-dot {
@@ -266,7 +391,7 @@ body {
 }
 
 .legend-dot.present {
-  background-color: #4f46e5;
+  background-color: var(--primary);
 }
 
 .legend-dot.absent {
@@ -274,7 +399,7 @@ body {
 }
 
 .legend-dot.leave {
-  background-color: #a5b4fc;
+  background-color: var(--accent);
 }
 
 /* Department headcount bars */
@@ -293,7 +418,7 @@ body {
 
 .dept-name {
   font-size: 13px;
-  color: #2d2f36;
+  color: var(--text-main);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -301,32 +426,32 @@ body {
 
 .bar-track {
   background-color: #f3f4f6;
-  border-radius: 6px;
+  border-radius: var(--radius-pill);
   height: 10px;
 }
 
 .bar-fill {
   height: 100%;
   width: calc(var(--pct) * 1%);
-  border-radius: 6px;
+  border-radius: var(--radius-pill);
   transition: width 0.3s ease;
   position: relative;
 }
 
-.dept-bar-row:nth-child(1) .bar-fill { background-color: #e5484d; }
-.dept-bar-row:nth-child(2) .bar-fill { background-color: #f0883e; }
+.dept-bar-row:nth-child(1) .bar-fill { background-color: var(--danger); }
+.dept-bar-row:nth-child(2) .bar-fill { background-color: var(--accent); }
 .dept-bar-row:nth-child(3) .bar-fill { background-color: #f0c33e; }
-.dept-bar-row:nth-child(4) .bar-fill { background-color: #3b82f6; }
-.dept-bar-row:nth-child(5) .bar-fill { background-color: #8b5cf6; }
-.dept-bar-row:nth-child(6) .bar-fill { background-color: #22a06b; }
-.dept-bar-row:nth-child(7) .bar-fill { background-color: #e5484d; }
-.dept-bar-row:nth-child(8) .bar-fill { background-color: #f0883e; }
+.dept-bar-row:nth-child(4) .bar-fill { background-color: var(--info); }
+.dept-bar-row:nth-child(5) .bar-fill { background-color: var(--violet); }
+.dept-bar-row:nth-child(6) .bar-fill { background-color: var(--success); }
+.dept-bar-row:nth-child(7) .bar-fill { background-color: var(--danger); }
+.dept-bar-row:nth-child(8) .bar-fill { background-color: var(--accent); }
 .dept-bar-row:nth-child(9) .bar-fill { background-color: #f0c33e; }
 
 .dept-count {
   font-size: 13px;
-  font-weight: 600;
-  color: #2d2f36;
+  font-weight: 700;
+  color: var(--primary);
   text-align: right;
 }
 
@@ -334,10 +459,11 @@ body {
   display: flex;
   justify-content: space-between;
   margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid #eef0f3;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color);
   font-size: 13px;
   font-weight: 700;
+  color: var(--primary);
 }
 
 /* Payroll line chart */
@@ -353,26 +479,26 @@ body {
 
 .trend-line {
   fill: none;
-  stroke: #4f46e5;
+  stroke: var(--primary);
   stroke-width: 2;
 }
 
 .trend-dot {
-  fill: #4f46e5;
+  fill: var(--accent);
   cursor: pointer;
 }
 
 .chart-tooltip {
   position: absolute;
-  background-color: #2d2f36;
+  background-color: var(--primary);
   color: #fff;
   font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.1s ease;
+  transition: opacity 0.15s ease;
   z-index: 10;
 }
 
@@ -381,7 +507,7 @@ body {
   justify-content: space-around;
   margin-top: 8px;
   font-size: 11px;
-  color: #9ca3af;
+  color: var(--text-muted);
 }
 
 /* Pending leave */
@@ -393,11 +519,13 @@ body {
 .view-more a {
   font-size: 13px;
   font-weight: 600;
-  color: #4f46e5;
+  color: var(--accent);
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .view-more a:hover {
+  color: var(--accent-hover);
   text-decoration: underline;
 }
 
@@ -406,17 +534,19 @@ body {
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  background-color: #f9fafb;
-  border: 1px solid #eef0f3;
-  border-radius: 8px;
-  padding: 12px 14px;
+  background-color: var(--neutral-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
   margin-bottom: 10px;
 }
 
 .avatar-img {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
+  border: 2px solid #ffffff;
+  box-shadow: var(--shadow-sm);
 }
