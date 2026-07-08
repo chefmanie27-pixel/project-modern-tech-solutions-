@@ -1,47 +1,37 @@
-
-
-
+// ==========================================
+// VUE 3 APPLICATION ENGINE
+// ==========================================
 const { createApp, ref, computed, onMounted } = Vue;
 
-
 const app = createApp({
-
-    
     setup() {
-
-        
-
-        const activeTab = ref('attendance');       
-        const dashboardFilter = ref('');          
+        // Layout State
+        const activeTab = ref('attendance'); // Defaulting view context to attendance tab
+        const dashboardFilter = ref('');      
         const attendanceFilter = ref('');         
         const leaveFilterStatus = ref('all');     
         const leaveFilterSearch = ref('');        
 
-        
+        // Reactive Application Stores
         const employees = ref([]);                
         const attendanceRecords = ref([]);        
         const leaveRequests = ref([]);            
 
-        
+        // Calendar Columns
         const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 
-        
+        // Core Data Processing Hydrator
         function loadData() {
-            
             const empList = employeeData.employeeInformation;
             const attList = attendanceData.attendanceAndLeave;
 
-            
             employees.value = empList;
 
-           
             const leaves = [];
             attList.forEach(item => {
-                
                 const emp = empList.find(e => e.employeeId === item.employeeId);
                 const empName = emp ? emp.name : item.name;
 
-                
                 item.leaveRequests.forEach((lr, idx) => {
                     leaves.push({
                         _uid: `${item.employeeId}-${idx}-${Date.now()}`, 
@@ -50,7 +40,6 @@ const app = createApp({
                         date: lr.date,
                         reason: lr.reason,
                         status: lr.status,
-                        
                         _attRef: item,
                         _lrRef: lr
                     });
@@ -61,6 +50,7 @@ const app = createApp({
             attendanceRecords.value = attList;
         }
 
+        // Metrics Rollups
         const presentToday = computed(() => {
             const today = '2025-07-29';
             let count = 0;
@@ -71,7 +61,6 @@ const app = createApp({
             return count;
         });
 
-        
         const absentToday = computed(() => {
             const today = '2025-07-29';
             let count = 0;
@@ -82,12 +71,11 @@ const app = createApp({
             return count;
         });
 
-        
         const pendingLeavesCount = computed(() => {
             return leaveRequests.value.filter(l => l.status === 'Pending').length;
         });
 
-        
+        // Dynamic Filtering Core Engines
         const filteredDashboardEmployees = computed(() => {
             const filter = dashboardFilter.value.toLowerCase().trim();
             if (!filter) return employees.value;
@@ -107,6 +95,7 @@ const app = createApp({
             );
         });
 
+        // Date Context Parsers
         function getTodayStatus(employeeId) {
             const rec = attendanceRecords.value.find(r => r.employeeId === employeeId);
             if (!rec) return '—';
@@ -115,7 +104,6 @@ const app = createApp({
             return todayRec ? todayRec.status : '—';
         }
 
-        
         function getTodayStatusClass(employeeId) {
             const status = getTodayStatus(employeeId);
             if (status === 'Present') return 'badge-present';
@@ -123,9 +111,7 @@ const app = createApp({
             return 'badge-secondary';
         }
 
-        
         function getDayStatus(employeeId, day) {
-            
             const dateMap = {
                 'Mon': '2025-07-25',
                 'Tue': '2025-07-26',
@@ -141,7 +127,6 @@ const app = createApp({
             return dayRec ? dayRec.status : null;
         }
 
-        
         function getDayStatusClass(employeeId, day) {
             const status = getDayStatus(employeeId, day);
             if (status === 'Present') return 'day-present';
@@ -149,7 +134,6 @@ const app = createApp({
             return 'bg-light text-muted';
         }
 
-        
         function getDayStatusLetter(employeeId, day) {
             const status = getDayStatus(employeeId, day);
             if (status === 'Present') return 'P';
@@ -157,7 +141,6 @@ const app = createApp({
             return '—';
         }
 
-        
         function getWeeklySummary(employeeId) {
             const rec = attendanceRecords.value.find(r => r.employeeId === employeeId);
             if (!rec) return '—';
@@ -167,7 +150,6 @@ const app = createApp({
             return `${present}P / ${absent}A`;
         }
 
-        
         function getWeeklySummaryClass(employeeId) {
             const rec = attendanceRecords.value.find(r => r.employeeId === employeeId);
             if (!rec) return 'badge-secondary';
@@ -178,32 +160,28 @@ const app = createApp({
             return 'badge-pending';
         }
 
-        
         function getLeaveStatusClass(status) {
             if (status === 'Approved') return 'badge-approved';
             if (status === 'Denied') return 'badge-denied';
             return 'badge-pending';
         }
 
-        
         function hasPendingLeave(employeeId) {
             return leaveRequests.value.some(l =>
                 l.employeeId === employeeId && l.status === 'Pending'
             );
         }
 
-        
+        // Leave Requests Mutations Actions
         function approveLeave(uid) {
             const req = leaveRequests.value.find(l => l._uid === uid);
             if (!req || req.status !== 'Pending') return; 
             req.status = 'Approved';
-            
             if (req._lrRef) {
                 req._lrRef.status = 'Approved';
             }
         }
 
-        
         function denyLeave(uid) {
             const req = leaveRequests.value.find(l => l._uid === uid);
             if (!req || req.status !== 'Pending') return;
@@ -213,7 +191,6 @@ const app = createApp({
             }
         }
 
-        
         function formatDate(dateStr) {
             const d = new Date(dateStr);
             return d.toLocaleDateString('en-ZA', {
@@ -223,28 +200,27 @@ const app = createApp({
             });
         }
 
-        
+        // App Initialization Hooks
         onMounted(() => {
             loadData(); 
         });
 
-        
+        // Public Exposed References 
         return {
             activeTab,
-            
+            dashboardFilter,
             attendanceFilter,
-            
-            
+            leaveFilterStatus,
+            leaveFilterSearch,
             employees,
             attendanceRecords,
-            
+            leaveRequests,
             weekDays,
             presentToday,
             absentToday,
             pendingLeavesCount,
             filteredDashboardEmployees,
             filteredAttendanceEmployees,
-            
             getTodayStatus,
             getTodayStatusClass,
             getDayStatusClass,
@@ -259,6 +235,5 @@ const app = createApp({
         };
     }
 });
-
 
 app.mount('#app');

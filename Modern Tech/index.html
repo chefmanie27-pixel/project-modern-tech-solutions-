@@ -3,60 +3,65 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ModernTech  Attendance & Leave</title>
-
+    <title>ModernTech | Attendance Tracker</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-
-    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
 
-    
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
 
+<div id="app">
 
-<div id="app" class="app-container">
+    <div class="nav">
+        <div class="logo">Modern<span>Tech</span></div>
+        <div class="nav-bar">
+            <ul class="nav-content">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="employees.html">Employees</a></li>
+                <li><a href="payroll.html">Payroll</a></li>
+                <li><a href="time-off.html">Time Off</a></li>
+                <li class="active"><a href="attendance.html">Attendance</a></li>
+            </ul>
+        </div>
+    </div>
 
-    
-    <nav class="navbar navbar-expand-lg navbar-modern mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <i class="bi bi-calendar-check"></i> ModernTech · HR
-            </a>
-            
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                <i class="bi bi-list fs-3" style="color:#fff;"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="navMenu">
-                <ul class="navbar-nav ms-auto">
-                    
-                    
-                    <li class="nav-item">
-                        <a class="nav-link" :class="{ active: activeTab === 'attendance' }"
-                           href="#" @click.prevent="activeTab = 'attendance'">
-                            <i class="bi bi-person-check"></i> Attendance
-                        </a>
-                    </li>
-                   
-                </ul>
+    <div class="app-container">
+        
+        <div class="mt-5 mb-4">
+            <h1 style="font-size: 2.25rem; font-weight: 700; color: var(--primary); margin: 0 0 8px 0;">Attendance Logs</h1>
+            <p style="color: var(--text-muted); font-size: 1.05rem; margin: 0;">Track daily active statuses and rolling weekly presence indicators.</p>
+        </div>
+
+        <div class="row g-3 mb-5">
+            <div class="col-md-6">
+                <div class="stat-card d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="stat-label">Present Today</div>
+                        <div class="stat-number text-success">{{ presentToday }}</div>
+                    </div>
+                    <i class="bi bi-check-circle-fill text-success stat-icon"></i>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stat-card d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="stat-label">Absent Today</div>
+                        <div class="stat-number text-danger">{{ absentToday }}</div>
+                    </div>
+                    <i class="bi bi-x-circle-fill text-danger stat-icon"></i>
+                </div>
             </div>
         </div>
-    </nav>
 
-        
-        <div class="table-card">
+        <div class="table-card mb-4">
             <div class="card-header-custom">
                 <h5><i class="bi bi-person-lines-fill me-2 text-secondary"></i> Employee Overview</h5>
                 <div class="filter-group">
-                    
-                    <input type="text" class="filter-input" v-model="dashboardFilter"
-                           placeholder="Search employee..." />
+                    <input type="text" class="filter-input" v-model="dashboardFilter" placeholder="Search employee..." />
                 </div>
             </div>
             <div class="table-wrapper">
@@ -71,11 +76,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        
                         <tr v-for="emp in filteredDashboardEmployees" :key="emp.employeeId">
                             <td><strong>{{ emp.name }}</strong></td>
                             <td>{{ emp.position }}</td>
-                            <td><span class="badge bg-secondary bg-opacity-10 text-secondary">{{ emp.department }}</span></td>
+                            <td><span class="badge-status badge-secondary">{{ emp.department }}</span></td>
                             <td class="text-center">
                                 <span class="badge-status" :class="getTodayStatusClass(emp.employeeId)">
                                     {{ getTodayStatus(emp.employeeId) }}
@@ -92,16 +96,12 @@
                 </table>
             </div>
         </div>
-    </section>
 
-    
-    <section v-if="activeTab === 'attendance'">
         <div class="table-card">
             <div class="card-header-custom">
                 <h5><i class="bi bi-calendar3 me-2 text-secondary"></i> Weekly Attendance</h5>
                 <div class="filter-group">
-                    <input type="text" class="filter-input" v-model="attendanceFilter"
-                           placeholder="Filter by name..." />
+                    <input type="text" class="filter-input" v-model="attendanceFilter" placeholder="Filter by name..." />
                 </div>
             </div>
             <div class="table-wrapper">
@@ -110,24 +110,21 @@
                         <tr>
                             <th>Employee</th>
                             <th>Department</th>
-                            <th v-for="day in weekDays" class="text-center">{{ day }}</th>
+                            <th v-for="day in weekDays" :key="day" class="text-center">{{ day }}</th>
                             <th class="text-center">Summary</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="emp in filteredAttendanceEmployees" :key="emp.employeeId">
                             <td><strong>{{ emp.name }}</strong></td>
-                            <td><span class="badge bg-secondary bg-opacity-10 text-secondary">{{ emp.department }}</span></td>
-                            <!-- Show a P/A circle for each day -->
-                            <td v-for="day in weekDays" class="text-center">
-                                <span class="day-status"
-                                      :class="getDayStatusClass(emp.employeeId, day)">
+                            <td><span class="badge-status badge-secondary">{{ emp.department }}</span></td>
+                            <td v-for="day in weekDays" :key="day" class="text-center">
+                                <span class="day-status" :class="getDayStatusClass(emp.employeeId, day)">
                                     {{ getDayStatusLetter(emp.employeeId, day) }}
                                 </span>
                             </td>
                             <td class="text-center">
-                                <span class="badge-status"
-                                      :class="getWeeklySummaryClass(emp.employeeId)">
+                                <span class="badge-status" :class="getWeeklySummaryClass(emp.employeeId)">
                                     {{ getWeeklySummary(emp.employeeId) }}
                                 </span>
                             </td>
@@ -136,24 +133,11 @@
                 </table>
             </div>
         </div>
-    </section>
-
-  
-
-
-    
-    <div class="text-center text-muted small mt-4">
-        <i class="bi bi-database me-1"></i> All data is client-side dummy data. ModernTech Solutions
     </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
 <script src="data.js"></script>
-
-
 <script src="app.js"></script>
 
 </body>
