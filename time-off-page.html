@@ -5,27 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Modern Tech HR Portal - Time Off</title>
     <link rel="stylesheet" href="style3.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
-    <main class="main">
+    <nav class="nav" style="width: 100%; position: fixed; top: 0; left: 0; z-index: 999;">
+      <div class="logo">Modern<span>Tech</span></div>
+      <div class="nav-bar">
+        <ul class="nav-content">
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="employees.html">Employees</a></li>
+          <li><a href="payroll.html">Payroll</a></li>
+          <li class="active"><a href="time-off-page.html">Time Off</a></li>
+          <li><a href="attendance.html">Attendance</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="main" style="margin-top: 80px;">
       <div class="header">
-        <div class="nav">
-          <div class="logo">Modern<span>Tech</span></div>
-          <div class="nav-bar">
-            <ul class="nav-content">
-              <li><a href="dashboard.html">Dashboard</a></li>
-              <li><a href="employees.html">Employees</a></li>
-              <li><a href="payroll.html">Payroll</a></li>
-              <li class = "active"><a href="time-off-page.html">Time Off</a></li>
-              <li><a href="attendance.html">Attendance</a></li>
-            </ul>
-          </div>
-        </div>
         <div>
           <h1>Time Off</h1>
           <p>Manage leave requests and approvals</p>
         </div>
-        <button class="btn-primary" id="newRequestBtn">+ New Request</button>
+        <button class="btn btn-primary" id="newRequestBtn">+ New Request</button>
       </div>
 
       <div class="tabs" id="tabs">
@@ -44,7 +46,6 @@
       </div>
 
       <div id="cards-container">
-        <!-- Card 1: Approved -->
         <div class="leave-card" data-status="approved">
           <div class="card-top">
             <div class="user-row">
@@ -76,11 +77,10 @@
             </div>
           </div>
 
-          <div class="reason"><strong>Reason:</strong>Not feeling well</div>
+          <div class="reason"><strong>Reason:</strong> Not feeling well</div>
           <div class="reviewed">Reviewed on 2025-07-22</div>
         </div>
 
-        <!-- Card 2: Pending -->
         <div class="leave-card" data-status="pending">
           <div class="card-top">
             <div class="user-row">
@@ -120,7 +120,6 @@
           </div>
         </div>
 
-        <!-- Card 3: Approved -->
         <div class="leave-card" data-status="approved">
           <div class="card-top">
             <div class="user-row">
@@ -156,7 +155,6 @@
           <div class="reviewed">Reviewed on 2025-07-20</div>
         </div>
 
-        <!-- Card 4:Denied -->
         <div class="leave-card" data-status="denied">
           <div class="card-top">
             <div class="user-row">
@@ -188,11 +186,10 @@
             </div>
           </div>
 
-          <div class="reason"><strong>Reason:</strong>Vacation</div>
-          <div class="reviewed">Reviewed on 1015-07-18</div>
+          <div class="reason"><strong>Reason:</strong> Vacation</div>
+          <div class="reviewed">Reviewed on 2025-07-18</div>
         </div>
 
-        <!-- Card 5:Approved -->
         <div class="leave-card" data-status="approved">
           <div class="card-top">
             <div class="user-row">
@@ -228,7 +225,6 @@
           <div class="reviewed">Reviewed on 2025-07-18</div>
         </div>
 
-        <!-- Card 6:Denied -->
         <div class="leave-card" data-status="denied">
           <div class="card-top">
             <div class="user-row">
@@ -244,7 +240,7 @@
           <div class="grid">
             <div>
               <label>Type</label>
-              <div>Family Responsibilty Leave</div>
+              <div>Family Responsibility Leave</div>
             </div>
             <div>
               <label>Duration</label>
@@ -260,11 +256,10 @@
             </div>
           </div>
 
-          <div class="reason"><strong>Reason:</strong>Family</div>
+          <div class="reason"><strong>Reason:</strong> Family</div>
           <div class="reviewed">Reviewed on 2025-07-15</div>
         </div>
 
-        <!-- Card 7:Approved -->
         <div class="leave-card" data-status="approved">
           <div class="card-top">
             <div class="user-row">
@@ -284,7 +279,7 @@
             </div>
             <div>
               <label>Duration</label>
-              <div>1 days</div>
+              <div>1 day</div>
             </div>
             <div>
               <label>From</label>
@@ -300,11 +295,10 @@
           <div class="reviewed">Reviewed on 2025-07-10</div>
         </div>
 
-        <!-- Card 8:Pending-->
         <div class="leave-card" data-status="pending">
           <div class="card-top">
             <div class="user-row">
-              <div class="avatar-sm" style="background: #dbeafe">SN</div>
+              <div class="avatar-sm" style="background: #dbeafe">TM</div>
               <div>
                 <div class="name">Thabo Molefe</div>
                 <div class="role">Quality Analyst - QA</div>
@@ -340,7 +334,6 @@
           </div>
         </div>
 
-        <!-- Card 9:Pending -->
         <div class="leave-card" data-status="pending">
           <div class="card-top">
             <div class="user-row">
@@ -372,7 +365,7 @@
             </div>
           </div>
 
-          <div class="reason"><strong>Reason:</strong>Vacation</div>
+          <div class="reason"><strong>Reason:</strong> Vacation</div>
 
           <div class="actions">
             <button class="btn approve">✓ Approve</button>
@@ -380,7 +373,6 @@
           </div>
         </div>
 
-        <!-- Card 10:Approved -->
         <div class="leave-card" data-status="approved">
           <div class="card-top">
             <div class="user-row">
@@ -413,10 +405,9 @@
           </div>
 
           <div class="reason"><strong>Reason:</strong> Medical appointment</div>
-          <div class="reviewed">Reviewed on</div>
+          <div class="reviewed">Reviewed on 2024-12-02</div>
         </div>
 
-        <!-- Card 11:Approved -->
         <div class="leave-card" data-status="approved">
           <div class="card-top">
             <div class="user-row">
@@ -448,11 +439,10 @@
             </div>
           </div>
 
-          <div class="reason"><strong>Reason:</strong>Vacation</div>
+          <div class="reason"><strong>Reason:</strong> Vacation</div>
           <div class="reviewed">Reviewed on 2024-12-02</div>
         </div>
 
-        <!-- Card 12:Pending -->
         <div class="leave-card" data-status="pending">
           <div class="card-top">
             <div class="user-row">
@@ -484,7 +474,7 @@
             </div>
           </div>
 
-          <div class="reason"><strong>Reason:</strong>Childcare</div>
+          <div class="reason"><strong>Reason:</strong> Childcare</div>
 
           <div class="actions">
             <button class="btn approve">✓ Approve</button>
@@ -492,7 +482,6 @@
           </div>
         </div>
 
-        <!-- Card 13:Pending-->
         <div class="leave-card" data-status="pending">
           <div class="card-top">
             <div class="user-row">
@@ -534,27 +523,26 @@
       </div>
     </main>
 
-    <!-- New Request Modal -->
     <div id="requestModal" class="modal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2>New Leave Request</h2>
+          <h3>New Leave Request</h3>
           <span class="close">&times;</span>
         </div>
 
         <form id="leaveForm">
           <label>Employee</label>
           <select required>
-            <option>Sibongile Nkosi(Software Engineer)</option>
-            <option>Lungile Moyo(HR Manager)</option>
-            <option>Thabo Molefe(Quality Analyst)</option>
-            <option>Keshav Naidoo(Sales Representative)</option>
-            <option>Zanele Khumalo(Marketing Specialist)</option>
-            <option>Sipho Zulu(UI/UX Designer)</option>
-            <option>Naledi Moeketsi(DevOps Engineer)</option>
-            <option>Farai Gumbo(Content Strategist)</option>
-            <option>Karabo Dlamini(Accountant)</option>
-            <option>Fatima Patel(Customer Support Lead)</option>
+            <option>Sibongile Nkosi (Software Engineer)</option>
+            <option>Lungile Moyo (HR Manager)</option>
+            <option>Thabo Molefe (Quality Analyst)</option>
+            <option>Keshav Naidoo (Sales Representative)</option>
+            <option>Zanele Khumalo (Marketing Specialist)</option>
+            <option>Sipho Zulu (UI/UX Designer)</option>
+            <option>Naledi Moeketsi (DevOps Engineer)</option>
+            <option>Farai Gumbo (Content Strategist)</option>
+            <option>Karabo Dlamini (Accountant)</option>
+            <option>Fatima Patel (Customer Support Lead)</option>
           </select>
 
           <label>Leave Type</label>
@@ -570,7 +558,6 @@
               <label>Start Date</label>
               <input type="date" required />
             </div>
-
             <div>
               <label>End Date</label>
               <input type="date" required />
@@ -578,34 +565,24 @@
           </div>
 
           <label>Reason</label>
-          <textarea
-            rows="4"
-            placeholder="Brief reason for leave request..."
-            required
-          ></textarea>
+          <textarea rows="4" placeholder="Brief reason for leave request..." required></textarea>
 
           <div class="modal-buttons">
             <button type="button" class="cancel-btn">Cancel</button>
-
             <button type="submit" class="submit-btn">Submit Request</button>
           </div>
         </form>
       </div>
     </div>
+
     <script>
       const container = document.getElementById("cards-container");
       const tabs = document.querySelectorAll(".tab");
       let currentFilter = "all";
 
-      // 1. Update counts
       function updateCounts() {
         const cards = container.querySelectorAll(".leave-card");
-        const counts = {
-          all: cards.length,
-          pending: 0,
-          approved: 0,
-          denied: 0,
-        };
+        const counts = { all: cards.length, pending: 0, approved: 0, denied: 0 };
         cards.forEach((c) => counts[c.dataset.status]++);
 
         document.getElementById("count-all").textContent = counts.all;
@@ -614,7 +591,6 @@
         document.getElementById("count-denied").textContent = counts.denied;
       }
 
-      // 2. Filter tabs
       tabs.forEach((tab) => {
         tab.addEventListener("click", () => {
           tabs.forEach((t) => t.classList.remove("active"));
@@ -633,69 +609,59 @@
         });
       }
 
-      // 3. Approve/Deny click logic
       container.addEventListener("click", (e) => {
         const card = e.target.closest(".leave-card");
         if (!card) return;
 
+        const badge = card.querySelector(".badge");
+        const actionsBlock = card.querySelector(".actions");
+
         if (e.target.classList.contains("approve")) {
           card.dataset.status = "approved";
-          card.querySelector(".badge").className = "badge approved";
-          card.querySelector(".badge").innerHTML = "✓ Approved";
-          card.querySelector(".actions").remove(); // remove buttons
+          badge.className = "badge approved";
+          badge.innerHTML = "✓ Approved";
+          if (actionsBlock) actionsBlock.remove();
+          
           if (!card.querySelector(".reviewed")) {
             card.insertAdjacentHTML(
               "beforeend",
-              `<div class="reviewed">Reviewed on ${new Date().toISOString().slice(0, 10)}</div>`,
+              `<div class="reviewed">Reviewed on ${new Date().toISOString().slice(0, 10)}</div>`
             );
           }
         }
 
         if (e.target.classList.contains("deny")) {
           card.dataset.status = "denied";
-          card.querySelector(".badge").className = "badge denied";
-          card.querySelector(".badge").innerHTML = "⦸ Denied";
-          card.querySelector(".actions").remove();
+          badge.className = "badge denied";
+          badge.innerHTML = "⦸ Denied";
+          if (actionsBlock) actionsBlock.remove();
+          
           if (!card.querySelector(".reviewed")) {
             card.insertAdjacentHTML(
               "beforeend",
-              `<div class="reviewed">Reviewed on ${new Date().toISOString().slice(0, 10)}</div>`,
+              `<div class="reviewed">Reviewed on ${new Date().toISOString().slice(0, 10)}</div>`
             );
           }
         }
 
         updateCounts();
-        filterCards(); // re-apply current tab filter
+        filterCards();
       });
 
-      updateCounts(); // init
+      updateCounts();
 
-      //modal//
-
+      // Modal Window Interactions
       const modal = document.getElementById("requestModal");
-
       const newRequestBtn = document.getElementById("newRequestBtn");
-
       const closeBtn = document.querySelector(".close");
-
       const cancelBtn = document.querySelector(".cancel-btn");
 
-      newRequestBtn.onclick = () => {
-        modal.style.display = "flex";
-      };
-
-      closeBtn.onclick = () => {
-        modal.style.display = "none";
-      };
-
-      cancelBtn.onclick = () => {
-        modal.style.display = "none";
-      };
+      newRequestBtn.onclick = () => modal.style.display = "flex";
+      closeBtn.onclick = () => modal.style.display = "none";
+      cancelBtn.onclick = () => modal.style.display = "none";
 
       window.onclick = (e) => {
-        if (e.target === modal) {
-          modal.style.display = "none";
-        }
+        if (e.target === modal) modal.style.display = "none";
       };
     </script>
   </body>
