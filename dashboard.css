@@ -1,0 +1,552 @@
+/* ==========================================================================
+   Design System & Tokens (shared with employee directory / reviews pages)
+   ========================================================================== */
+:root {
+  --primary: #0b2e59;          /* Premium Deep Navy */
+  --primary-hover: #071f3d;
+  --accent: #f7941d;           /* Vibrant Orange */
+  --accent-hover: #df8414;
+
+  --success: #10b981;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --violet: #8b5cf6;
+
+  --neutral-dark: #0b2e59;
+  --neutral-light: #fafbfc;
+  --text-main: #333333;
+  --text-muted: #666666;
+  --border-color: #d9d9d9;
+
+  --radius-md: 10px;
+  --radius-lg: 20px;
+  --radius-pill: 50px;
+
+  --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 12px 25px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 45px rgba(0, 0, 0, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #ffffff;
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--primary);
+  padding: 20px 40px;
+  box-shadow: var(--shadow-sm);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+}
+
+.logo span {
+  color: var(--accent);
+}
+
+.nav-bar {
+  display: flex;
+}
+
+.nav-content {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 28px;
+}
+
+.nav-content li a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-content li a:hover,
+.nav-content li.active a {
+  color: #ffffff;
+}
+
+.header {
+  margin: 0;
+  padding: 0;
+}
+
+/* .nav lives inside .header on this page; let it bleed full width instead
+   of inheriting a max-width/padding constraint meant for the title area. */
+.header .nav {
+  margin: 0;
+}
+
+/* Everything in .header that isn't the nav bar (title, subtitle, or a
+   wrapper div around them) gets the normal content-width treatment. */
+.header > *:not(.nav) {
+  max-width: 1300px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.header .nav + * {
+  margin-top: 40px;
+}
+
+.header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0 0 8px 0;
+}
+
+.header .subtitle,
+.header p {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.dashboard-container {
+  max-width: 1300px;
+  margin: 24px auto 0;
+  padding: 0 24px 60px;
+}
+
+/* ==========================================================================
+   Icons
+   ========================================================================== */
+.icon svg {
+  width: 20px;
+  height: 20px;
+  opacity: 0.95;
+}
+
+.active-emplpoyees .icon svg {
+  color: var(--danger);
+}
+
+.monthly-payroll .icon svg {
+  color: var(--accent);
+}
+
+.pending-requests .icon svg {
+  color: var(--info);
+}
+
+.avg-attendance .icon svg {
+  color: var(--success);
+}
+
+/* ==========================================================================
+   Row 1 - KPI cards
+   ========================================================================== */
+.card-row-1 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.card-row-1 > div {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  cursor: pointer;
+  background-color: #ffffff;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.active-emplpoyees {
+  border-color: rgba(239, 68, 68, 0.35);
+  background-color: #fdecec;
+}
+
+.monthly-payroll {
+  border-color: rgba(247, 148, 29, 0.35);
+  background-color: #fdf1e2;
+}
+
+.pending-requests {
+  border-color: rgba(59, 130, 246, 0.35);
+  background-color: #e9f1fe;
+}
+
+.avg-attendance {
+  border-color: rgba(16, 185, 129, 0.35);
+  background-color: #e6f6ef;
+}
+
+.active-emplpoyees h2 { color: var(--danger); font-weight: 700; }
+.monthly-payroll h2   { color: var(--accent); font-weight: 700; }
+.pending-requests h2  { color: var(--info); font-weight: 700; }
+.avg-attendance h2    { color: var(--success); font-weight: 700; }
+
+.card-row-1 > div:hover {
+  transform: translateY(-6px);
+}
+
+.card-row-1 > div:active {
+  transform: translateY(-2px);
+}
+
+.active-emplpoyees:hover {
+  box-shadow: 0 12px 25px rgba(239, 68, 68, 0.25);
+  background-color: #fce0e0;
+}
+
+.monthly-payroll:hover {
+  box-shadow: 0 12px 25px rgba(247, 148, 29, 0.3);
+  background-color: #fce6d0;
+}
+
+.pending-requests:hover {
+  box-shadow: 0 12px 25px rgba(59, 130, 246, 0.25);
+  background-color: #dbe9fd;
+}
+
+.avg-attendance:hover {
+  box-shadow: 0 12px 25px rgba(16, 185, 129, 0.25);
+  background-color: #d9f2e6;
+}
+
+/* ==========================================================================
+   Row 2 + 3 - panels
+   ========================================================================== */
+.card-row-2,
+.card-row-3 {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.card-row-2 > div,
+.card-row-3 > div {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 22px;
+}
+
+.card-row-2 h3,
+.card-row-3 h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0 0 4px;
+}
+
+.card-row-2 p,
+.card-row-3 p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 16px;
+}
+
+/* Chart container background */
+.chart-container {
+  background-color: var(--neutral-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+}
+
+/* Shared y-axis + chart row layout */
+.attendance-chart-wrapper,
+.line-chart-wrapper {
+  display: flex;
+  gap: 12px;
+}
+
+.y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding-bottom: 20px;
+}
+
+/* Attendance bars */
+.bar-chart {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 8px;
+  height: 200px;
+}
+
+.bar-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.bar-cluster {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 100%;
+}
+
+.bar {
+  width: 14px;
+  height: calc(var(--pct) * 1%);
+  border-radius: 3px 3px 0 0;
+  position: relative;
+}
+
+.bar.present {
+  background-color: var(--primary);
+}
+
+.bar.absent {
+  background-color: #e5e7eb;
+}
+
+.bar.leave {
+  background-color: var(--accent);
+  opacity: 0.55;
+}
+
+.bar-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Hover tooltips (bar chart + department bars) */
+.bar::after,
+.bar-fill::after {
+  content: attr(data-value);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  background-color: var(--primary);
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+}
+
+.bar:hover::after,
+.bar-fill:hover::after {
+  opacity: 1;
+}
+
+/* Attendance legend */
+.chart-legend {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-dot.present {
+  background-color: var(--primary);
+}
+
+.legend-dot.absent {
+  background-color: #e5e7eb;
+}
+
+.legend-dot.leave {
+  background-color: var(--accent);
+}
+
+/* Department headcount bars */
+.dept-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dept-bar-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 28px;
+  align-items: center;
+  gap: 12px;
+}
+
+.dept-name {
+  font-size: 13px;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar-track {
+  background-color: #f3f4f6;
+  border-radius: var(--radius-pill);
+  height: 10px;
+}
+
+.bar-fill {
+  height: 100%;
+  width: calc(var(--pct) * 1%);
+  border-radius: var(--radius-pill);
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.dept-bar-row:nth-child(1) .bar-fill { background-color: var(--danger); }
+.dept-bar-row:nth-child(2) .bar-fill { background-color: var(--accent); }
+.dept-bar-row:nth-child(3) .bar-fill { background-color: #f0c33e; }
+.dept-bar-row:nth-child(4) .bar-fill { background-color: var(--info); }
+.dept-bar-row:nth-child(5) .bar-fill { background-color: var(--violet); }
+.dept-bar-row:nth-child(6) .bar-fill { background-color: var(--success); }
+.dept-bar-row:nth-child(7) .bar-fill { background-color: var(--danger); }
+.dept-bar-row:nth-child(8) .bar-fill { background-color: var(--accent); }
+.dept-bar-row:nth-child(9) .bar-fill { background-color: #f0c33e; }
+
+.dept-count {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  text-align: right;
+}
+
+.dept-total-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+/* Payroll line chart */
+.line-chart-area {
+  position: relative;
+  flex: 1;
+}
+
+.line-chart {
+  width: 100%;
+  height: 200px;
+}
+
+.trend-line {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 2;
+}
+
+.trend-dot {
+  fill: var(--accent);
+  cursor: pointer;
+}
+
+.chart-tooltip {
+  position: absolute;
+  background-color: var(--primary);
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+}
+
+.x-axis-labels {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Pending leave */
+.view-more {
+  text-align: right;
+  margin-bottom: 14px;
+}
+
+.view-more a {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.view-more a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.employee-cards {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background-color: var(--neutral-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-bottom: 10px;
+}
+
+.avatar-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid #ffffff;
+  box-shadow: var(--shadow-sm);
+}

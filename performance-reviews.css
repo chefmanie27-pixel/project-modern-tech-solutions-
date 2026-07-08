@@ -1,0 +1,452 @@
+/* ==========================================================================
+   Design System & Tokens (shared with employee directory page)
+   ========================================================================== */
+:root {
+  --primary: #0b2e59;          /* Premium Deep Navy */
+  --primary-hover: #071f3d;
+  --accent: #f7941d;           /* Vibrant Orange */
+  --accent-hover: #df8414;
+
+  --success: #10b981;
+  --danger: #ef4444;
+
+  --neutral-dark: #0b2e59;
+  --neutral-light: #fafbfc;
+  --text-main: #333333;
+  --text-muted: #666666;
+  --border-color: #d9d9d9;
+
+  --radius-md: 10px;
+  --radius-lg: 20px;
+  --radius-pill: 50px;
+
+  --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 12px 25px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 45px rgba(0, 0, 0, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #ffffff;
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--primary);
+  padding: 20px 40px;
+  box-shadow: var(--shadow-sm);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+}
+
+.logo span {
+  color: var(--accent);
+}
+
+.nav-bar {
+  display: flex;
+}
+
+.nav-content {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 28px;
+}
+
+.nav-content li a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-content li a:hover,
+.nav-content li.active a {
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+.header {
+  margin: 0;
+  padding: 0;
+}
+
+/* .nav lives inside .header on this page; let it bleed full width instead
+   of inheriting a max-width/padding constraint meant for the title area. */
+.header .nav {
+  margin: 0;
+}
+
+/* Everything in .header that isn't the nav bar (title, subtitle, or a
+   wrapper div around them) gets the normal content-width treatment. */
+.header > *:not(.nav) {
+  max-width: 1300px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.header .nav + * {
+  margin-top: 40px;
+}
+
+.header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0 0 8px 0;
+}
+
+.header .subtitle {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Layout
+   ========================================================================== */
+.reviews-container {
+  display: flex;
+  max-width: 1300px;
+  margin: 32px auto 0;
+  padding: 0 24px 60px;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* ==========================================================================
+   Left panel - employee list
+   ========================================================================== */
+.employee-panel {
+  width: 300px;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-md);
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  margin-bottom: 18px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  background-color: var(--neutral-light);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 8px rgba(11, 46, 89, 0.15);
+  background-color: #ffffff;
+}
+
+.employee-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 10px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.employee-item:hover {
+  background-color: var(--neutral-light);
+}
+
+.employee-item.active {
+  background-color: #eaf0f7;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.employee-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--primary);
+}
+
+.employee-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+.avatar-lg {
+  width: 52px;
+  height: 52px;
+}
+
+/* ==========================================================================
+   Right panel
+   ========================================================================== */
+.detail-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-md);
+}
+
+.detail-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.detail-header p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.btn-primary {
+  margin-left: auto;
+  background-color: var(--accent);
+  color: #ffffff;
+  border: 1px solid transparent;
+  padding: 14px 28px;
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(247, 148, 29, 0.35);
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 14px 28px;
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--primary);
+  color: #ffffff;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(11, 46, 89, 0.15);
+}
+
+/* ==========================================================================
+   Review history timeline
+   ========================================================================== */
+.history-section {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-md);
+}
+
+.history-section h3 {
+  margin: 0 0 16px;
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 20px;
+  border-left: 2px solid var(--border-color);
+}
+
+.timeline-item {
+  position: relative;
+  background-color: var(--neutral-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -26px;
+  top: 18px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px var(--border-color);
+}
+
+.timeline-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: var(--primary);
+}
+
+.timeline-summary {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ==========================================================================
+   New review form
+   ========================================================================== */
+.form-section {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+}
+
+.form-section h3 {
+  margin: 0 0 16px;
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-select {
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  background-color: #ffffff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 8px rgba(11, 46, 89, 0.15);
+}
+
+.sliders-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  background-color: var(--neutral-light);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  border: 1px solid var(--border-color);
+}
+
+.slider-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.slider-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  resize: vertical;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 8px rgba(11, 46, 89, 0.15);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
