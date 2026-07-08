@@ -9,6 +9,28 @@ body {
   color: #2d2f36;
 }
 
+.icon svg {
+  width: 20px;
+  height: 20px;
+  opacity: 0.9;
+}
+
+.active-emplpoyees .icon svg {
+  color: #e5484d;
+}
+
+.monthly-payroll .icon svg {
+  color: #f0883e;
+}
+
+.pending-requests .icon svg {
+  color: #3b82f6;
+}
+
+.avg-attendance .icon svg {
+  color: #22a06b;
+}
+
 .header {
   max-width: 1300px;
   margin: 0 auto;
@@ -63,7 +85,6 @@ body {
 .pending-requests h2  { color: #3b82f6; }
 .avg-attendance h2    { color: #22a06b; }
 
-/* Hover and active effects for cards */
 .card-row-1 > div:hover {
   transform: translateY(-6px) scale(1.03);
 }
@@ -91,7 +112,6 @@ body {
   box-shadow: 0 10px 24px rgba(34, 160, 107, 0.35);
   background-color: #d9f2e6;
 }
-
 
 /* Row 2 + 3 - panels */
 .card-row-2,
@@ -124,7 +144,7 @@ body {
   margin: 0 0 14px;
 }
 
-/* Chart container background - matches index.css chart-area */
+/* Chart container background */
 .chart-container {
   background-color: #f9fafb;
   border: 1px solid #eef0f3;
@@ -132,8 +152,25 @@ body {
   padding: 16px 20px;
 }
 
+/* Shared y-axis + chart row layout */
+.attendance-chart-wrapper,
+.line-chart-wrapper {
+  display: flex;
+  gap: 12px;
+}
+
+.y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #9ca3af;
+  padding-bottom: 20px;
+}
+
 /* Attendance bars */
 .bar-chart {
+  flex: 1;
   display: flex;
   align-items: flex-end;
   justify-content: space-around;
@@ -161,6 +198,7 @@ body {
   width: 14px;
   height: calc(var(--pct) * 1%);
   border-radius: 2px 2px 0 0;
+  position: relative;
 }
 
 .bar.present {
@@ -178,6 +216,31 @@ body {
 .bar-label {
   font-size: 11px;
   color: #9ca3af;
+}
+
+/* Hover tooltips (bar chart + department bars) */
+.bar::after,
+.bar-fill::after {
+  content: attr(data-value);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  background-color: #2d2f36;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+}
+
+.bar:hover::after,
+.bar-fill:hover::after {
+  opacity: 1;
 }
 
 /* Attendance legend */
@@ -240,7 +303,6 @@ body {
   background-color: #f3f4f6;
   border-radius: 6px;
   height: 10px;
-  overflow: hidden;
 }
 
 .bar-fill {
@@ -248,6 +310,7 @@ body {
   width: calc(var(--pct) * 1%);
   border-radius: 6px;
   transition: width 0.3s ease;
+  position: relative;
 }
 
 .dept-bar-row:nth-child(1) .bar-fill { background-color: #e5484d; }
@@ -278,6 +341,16 @@ body {
 }
 
 /* Payroll line chart */
+.line-chart-area {
+  position: relative;
+  flex: 1;
+}
+
+.line-chart {
+  width: 100%;
+  height: 200px;
+}
+
 .trend-line {
   fill: none;
   stroke: #4f46e5;
@@ -286,11 +359,26 @@ body {
 
 .trend-dot {
   fill: #4f46e5;
+  cursor: pointer;
+}
+
+.chart-tooltip {
+  position: absolute;
+  background-color: #2d2f36;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s ease;
+  z-index: 10;
 }
 
 .x-axis-labels {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   margin-top: 8px;
   font-size: 11px;
   color: #9ca3af;
@@ -322,6 +410,7 @@ body {
   border: 1px solid #eef0f3;
   border-radius: 8px;
   padding: 12px 14px;
+  margin-bottom: 10px;
 }
 
 .avatar-img {

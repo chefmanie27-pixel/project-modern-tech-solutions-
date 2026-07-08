@@ -16,40 +16,56 @@
 
     <div class="dashboard-container">
       <div class="card-row-1">
-        <div class="active-emplpoyees">
+        <div class="active-emplpoyees" onclick="window.location.href='employees.html'">
           <div class="icon">
-            <img src="icons/active-employees.svg" alt="Active Employees" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
           </div>
           <h3>Active Employees</h3>
           <h2 id="kpi-active-employees">12</h2>
           <p id="kpi-active-sub">15 in total - 3 on leave</p>
         </div>
 
-        <div class="monthly-payroll">
+        <div class="monthly-payroll" onclick="window.location.href='payroll.html'">
           <div class="icon">
-            <img src="icons/monthly-payroll.svg" alt="Monthly Payroll" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
           </div>
           <h3>Monthly Payroll</h3>
           <h2 id="kpi-monthly-payroll">R 97k</h2>
           <p>Jun 2026 net pay</p>
         </div>
 
-        <div class="pending-requests">
+        <div class="pending-requests" onclick="window.location.href='timeoff.html'">
           <div class="icon">
-            <img src="icons/pending-requests.svg" alt="Pending Requests" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
           </div>
           <h3>Pending Requests</h3>
           <h2 id="kpi-pending-requests">2</h2>
           <p>Time off awaiting approval</p>
         </div>
 
-        <div class="avg-attendance">
+        <div class="avg-attendance" onclick="window.location.href='attendance.html'">
           <div class="icon">
-            <img src="icons/avg-attendance.svg" alt="Avg Attendance" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
           </div>
           <h3>Avg Attendance</h3>
           <h2 id="kpi-avg-attendance">91%</h2>
-          <p>Last 5 working days</p>
+          <p>Last 10 working days</p>
         </div>
       </div>
 
@@ -65,26 +81,9 @@
           </div>
 
           <div class="chart-container">
-            <div class="bar-chart" id="attendanceChart">
-              <div class="bar-group">
-                <div class="bar-cluster">
-                  <div class="bar present" style="--pct: 60"></div>
-                  <div class="bar absent" style="--pct: 33"></div>
-                  <div class="bar leave" style="--pct: 7"></div>
-                </div>
-                <span class="bar-label">06-22</span>
-              </div>
-
-              <div class="bar-group">
-                <div class="bar-cluster">
-                  <div class="bar present" style="--pct: 87"></div>
-                  <div class="bar absent" style="--pct: 7"></div>
-                  <div class="bar leave" style="--pct: 6"></div>
-                </div>
-                <span class="bar-label">06-23</span>
-              </div>
-
-              <!-- repeat bar-group per day, 10 total -->
+            <div class="attendance-chart-wrapper">
+              <div class="y-axis" id="attendanceYAxis"></div>
+              <div class="bar-chart" id="attendanceChart"></div>
             </div>
           </div>
         </div>
@@ -94,59 +93,10 @@
           <p>Employee distribution across departments</p>
 
           <div class="chart-container">
-            <div class="dept-list" id="deptHeadcount">
-              <div class="dept-bar-row">
-                <span class="dept-name">Engineering</span>
-                <div class="bar-track">
-                  <div class="bar-fill" style="--pct: 30"></div>
-                </div>
-                <span class="dept-count">3</span>
-              </div>
-
-              <div class="dept-bar-row">
-                <span class="dept-name">Customer Support</span>
-                <div class="bar-track">
-                  <div class="bar-fill" style="--pct: 20"></div>
-                </div>
-                <span class="dept-count">2</span>
-              </div>
-
-              <div class="dept-bar-row">
-                <span class="dept-name">Marketing</span>
-                <div class="bar-track">
-                  <div class="bar-fill" style="--pct: 20"></div>
-                </div>
-                <span class="dept-count">2</span>
-              </div>
-
-              <div class="dept-bar-row">
-                <span class="dept-name">Human Resources</span>
-                <div class="bar-track">
-                  <div class="bar-fill" style="--pct: 10"></div>
-                </div>
-                <span class="dept-count">1</span>
-              </div>
-
-              <div class="dept-bar-row">
-                <span class="dept-name">Quality Assurance</span>
-                <div class="bar-track">
-                  <div class="bar-fill" style="--pct: 10"></div>
-                </div>
-                <span class="dept-count">1</span>
-              </div>
-
-              <div class="dept-bar-row">
-                <span class="dept-name">Sales</span>
-                <div class="bar-track">
-                  <div class="bar-fill" style="--pct: 10"></div>
-                </div>
-                <span class="dept-count">1</span>
-              </div>
-            </div>
-
+            <div class="dept-list" id="deptHeadcount"></div>
             <div class="dept-total-row">
               <span>Total</span>
-              <span id="deptTotal">10</span>
+              <span id="deptTotal">0</span>
             </div>
           </div>
         </div>
@@ -155,25 +105,19 @@
       <div class="card-row-3">
         <div class="payroll-trend">
           <h3>Payroll Trend</h3>
-          <p>Total net pay Jan - Jun 2026</p>
+          <p>Net pay (only current month available in data)</p>
 
           <div class="chart-container">
-            <svg class="line-chart" id="payrollChart" viewBox="0 0 600 300" preserveAspectRatio="none">
-              <!-- gridlines / y-axis labels can go here later -->
-              <polyline
-                class="trend-line"
-                points="30,220 130,180 230,175 330,140 430,110 530,60"
-              />
-              <circle class="trend-dot" cx="30" cy="220" r="5"></circle>
-              <circle class="trend-dot" cx="130" cy="180" r="5"></circle>
-              <circle class="trend-dot" cx="230" cy="175" r="5"></circle>
-              <circle class="trend-dot" cx="330" cy="140" r="5"></circle>
-              <circle class="trend-dot" cx="430" cy="110" r="5"></circle>
-              <circle class="trend-dot" cx="530" cy="60" r="5"></circle>
-            </svg>
-            <div class="x-axis-labels">
-              <span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span>
+            <div class="line-chart-wrapper">
+              <div class="y-axis" id="payrollYAxis"></div>
+              <div class="line-chart-area">
+                <svg class="line-chart" id="payrollChart" viewBox="0 0 600 300" preserveAspectRatio="none">
+                  <polyline class="trend-line" points=""></polyline>
+                </svg>
+                <div class="chart-tooltip" id="payrollTooltip"></div>
+              </div>
             </div>
+            <div class="x-axis-labels" id="payrollXAxis"></div>
           </div>
         </div>
 
@@ -181,17 +125,11 @@
           <h3>Pending Leave Requests</h3>
           <p>Requests awaiting approval</p>
 
-          <div class="view-more"><a href="#">View All</a></div>
-
-          <div id="pendingLeaveList">
-            <div class="employee-cards">
-              <img class="avatar-img" src="images/john-doe.jpg" alt="John Doe" />
-              <h3>John Doe</h3>
-              <p>Type: Annual Leave</p>
-              <p>Duration: 5 days</p>
-              <p>Start Date: Jun 15, 2026</p>
-            </div>
+          <div class="view-more">
+            <a href="timeoff.html">View All</a>
           </div>
+
+          <div id="pendingLeaveList"></div>
         </div>
       </div>
     </div>

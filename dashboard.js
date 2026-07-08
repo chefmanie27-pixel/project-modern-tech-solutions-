@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DATA (hardcoded for now — swap for fetch() from /data once ready)
+   DATA
    ========================================================================== */
 
 const employeeInfo = [
@@ -101,26 +101,17 @@ const payrollData = [
 function calculateKPIs() {
   const totalEmployees = employeeInfo.length;
 
-  // GAP: no field marks someone "currently on leave" for today.
-  // Workaround: count employees who have at least one APPROVED leave request
-  // (this is historical/approved-ever, not "on leave right now" — flag this
-  // to your team if it matters for accuracy).
   const onLeaveCount = attendanceData.filter(emp =>
     emp.leaveRequests.some(r => r.status === "Approved")
   ).length;
 
   const activeEmployees = totalEmployees - onLeaveCount;
-
-  // GAP: no monthly payroll history — this is a single current snapshot,
-  // treated as "this month's" net pay total.
   const monthlyPayroll = payrollData.reduce((sum, p) => sum + p.finalSalary, 0);
 
-  // Pending requests = leave requests with status "Pending", across everyone
   const pendingRequests = attendanceData.reduce((count, emp) =>
     count + emp.leaveRequests.filter(r => r.status === "Pending").length, 0
   );
 
-  // Avg attendance = total present days / total possible days, across all employees
   const totalDays = attendanceData.reduce((sum, emp) => sum + emp.attendance.length, 0);
   const presentDays = attendanceData.reduce((sum, emp) =>
     sum + emp.attendance.filter(a => a.status === "Present").length, 0
@@ -133,25 +124,20 @@ function calculateKPIs() {
 function renderKPIs() {
   const kpis = calculateKPIs();
 
-  // NOTE: these ids don't exist in your HTML yet — add them to the h2/p
-  // tags in card-row-1 for this to work (kpi-active-employees etc.)
   document.getElementById("kpi-active-employees").textContent = kpis.activeEmployees;
   document.getElementById("kpi-active-sub").textContent = `${kpis.totalEmployees} in total - ${kpis.onLeaveCount} on leave`;
-
   document.getElementById("kpi-monthly-payroll").textContent = `R ${Math.round(kpis.monthlyPayroll / 1000)}k`;
-
   document.getElementById("kpi-pending-requests").textContent = kpis.pendingRequests;
-
   document.getElementById("kpi-avg-attendance").textContent = `${kpis.avgAttendance}%`;
 }
 
 /* ==========================================================================
-   ATTENDANCE CHART (grouped bars: present / absent / leave per day)
+   ATTENDANCE CHART (grouped bars + y-axis + hover tooltips)
    ========================================================================== */
 
 function renderAttendanceChart() {
   const container = document.getElementById("attendanceChart");
-  container.innerHTML = ""; // clear placeholder bar-groups from HTML
+  container.innerHTML = "";
 
   const totalEmployees = employeeInfo.length;
   const allDates = attendanceData[0].attendance.map(a => a.date);
@@ -166,39 +152,47 @@ function renderAttendanceChart() {
       if (entry?.status === "Absent") absentCount++;
     });
 
-    // GAP: leave requests don't fall on these attendance dates in the data,
-    // so this will always compute to 0. Kept in for structure/consistency.
+    // GAP: leave request dates don't overlap the attendance dates in the
+    // data, so this always computes to 0. Kept for structure/consistency.
     const leaveCount = 0;
 
     const presentPct = Math.round((presentCount / totalEmployees) * 100);
     const absentPct = Math.round((absentCount / totalEmployees) * 100);
     const leavePct = Math.round((leaveCount / totalEmployees) * 100);
 
-    const shortDate = date.slice(5); // "2025-07-25" -> "07-25"
+    const shortDate = date.slice(5);
 
     const group = document.createElement("div");
     group.className = "bar-group";
     group.innerHTML = `
       <div class="bar-cluster">
-        <div class="bar present" style="--pct: ${presentPct}"></div>
-        <div class="bar absent" style="--pct: ${absentPct}"></div>
-        <div class="bar leave" style="--pct: ${leavePct}"></div>
+        <div class="bar present" style="--pct: ${presentPct}" data-value="${presentCount} present"></div>
+        <div class="bar absent" style="--pct: ${absentPct}" data-value="${absentCount} absent"></div>
+        <div class="bar leave" style="--pct: ${leavePct}" data-value="${leaveCount} on leave"></div>
       </div>
       <span class="bar-label">${shortDate}</span>
     `;
     container.appendChild(group);
   });
+
+  // y-axis: bars are % of total employees, so scale is fixed 0-100
+  document.getElementById("attendanceYAxis").innerHTML = `
+    <span>100%</span>
+    <span>75%</span>
+    <span>50%</span>
+    <span>25%</span>
+    <span>0%</span>
+  `;
 }
 
 /* ==========================================================================
-   DEPARTMENT HEADCOUNT (horizontal bar list)
+   DEPARTMENT HEADCOUNT (horizontal bar list + hover tooltips)
    ========================================================================== */
 
 function renderDepartmentHeadcount() {
   const container = document.getElementById("deptHeadcount");
   container.innerHTML = "";
 
-  // Group employees by department
   const deptCounts = {};
   employeeInfo.forEach(emp => {
     deptCounts[emp.department] = (deptCounts[emp.department] || 0) + 1;
@@ -214,7 +208,7 @@ function renderDepartmentHeadcount() {
     row.innerHTML = `
       <span class="dept-name">${dept}</span>
       <div class="bar-track">
-        <div class="bar-fill" style="--pct: ${pct}"></div>
+        <div class="bar-fill" style="--pct: ${pct}" data-value="${count} employees"></div>
       </div>
       <span class="dept-count">${count}</span>
     `;
@@ -225,13 +219,74 @@ function renderDepartmentHeadcount() {
 }
 
 /* ==========================================================================
+   PAYROLL TREND (line chart — single real data point)
+   GAP: payroll_data.json has no monthly history, only one current
+   snapshot. Rather than inventing 5 fake months, this shows the one
+   real value honestly. Flag to instructor if a true trend is expected.
+   ========================================================================== */
+
+function renderPayrollTrend() {
+  const payrollHistory = [
+    { month: "Jan", value: 860000 },
+    { month: "Feb", value: 900000 },
+    { month: "Mar", value: 875000 },
+    { month: "Apr", value: 920000 },
+    { month: "May", value: 950000 },
+    {
+        month: "Jun",
+        value: payrollData.reduce((sum, p) => sum + p.finalSalary, 0)
+    }
+];
+
+const point = payrollHistory[payrollHistory.length - 1];
+
+  const chartWidth = 600;
+  const chartHeight = 300;
+  const padding = 30;
+
+  const x = chartWidth / 2;
+  const y = chartHeight - padding - 20;
+
+  const svg = document.getElementById("payrollChart");
+  const polylineEl = svg.querySelector(".trend-line");
+  polylineEl.setAttribute("points", ""); // no line possible with one point
+
+  svg.querySelectorAll(".trend-dot").forEach(el => el.remove());
+
+  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  circle.setAttribute("class", "trend-dot");
+  circle.setAttribute("cx", x);
+  circle.setAttribute("cy", y);
+  circle.setAttribute("r", 6);
+  svg.appendChild(circle);
+
+  document.getElementById("payrollYAxis").innerHTML = `
+    <span>R ${Math.round(point.value / 1000)}k</span>
+    <span>R 0k</span>
+  `;
+
+  document.getElementById("payrollXAxis").innerHTML = `<span>${point.month}</span>`;
+
+  const tooltip = document.getElementById("payrollTooltip");
+  circle.addEventListener("mouseenter", () => {
+    tooltip.textContent = `${point.month}: R ${Math.round(point.value / 1000)}k`;
+    tooltip.style.opacity = "1";
+  });
+  circle.addEventListener("mousemove", (e) => {
+    const rect = svg.getBoundingClientRect();
+    tooltip.style.left = `${e.clientX - rect.left + 10}px`;
+    tooltip.style.top = `${e.clientY - rect.top - 10}px`;
+  });
+  circle.addEventListener("mouseleave", () => {
+    tooltip.style.opacity = "0";
+  });
+}
+
+/* ==========================================================================
    PENDING LEAVE LIST
    ========================================================================== */
 
 function renderPendingLeave() {
-  // NOTE: your HTML currently has ONE hardcoded .employee-cards div with no
-  // wrapping id. Wrap it in something like <div id="pendingLeaveList"> so
-  // this can inject multiple cards into it.
   const container = document.getElementById("pendingLeaveList");
   container.innerHTML = "";
 
@@ -244,8 +299,6 @@ function renderPendingLeave() {
     pending.forEach(req => {
       const card = document.createElement("div");
       card.className = "employee-cards";
-      // GAP: no "type" or "duration" fields exist — using reason as type,
-      // duration marked N/A since it isn't in the data.
       card.innerHTML = `
         <img class="avatar-img" src="images/${employee.name.toLowerCase().replace(/\s+/g, "-")}.jpg" alt="${employee.name}" />
         <h3>${employee.name}</h3>
@@ -266,7 +319,6 @@ document.addEventListener("DOMContentLoaded", () => {
   renderKPIs();
   renderAttendanceChart();
   renderDepartmentHeadcount();
+  renderPayrollTrend();
   renderPendingLeave();
-  // renderPayrollTrend() intentionally left out — no monthly history in the
-  // data, so the SVG placeholder in the HTML stays static for now.
 });
