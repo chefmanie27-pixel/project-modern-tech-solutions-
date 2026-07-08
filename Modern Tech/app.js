@@ -11,7 +11,7 @@ const app = createApp({
 
         
 
-        const activeTab = ref('');       
+        const activeTab = ref('attendance');       
         const dashboardFilter = ref('');          
         const attendanceFilter = ref('');         
         const leaveFilterStatus = ref('all');     
