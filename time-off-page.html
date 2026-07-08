@@ -5,10 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Modern Tech HR Portal - Time Off</title>
     <link rel="stylesheet" href="style3.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <nav class="nav" style="width: 100%; position: fixed; top: 0; left: 0; z-index: 999;">
+    <nav
+      class="nav"
+      style="width: 100%; position: fixed; top: 0; left: 0; z-index: 999"
+    >
       <div class="logo">Modern<span>Tech</span></div>
       <div class="nav-bar">
         <ul class="nav-content">
@@ -21,13 +27,15 @@
       </div>
     </nav>
 
-    <main class="main" style="margin-top: 80px;">
+    <main class="main" style="margin-top: 80px">
       <div class="header">
         <div>
           <h1>Time Off</h1>
           <p>Manage leave requests and approvals</p>
         </div>
-        <button class="btn btn-primary" id="newRequestBtn">+ New Request</button>
+        <button class="btn btn-primary" id="newRequestBtn">
+          + New Request
+        </button>
       </div>
 
       <div class="tabs" id="tabs">
@@ -532,7 +540,7 @@
 
         <form id="leaveForm">
           <label>Employee</label>
-          <select required>
+          <select id="employee" required>
             <option>Sibongile Nkosi (Software Engineer)</option>
             <option>Lungile Moyo (HR Manager)</option>
             <option>Thabo Molefe (Quality Analyst)</option>
@@ -546,7 +554,7 @@
           </select>
 
           <label>Leave Type</label>
-          <select required>
+          <select id="leaveType" required>
             <option>Annual Leave</option>
             <option>Sick Leave</option>
             <option>Family Responsibility</option>
@@ -556,16 +564,21 @@
           <div class="date-row">
             <div>
               <label>Start Date</label>
-              <input type="date" required />
+              <input type="date" id="startDate" required />
             </div>
             <div>
               <label>End Date</label>
-              <input type="date" required />
+              <input type="date" id="endDate" required />
             </div>
           </div>
 
           <label>Reason</label>
-          <textarea rows="4" placeholder="Brief reason for leave request..." required></textarea>
+          <textarea
+            id="reason"
+            rows="4"
+            placeholder="Brief reason for leave request..."
+            required
+          ></textarea>
 
           <div class="modal-buttons">
             <button type="button" class="cancel-btn">Cancel</button>
@@ -582,7 +595,12 @@
 
       function updateCounts() {
         const cards = container.querySelectorAll(".leave-card");
-        const counts = { all: cards.length, pending: 0, approved: 0, denied: 0 };
+        const counts = {
+          all: cards.length,
+          pending: 0,
+          approved: 0,
+          denied: 0,
+        };
         cards.forEach((c) => counts[c.dataset.status]++);
 
         document.getElementById("count-all").textContent = counts.all;
@@ -621,11 +639,11 @@
           badge.className = "badge approved";
           badge.innerHTML = "✓ Approved";
           if (actionsBlock) actionsBlock.remove();
-          
+
           if (!card.querySelector(".reviewed")) {
             card.insertAdjacentHTML(
               "beforeend",
-              `<div class="reviewed">Reviewed on ${new Date().toISOString().slice(0, 10)}</div>`
+              `<div class="reviewed">Reviewed on ${new Date().toISOString().slice(0, 10)}</div>`,
             );
           }
         }
@@ -635,11 +653,11 @@
           badge.className = "badge denied";
           badge.innerHTML = "⦸ Denied";
           if (actionsBlock) actionsBlock.remove();
-          
+
           if (!card.querySelector(".reviewed")) {
             card.insertAdjacentHTML(
               "beforeend",
-              `<div class="reviewed">Reviewed on ${new Date().toISOString().slice(0, 10)}</div>`
+              `<div class="reviewed">Reviewed on ${new Date().toISOString().slice(0, 10)}</div>`,
             );
           }
         }
@@ -656,13 +674,116 @@
       const closeBtn = document.querySelector(".close");
       const cancelBtn = document.querySelector(".cancel-btn");
 
-      newRequestBtn.onclick = () => modal.style.display = "flex";
-      closeBtn.onclick = () => modal.style.display = "none";
-      cancelBtn.onclick = () => modal.style.display = "none";
+      newRequestBtn.onclick = () => (modal.style.display = "flex");
+      closeBtn.onclick = () => (modal.style.display = "none");
+      cancelBtn.onclick = () => (modal.style.display = "none");
 
       window.onclick = (e) => {
         if (e.target === modal) modal.style.display = "none";
       };
+      const leaveForm = document.getElementById("leaveForm");
+
+      leaveForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        // Get form values
+        const employee = document.getElementById("employee").value;
+        const leaveType = document.getElementById("leaveType").value;
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+        const reason = document.getElementById("reason").value;
+
+        // Calculate duration
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+        // Employee initials
+        const initials = employee
+          .split("(")[0]
+          .trim()
+          .split(" ")
+          .map((name) => name[0])
+          .join("");
+
+        // Employee name
+        const employeeName = employee.split("(")[0].trim();
+
+        // Employee role
+        const employeeRole = employee.match(/\((.*?)\)/)[1];
+
+        // Create new card
+        const newCard = document.createElement("div");
+
+        newCard.className = "leave-card";
+        newCard.dataset.status = "pending";
+
+        newCard.innerHTML = `
+      <div class="card-top">
+          <div class="user-row">
+              <div class="avatar-sm" style="background:#dbeafe">
+                  ${initials}
+              </div>
+
+              <div>
+                  <div class="name">${employeeName}</div>
+                  <div class="role">${employeeRole}</div>
+              </div>
+          </div>
+
+          <div class="badge pending">⏳ Pending</div>
+      </div>
+
+      <div class="grid">
+
+          <div>
+              <label>Type</label>
+              <div>${leaveType}</div>
+          </div>
+
+          <div>
+              <label>Duration</label>
+              <div>${days} day${days > 1 ? "s" : ""}</div>
+          </div>
+
+          <div>
+              <label>From</label>
+              <div>${startDate}</div>
+          </div>
+
+          <div>
+              <label>To</label>
+              <div>${endDate}</div>
+          </div>
+
+      </div>
+
+      <div class="reason">
+          <strong>Reason:</strong> ${reason}
+      </div>
+
+      <div class="actions">
+          <button class="btn approve">✓ Approve</button>
+          <button class="btn deny">✕ Deny</button>
+      </div>
+  `;
+
+        // Add card at the TOP
+        container.prepend(newCard);
+
+        // Update numbers
+        updateCounts();
+
+        // Keep current filter working
+        filterCards();
+
+        // Close modal
+        modal.style.display = "none";
+
+        // Reset form
+        leaveForm.reset();
+      });
     </script>
   </body>
 </html>
