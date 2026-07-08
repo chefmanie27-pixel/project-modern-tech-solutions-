@@ -15,9 +15,9 @@
         <ul class="nav-content">
           <li><a href="dashboard.html">Dashboard</a></li>
           <li><a href="employees.html">Employees</a></li>
-          <li class="active"><a href="payroll.html">Payroll</a></li>
+          <li class = "active"><a href="payroll.html">Payroll</a></li>
           <li><a href="time-off.html">Time Off</a></li>
-          <li><a href="attendance.html">Attendance</a></li>
+          <li><a href="Modern Tech/index.html">Attendance</a></li>
         </ul>
       </div>
     </div>
@@ -163,9 +163,11 @@
         const meta = getPayrollMeta();
 
         data.payrollData = employees.map((emp) => {
-          const empMeta =
-            meta[emp.employeeId] ||
-            fallbackMeta[emp.employeeId] || { hoursWorked: STANDARD_HOURS, leaveDeductions: 0 };
+          const empMeta = meta[emp.employeeId] ||
+            fallbackMeta[emp.employeeId] || {
+              hoursWorked: STANDARD_HOURS,
+              leaveDeductions: 0,
+            };
 
           const hourlyRate = emp.salary / STANDARD_HOURS;
           const leaveCost = empMeta.leaveDeductions * hourlyRate;
