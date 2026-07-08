@@ -11,7 +11,7 @@ const app = createApp({
 
         
 
-        const activeTab = ref('dashboard');       
+        const activeTab = ref('');       
         const dashboardFilter = ref('');          
         const attendanceFilter = ref('');         
         const leaveFilterStatus = ref('all');     
@@ -61,9 +61,6 @@ const app = createApp({
             attendanceRecords.value = attList;
         }
 
-       
-
-        
         const presentToday = computed(() => {
             const today = '2025-07-29';
             let count = 0;
@@ -101,7 +98,6 @@ const app = createApp({
             );
         });
 
-        
         const filteredAttendanceEmployees = computed(() => {
             const filter = attendanceFilter.value.toLowerCase().trim();
             if (!filter) return employees.value;
@@ -111,12 +107,6 @@ const app = createApp({
             );
         });
 
-        
-
-
-       
-
-        
         function getTodayStatus(employeeId) {
             const rec = attendanceRecords.value.find(r => r.employeeId === employeeId);
             if (!rec) return '—';
@@ -205,7 +195,7 @@ const app = createApp({
         
         function approveLeave(uid) {
             const req = leaveRequests.value.find(l => l._uid === uid);
-            if (!req || req.status !== 'Pending') return; // only if pending
+            if (!req || req.status !== 'Pending') return; 
             req.status = 'Approved';
             
             if (req._lrRef) {
@@ -241,7 +231,7 @@ const app = createApp({
         
         return {
             activeTab,
-            dashboardFilter,
+            
             attendanceFilter,
             
             

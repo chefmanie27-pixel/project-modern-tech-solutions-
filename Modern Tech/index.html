@@ -36,12 +36,7 @@
             <div class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav ms-auto">
                     
-                    <li class="nav-item">
-                        <a class="nav-link" :class="{ active: activeTab === 'dashboard' }"
-                           href="#" @click.prevent="activeTab = 'dashboard'">
-                            <i class="bi bi-grid-3x3-gap"></i> Dashboard
-                        </a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link" :class="{ active: activeTab === 'attendance' }"
                            href="#" @click.prevent="activeTab = 'attendance'">
@@ -53,49 +48,6 @@
             </div>
         </div>
     </nav>
-
-    
-    <section v-if="activeTab === 'dashboard'">
-
-        
-        <div class="row g-3 mb-4">
-            <div class="col-6 col-md-3">
-                <div class="stat-card d-flex align-items-center">
-                    <div class="flex-grow-1">
-                        <div class="stat-number">{{ employees.length }}</div>
-                        <div class="stat-label"><i class="bi bi-people me-1"></i> Total Employees</div>
-                    </div>
-                    <div class="stat-icon text-primary"><i class="bi bi-people"></i></div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card d-flex align-items-center">
-                    <div class="flex-grow-1">
-                        <div class="stat-number text-success">{{ presentToday }}</div>
-                        <div class="stat-label"><i class="bi bi-check-circle me-1"></i> Present Today</div>
-                    </div>
-                    <div class="stat-icon text-success"><i class="bi bi-check-circle"></i></div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card d-flex align-items-center">
-                    <div class="flex-grow-1">
-                        <div class="stat-number text-danger">{{ absentToday }}</div>
-                        <div class="stat-label"><i class="bi bi-x-circle me-1"></i> Absent Today</div>
-                    </div>
-                    <div class="stat-icon text-danger"><i class="bi bi-x-circle"></i></div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card d-flex align-items-center">
-                    <div class="flex-grow-1">
-                        <div class="stat-number text-warning">{{ pendingLeavesCount }}</div>
-                        <div class="stat-label"><i class="bi bi-clock me-1"></i> Pending Leaves</div>
-                    </div>
-                    <div class="stat-icon text-warning"><i class="bi bi-clock"></i></div>
-                </div>
-            </div>
-        </div>
 
         
         <div class="table-card">
