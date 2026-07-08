@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ModernTech Solutions | Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div>
+        <h1>Dashboard</h1>
+        <p class="subtitle">Overview of your analytics</p>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <div class="card-row-1">
+        <div class="active-emplpoyees" onclick="window.location.href='employees.html'">
+          <div class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <h3>Active Employees</h3>
+          <h2 id="kpi-active-employees">12</h2>
+          <p id="kpi-active-sub">15 in total - 3 on leave</p>
+        </div>
+
+        <div class="monthly-payroll" onclick="window.location.href='payroll.html'">
+          <div class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <h3>Monthly Payroll</h3>
+          <h2 id="kpi-monthly-payroll">R 97k</h2>
+          <p>Jun 2026 net pay</p>
+        </div>
+
+        <div class="pending-requests" onclick="window.location.href='timeoff.html'">
+          <div class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <h3>Pending Requests</h3>
+          <h2 id="kpi-pending-requests">2</h2>
+          <p>Time off awaiting approval</p>
+        </div>
+
+        <div class="avg-attendance" onclick="window.location.href='attendance.html'">
+          <div class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <h3>Avg Attendance</h3>
+          <h2 id="kpi-avg-attendance">91%</h2>
+          <p>Last 10 working days</p>
+        </div>
+      </div>
+
+      <div class="card-row-2">
+        <div class="attendance-overview">
+          <h3>Attendance Overview</h3>
+          <p>Last 10 working days</p>
+
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot present"></span>Present</span>
+            <span class="legend-item"><span class="legend-dot absent"></span>Absent</span>
+            <span class="legend-item"><span class="legend-dot leave"></span>On Leave</span>
+          </div>
+
+          <div class="chart-container">
+            <div class="attendance-chart-wrapper">
+              <div class="y-axis" id="attendanceYAxis"></div>
+              <div class="bar-chart" id="attendanceChart"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="department-headcount">
+          <h3>Department Headcount</h3>
+          <p>Employee distribution across departments</p>
+
+          <div class="chart-container">
+            <div class="dept-list" id="deptHeadcount"></div>
+            <div class="dept-total-row">
+              <span>Total</span>
+              <span id="deptTotal">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-row-3">
+        <div class="payroll-trend">
+          <h3>Payroll Trend</h3>
+          <p>Net pay (only current month available in data)</p>
+
+          <div class="chart-container">
+            <div class="line-chart-wrapper">
+              <div class="y-axis" id="payrollYAxis"></div>
+              <div class="line-chart-area">
+                <svg class="line-chart" id="payrollChart" viewBox="0 0 600 300" preserveAspectRatio="none">
+                  <polyline class="trend-line" points=""></polyline>
+                </svg>
+                <div class="chart-tooltip" id="payrollTooltip"></div>
+              </div>
+            </div>
+            <div class="x-axis-labels" id="payrollXAxis"></div>
+          </div>
+        </div>
+
+        <div class="pending-leave">
+          <h3>Pending Leave Requests</h3>
+          <p>Requests awaiting approval</p>
+
+          <div class="view-more">
+            <a href="timeoff.html">View All</a>
+          </div>
+
+          <div id="pendingLeaveList"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>
