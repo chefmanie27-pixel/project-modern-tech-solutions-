@@ -30,10 +30,68 @@ body {
 }
 
 .card-row-1 > div {
-  border: 1px solid #e5e7eb;
+  border-width: 2px;
+  border-style: solid;
   border-radius: 8px;
   padding: 20px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
+
+.active-emplpoyees {
+  border-color: #e5484d;
+  background-color: #fdecec;
+}
+
+.monthly-payroll {
+  border-color: #f0883e;
+  background-color: #fdf0e4;
+}
+
+.pending-requests {
+  border-color: #3b82f6;
+  background-color: #e9f1fe;
+}
+
+.avg-attendance {
+  border-color: #22a06b;
+  background-color: #e6f6ef;
+}
+
+.active-emplpoyees h2 { color: #e5484d; }
+.monthly-payroll h2   { color: #f0883e; }
+.pending-requests h2  { color: #3b82f6; }
+.avg-attendance h2    { color: #22a06b; }
+
+/* Hover and active effects for cards */
+.card-row-1 > div:hover {
+  transform: translateY(-6px) scale(1.03);
+}
+
+.card-row-1 > div:active {
+  transform: translateY(-2px) scale(1.01);
+}
+
+.active-emplpoyees:hover {
+  box-shadow: 0 10px 24px rgba(229, 72, 77, 0.35);
+  background-color: #fce0e0;
+}
+
+.monthly-payroll:hover {
+  box-shadow: 0 10px 24px rgba(240, 136, 62, 0.35);
+  background-color: #fce6d5;
+}
+
+.pending-requests:hover {
+  box-shadow: 0 10px 24px rgba(59, 130, 246, 0.35);
+  background-color: #dbe9fd;
+}
+
+.avg-attendance:hover {
+  box-shadow: 0 10px 24px rgba(34, 160, 107, 0.35);
+  background-color: #d9f2e6;
+}
+
 
 /* Row 2 + 3 - panels */
 .card-row-2,
@@ -46,15 +104,32 @@ body {
 
 .card-row-2 > div,
 .card-row-3 > div {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  background: #fff;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   padding: 20px;
 }
 
+.card-row-2 h3,
+.card-row-3 h3 {
+  font-size: 15px;
+  margin: 0 0 4px;
+}
+
+.card-row-2 p,
+.card-row-3 p {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 14px;
+}
+
+/* Chart container background - matches index.css chart-area */
 .chart-container {
-  border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 16px;
+  background-color: #f9fafb;
+  border: 1px solid #eef0f3;
+  border-radius: 8px;
+  padding: 16px 20px;
 }
 
 /* Attendance bars */
@@ -85,7 +160,58 @@ body {
 .bar {
   width: 14px;
   height: calc(var(--pct) * 1%);
-  background-color: #999;
+  border-radius: 2px 2px 0 0;
+}
+
+.bar.present {
+  background-color: #4f46e5;
+}
+
+.bar.absent {
+  background-color: #e5e7eb;
+}
+
+.bar.leave {
+  background-color: #a5b4fc;
+}
+
+.bar-label {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* Attendance legend */
+.chart-legend {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-dot.present {
+  background-color: #4f46e5;
+}
+
+.legend-dot.absent {
+  background-color: #e5e7eb;
+}
+
+.legend-dot.leave {
+  background-color: #a5b4fc;
 }
 
 /* Department headcount bars */
@@ -102,28 +228,64 @@ body {
   gap: 12px;
 }
 
+.dept-name {
+  font-size: 13px;
+  color: #2d2f36;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .bar-track {
-  background-color: #eee;
-  border-radius: 4px;
+  background-color: #f3f4f6;
+  border-radius: 6px;
   height: 10px;
+  overflow: hidden;
 }
 
 .bar-fill {
   height: 100%;
   width: calc(var(--pct) * 1%);
-  border-radius: 4px;
-  background-color: #999;
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+.dept-bar-row:nth-child(1) .bar-fill { background-color: #e5484d; }
+.dept-bar-row:nth-child(2) .bar-fill { background-color: #f0883e; }
+.dept-bar-row:nth-child(3) .bar-fill { background-color: #f0c33e; }
+.dept-bar-row:nth-child(4) .bar-fill { background-color: #3b82f6; }
+.dept-bar-row:nth-child(5) .bar-fill { background-color: #8b5cf6; }
+.dept-bar-row:nth-child(6) .bar-fill { background-color: #22a06b; }
+.dept-bar-row:nth-child(7) .bar-fill { background-color: #e5484d; }
+.dept-bar-row:nth-child(8) .bar-fill { background-color: #f0883e; }
+.dept-bar-row:nth-child(9) .bar-fill { background-color: #f0c33e; }
+
+.dept-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2d2f36;
+  text-align: right;
+}
+
+.dept-total-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #eef0f3;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 /* Payroll line chart */
 .trend-line {
   fill: none;
-  stroke: #999;
+  stroke: #4f46e5;
   stroke-width: 2;
 }
 
 .trend-dot {
-  fill: #999;
+  fill: #4f46e5;
 }
 
 .x-axis-labels {
@@ -131,18 +293,35 @@ body {
   justify-content: space-between;
   margin-top: 8px;
   font-size: 11px;
-  color: #999;
+  color: #9ca3af;
 }
 
 /* Pending leave */
+.view-more {
+  text-align: right;
+  margin-bottom: 14px;
+}
+
+.view-more a {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.view-more a:hover {
+  text-decoration: underline;
+}
+
 .employee-cards {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 12px;
+  background-color: #f9fafb;
+  border: 1px solid #eef0f3;
+  border-radius: 8px;
+  padding: 12px 14px;
 }
 
 .avatar-img {
@@ -150,4 +329,5 @@ body {
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
+  flex-shrink: 0;
 }

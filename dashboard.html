@@ -21,8 +21,8 @@
             <img src="icons/active-employees.svg" alt="Active Employees" />
           </div>
           <h3>Active Employees</h3>
-          <h2>12</h2>
-          <p>15 in total - 3 on leave</p>
+          <h2 id="kpi-active-employees">12</h2>
+          <p id="kpi-active-sub">15 in total - 3 on leave</p>
         </div>
 
         <div class="monthly-payroll">
@@ -30,7 +30,7 @@
             <img src="icons/monthly-payroll.svg" alt="Monthly Payroll" />
           </div>
           <h3>Monthly Payroll</h3>
-          <h2>R 97k</h2>
+          <h2 id="kpi-monthly-payroll">R 97k</h2>
           <p>Jun 2026 net pay</p>
         </div>
 
@@ -39,7 +39,7 @@
             <img src="icons/pending-requests.svg" alt="Pending Requests" />
           </div>
           <h3>Pending Requests</h3>
-          <h2>2</h2>
+          <h2 id="kpi-pending-requests">2</h2>
           <p>Time off awaiting approval</p>
         </div>
 
@@ -48,43 +48,44 @@
             <img src="icons/avg-attendance.svg" alt="Avg Attendance" />
           </div>
           <h3>Avg Attendance</h3>
-          <h2>91%</h2>
-          <p>Last 10 working days</p>
+          <h2 id="kpi-avg-attendance">91%</h2>
+          <p>Last 5 working days</p>
         </div>
       </div>
 
       <div class="card-row-2">
         <div class="attendance-overview">
-        <h3>Attendance Overview</h3>
-        <p>Last 10 working days</p>
+          <h3>Attendance Overview</h3>
+          <p>Last 10 working days</p>
 
-        <div class="chart-legend">
-          <span class="legend-item"><span class="legend-dot present"></span>Present</span>
-          <span class="legend-item"><span class="legend-dot absent"></span>Absent</span>
-          <span class="legend-item"><span class="legend-dot leave"></span>On Leave</span>
-        </div>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot present"></span>Present</span>
+            <span class="legend-item"><span class="legend-dot absent"></span>Absent</span>
+            <span class="legend-item"><span class="legend-dot leave"></span>On Leave</span>
+          </div>
 
-        <div class="chart-container">
-          <div class="bar-chart" id="attendanceChart">
-            <div class="bar-group">
-              <div class="bar-cluster">
-                <div class="bar present" style="--pct: 60"></div>
-                <div class="bar absent" style="--pct: 33"></div>
-                <div class="bar leave" style="--pct: 7"></div>
+          <div class="chart-container">
+            <div class="bar-chart" id="attendanceChart">
+              <div class="bar-group">
+                <div class="bar-cluster">
+                  <div class="bar present" style="--pct: 60"></div>
+                  <div class="bar absent" style="--pct: 33"></div>
+                  <div class="bar leave" style="--pct: 7"></div>
+                </div>
+                <span class="bar-label">06-22</span>
               </div>
-              <span class="bar-label">06-22</span>
-            </div>
 
-            <div class="bar-group">
-              <div class="bar-cluster">
-                <div class="bar present" style="--pct: 87"></div>
-                <div class="bar absent" style="--pct: 7"></div>
-                <div class="bar leave" style="--pct: 6"></div>
+              <div class="bar-group">
+                <div class="bar-cluster">
+                  <div class="bar present" style="--pct: 87"></div>
+                  <div class="bar absent" style="--pct: 7"></div>
+                  <div class="bar leave" style="--pct: 6"></div>
+                </div>
+                <span class="bar-label">06-23</span>
               </div>
-              <span class="bar-label">06-23</span>
-            </div>
 
-            <!-- repeat bar-group per day, 10 total -->
+              <!-- repeat bar-group per day, 10 total -->
+            </div>
           </div>
         </div>
 
@@ -182,12 +183,14 @@
 
           <div class="view-more"><a href="#">View All</a></div>
 
-          <div class="employee-cards">
-            <img class="avatar-img" src="images/john-doe.jpg" alt="John Doe" />
-            <h1>John Doe</h1>
-            <p>Type: Annual Leave</p>
-            <p>Duration: 5 days</p>
-            <p>Start Date: Jun 15, 2026</p>
+          <div id="pendingLeaveList">
+            <div class="employee-cards">
+              <img class="avatar-img" src="images/john-doe.jpg" alt="John Doe" />
+              <h3>John Doe</h3>
+              <p>Type: Annual Leave</p>
+              <p>Duration: 5 days</p>
+              <p>Start Date: Jun 15, 2026</p>
+            </div>
           </div>
         </div>
       </div>
