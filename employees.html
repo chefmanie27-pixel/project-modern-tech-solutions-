@@ -123,6 +123,9 @@
     </div>
 
     <script>
+      // ---- Shared storage key used by payroll.html too ----
+      const EMPLOYEE_STORAGE_KEY = "moderntech_employees";
+
       let data = {
         employeeInformation: [
           {
@@ -227,6 +230,31 @@
 
       let isEditing = false;
 
+      // ---- Persistence layer ----
+      // On first load, if localStorage already has employee data (e.g. saved
+      // during a previous session, or updated from another tab), use that
+      // instead of the hardcoded defaults above. Otherwise seed localStorage
+      // with the defaults so payroll.html has something to read immediately.
+      function loadFromStorage() {
+        const stored = localStorage.getItem(EMPLOYEE_STORAGE_KEY);
+        if (stored) {
+          try {
+            data.employeeInformation = JSON.parse(stored);
+            return;
+          } catch (e) {
+            console.warn("Corrupt employee data in storage, using defaults.");
+          }
+        }
+        saveToStorage();
+      }
+
+      function saveToStorage() {
+        localStorage.setItem(
+          EMPLOYEE_STORAGE_KEY,
+          JSON.stringify(data.employeeInformation),
+        );
+      }
+
       function renderTable() {
         tableBody.innerHTML = "";
         data.employeeInformation.forEach((employee) => {
@@ -276,6 +304,7 @@
           data.employeeInformation = data.employeeInformation.filter(
             (emp) => emp.employeeId !== id,
           );
+          saveToStorage();
           renderTable();
         }
       }
@@ -294,6 +323,7 @@
             employee[field] = value;
           }
         });
+        saveToStorage();
       }
 
       employeeBtn.addEventListener("click", () => {
@@ -349,13 +379,24 @@
         };
 
         data.employeeInformation.push(newEmployee);
+        saveToStorage();
         renderTable();
 
         addModal.style.display = "none";
         addEmployeeForm.reset();
       });
 
+      // ---- Lifecycle ----
+      loadFromStorage();
       renderTable();
+
+      // Keep this tab in sync if employee data changes from another tab
+      window.addEventListener("storage", (e) => {
+        if (e.key === EMPLOYEE_STORAGE_KEY && !isEditing) {
+          loadFromStorage();
+          renderTable();
+        }
+      });
     </script>
   </body>
 </html>

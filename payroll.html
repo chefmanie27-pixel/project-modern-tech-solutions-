@@ -86,84 +86,100 @@
 
     <!-- Application Controller Logic -->
     <script>
-      // Single Source of Truth Local Dataset
-      const data = {
-        payrollData: [
-          {
-            employeeId: 1,
-            employeeName: "Sibongile NKosi",
-            hoursWorked: 160,
-            leaveDeductions: 8,
-            finalSalary: 69500,
-          },
-          {
-            employeeId: 2,
-            employeeName: "Lungile Moyo",
-            hoursWorked: 150,
-            leaveDeductions: 10,
-            finalSalary: 79000,
-          },
-          {
-            employeeId: 3,
-            employeeName: "Thabo Molefe",
-            hoursWorked: 170,
-            leaveDeductions: 4,
-            finalSalary: 54800,
-          },
-          {
-            employeeId: 4,
-            employeeName: "Keshav Naidoo",
-            hoursWorked: 165,
-            leaveDeductions: 6,
-            finalSalary: 59700,
-          },
-          {
-            employeeId: 5,
-            employeeName: "Zanele Khumalo",
-            hoursWorked: 158,
-            leaveDeductions: 5,
-            finalSalary: 57850,
-          },
-          {
-            employeeId: 6,
-            employeeName: "Sipho Zulu",
-            hoursWorked: 168,
-            leaveDeductions: 2,
-            finalSalary: 64800,
-          },
-          {
-            employeeId: 7,
-            employeeName: "Naledi Moeketsi",
-            hoursWorked: 175,
-            leaveDeductions: 3,
-            finalSalary: 71800,
-          },
-          {
-            employeeId: 8,
-            employeeName: "Farai Gumbo",
-            hoursWorked: 160,
-            leaveDeductions: 0,
-            finalSalary: 56000,
-          },
-          {
-            employeeId: 9,
-            employeeName: "Karabo Dlamini",
-            hoursWorked: 155,
-            leaveDeductions: 5,
-            finalSalary: 61500,
-          },
-          {
-            employeeId: 10,
-            employeeName: "Fatima Patel",
-            hoursWorked: 162,
-            leaveDeductions: 4,
-            finalSalary: 57750,
-          },
-        ],
+      // ---- Shared storage keys ----
+      // Must match the key used in employees.html
+      const EMPLOYEE_STORAGE_KEY = "moderntech_employees";
+      // Payroll-only numbers (hours worked, leave deduction hours) that
+      // don't belong on the employee record itself.
+      const PAYROLL_META_KEY = "moderntech_payroll_meta";
+      // Standard hours in a pay period, used to derive an hourly rate from
+      // an employee's monthly salary.
+      const STANDARD_HOURS = 160;
+
+      // Fallback data, used only if employees.html has never been opened yet
+      // (so localStorage is still empty). Keeps this page working standalone.
+      const fallbackEmployees = [
+        { employeeId: 1, name: "Sibongile Nkosi", salary: 70000 },
+        { employeeId: 2, name: "Lungile Moyo", salary: 80000 },
+        { employeeId: 3, name: "Thabo Molefe", salary: 55000 },
+        { employeeId: 4, name: "Keshav Naidoo", salary: 60000 },
+        { employeeId: 5, name: "Zanele Khumalo", salary: 58000 },
+        { employeeId: 6, name: "Sipho Zulu", salary: 65000 },
+        { employeeId: 7, name: "Naledi Moeketsi", salary: 72000 },
+        { employeeId: 8, name: "Farai Gumbo", salary: 56000 },
+        { employeeId: 9, name: "Karabo Dlamini", salary: 62000 },
+        { employeeId: 10, name: "Fatima Patel", salary: 58000 },
+      ];
+
+      const fallbackMeta = {
+        1: { hoursWorked: 160, leaveDeductions: 8 },
+        2: { hoursWorked: 150, leaveDeductions: 10 },
+        3: { hoursWorked: 170, leaveDeductions: 4 },
+        4: { hoursWorked: 165, leaveDeductions: 6 },
+        5: { hoursWorked: 158, leaveDeductions: 5 },
+        6: { hoursWorked: 168, leaveDeductions: 2 },
+        7: { hoursWorked: 175, leaveDeductions: 3 },
+        8: { hoursWorked: 160, leaveDeductions: 0 },
+        9: { hoursWorked: 155, leaveDeductions: 5 },
+        10: { hoursWorked: 162, leaveDeductions: 4 },
       };
+
+      const data = { payrollData: [] };
 
       const tableBody = document.getElementById("table-rows");
       const emptyState = document.getElementById("empty-state");
+
+      function getPayrollMeta() {
+        const stored = localStorage.getItem(PAYROLL_META_KEY);
+        if (stored) {
+          try {
+            return JSON.parse(stored);
+          } catch (e) {
+            console.warn("Corrupt payroll meta in storage, using defaults.");
+          }
+        }
+        return {};
+      }
+
+      function savePayrollMeta(meta) {
+        localStorage.setItem(PAYROLL_META_KEY, JSON.stringify(meta));
+      }
+
+      // Builds data.payrollData by combining the live employee list (name +
+      // current salary, sourced from employees.html) with payroll-only meta
+      // (hours worked / leave deductions), then recalculates net pay from
+      // the employee's *current* salary every time this runs.
+      function buildPayrollData() {
+        const storedEmployees = localStorage.getItem(EMPLOYEE_STORAGE_KEY);
+        let employees = fallbackEmployees;
+        if (storedEmployees) {
+          try {
+            employees = JSON.parse(storedEmployees);
+          } catch (e) {
+            console.warn("Corrupt employee data in storage, using fallback.");
+          }
+        }
+
+        const meta = getPayrollMeta();
+
+        data.payrollData = employees.map((emp) => {
+          const empMeta =
+            meta[emp.employeeId] ||
+            fallbackMeta[emp.employeeId] || { hoursWorked: STANDARD_HOURS, leaveDeductions: 0 };
+
+          const hourlyRate = emp.salary / STANDARD_HOURS;
+          const leaveCost = empMeta.leaveDeductions * hourlyRate;
+          const finalSalary = Math.round(emp.salary - leaveCost);
+
+          return {
+            employeeId: emp.employeeId,
+            employeeName: emp.name,
+            hoursWorked: empMeta.hoursWorked,
+            leaveDeductions: empMeta.leaveDeductions,
+            finalSalary,
+          };
+        });
+      }
 
       // Dynamic Calculation Engine for Core Cards
       function calculateGlobalMetrics() {
@@ -231,6 +247,12 @@
           `;
           })
           .join("");
+      }
+
+      function refreshPayroll() {
+        buildPayrollData();
+        calculateGlobalMetrics();
+        renderTable();
       }
 
       // Row Drawer Animation/Expansion Toggle Trigger
@@ -335,9 +357,21 @@
         .getElementById("table-filter")
         .addEventListener("change", filterTable);
 
+      // Refresh automatically if employee data (e.g. a salary change) or
+      // payroll meta is updated from another tab/page.
+      window.addEventListener("storage", (e) => {
+        if (e.key === EMPLOYEE_STORAGE_KEY || e.key === PAYROLL_META_KEY) {
+          refreshPayroll();
+        }
+      });
+
+      // Also refresh whenever this tab regains focus, in case employee data
+      // was changed in employees.html within the same tab via back/forward
+      // navigation.
+      window.addEventListener("focus", refreshPayroll);
+
       // Lifecycle Run Initializer
-      calculateGlobalMetrics();
-      renderTable();
+      refreshPayroll();
     </script>
   </body>
 </html>
