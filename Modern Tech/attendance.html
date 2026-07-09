@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="../auth-guard.js"></script>
     <title>ModernTech | Attendance Tracker</title>
 
     <link
@@ -28,6 +29,13 @@
     <div id="app">
       <div class="nav">
         <div class="logo">Modern<span>Tech</span></div>
+        <button
+          class="nav-toggle"
+          aria-label="Toggle menu"
+          aria-expanded="false"
+        >
+          <span></span><span></span><span></span>
+        </button>
         <div class="nav-bar">
           <ul class="nav-content">
             <li><a href="../dashboard.html">Dashboard</a></li>
@@ -35,7 +43,20 @@
             <li><a href="../payroll.html">Payroll</a></li>
             <li><a href="../time-off-page.html">Time Off</a></li>
             <li class="active"><a href="attendance.html">Attendance</a></li>
-            <li><a href="../performance-reviews.html">Performance Reviews</a></li>
+            <li>
+              <a href="../performance-reviews.html">Performance Reviews</a>
+            </li>
+            <li>
+              <a
+                href="#"
+                onclick="
+                  localStorage.removeItem('moderntech_auth');
+                  window.location.href = '../login.html';
+                  return false;
+                "
+                >Logout</a
+              >
+            </li>
           </ul>
         </div>
       </div>
@@ -208,5 +229,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="data.js"></script>
     <script src="app.js"></script>
+    <script src="../nav.js"></script>
   </body>
 </html>

@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="auth-guard.js"></script>
     <title>ModernTech Solutions | Dashboard</title>
     <link rel="stylesheet" href="combined-styles.css" />
     <link
@@ -14,14 +15,32 @@
     <header class="header">
       <div class="nav">
         <div class="logo">Modern<span>Tech</span></div>
+        <button
+          class="nav-toggle"
+          aria-label="Toggle menu"
+          aria-expanded="false"
+        >
+          <span></span><span></span><span></span>
+        </button>
         <div class="nav-bar">
           <ul class="nav-content">
-            <li class ="active"><a href="dashboard.html">Dashboard</a></li>
+            <li class="active"><a href="dashboard.html">Dashboard</a></li>
             <li><a href="employees.html">Employees</a></li>
             <li><a href="payroll.html">Payroll</a></li>
             <li><a href="time-off-page.html">Time Off</a></li>
             <li><a href="Modern Tech/attendance.html">Attendance</a></li>
             <li><a href="performance-reviews.html">Performance Reviews</a></li>
+            <li>
+              <a
+                href="#"
+                onclick="
+                  localStorage.removeItem('moderntech_auth');
+                  window.location.href = 'login.html';
+                  return false;
+                "
+                >Logout</a
+              >
+            </li>
           </ul>
         </div>
       </div>
@@ -186,7 +205,7 @@
           <p>Requests awaiting approval</p>
 
           <div class="view-more">
-            <a href="timeoff.html">View All</a>
+            <a href="time-off-page.html">View All</a>
           </div>
 
           <div id="pendingLeaveList"></div>
@@ -194,6 +213,7 @@
       </div>
     </div>
 
+    <script src="nav.js"></script>
     <script src="dashboard.js"></script>
   </body>
 </html>

@@ -15,6 +15,17 @@
     />
 
     <link rel="stylesheet" href="combined-styles.css" />
+    <style>
+      .login-error {
+        color: #dc2626;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        margin: 10px 0 0 0;
+      }
+    </style>
   </head>
   <body class="page-login">
     <!-- Background Shapes -->
@@ -73,6 +84,8 @@
               <i class="fa-solid fa-eye" id="togglePassword"></i>
             </div>
           </div>
+
+          <p id="loginError" class="login-error" style="display: none"></p>
 
           <button class="btn login-btn" type="submit">Sign In</button>
         </form>

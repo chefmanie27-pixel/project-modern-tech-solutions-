@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="auth-guard.js"></script>
     <title>Modern Tech HR Portal - Time Off</title>
     <link rel="stylesheet" href="combined-styles.css" />
     <link
@@ -16,6 +17,9 @@
       style="width: 100%; position: fixed; top: 0; left: 0; z-index: 999"
     >
       <div class="logo">Modern<span>Tech</span></div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
       <div class="nav-bar">
         <ul class="nav-content">
           <li><a href="dashboard.html">Dashboard</a></li>
@@ -24,6 +28,17 @@
           <li class="active"><a href="time-off-page.html">Time Off</a></li>
           <li><a href="Modern Tech/attendance.html">Attendance</a></li>
           <li><a href="performance-reviews.html">Performance Reviews</a></li>
+          <li>
+            <a
+              href="#"
+              onclick="
+                localStorage.removeItem('moderntech_auth');
+                window.location.href = 'login.html';
+                return false;
+              "
+              >Logout</a
+            >
+          </li>
         </ul>
       </div>
     </nav>
@@ -786,5 +801,6 @@
         leaveForm.reset();
       });
     </script>
+    <script src="nav.js"></script>
   </body>
 </html>

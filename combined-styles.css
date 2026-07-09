@@ -17,6 +17,9 @@
       form/input/select, etc.) with DIFFERENT rules. Scoping under a page
       class keeps those from clobbering each other now that everything
       lives in one file.
+   6) Responsive layout — breakpoints at 1024px / 768px / 480px, grouped by
+      breakpoint (not by page) so the whole site's mobile behavior can be
+      scanned in one place.
 
    HOW TO USE
    ----------
@@ -78,12 +81,22 @@
   padding: 0;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   font-family: "Poppins", Arial, Helvetica, sans-serif;
   background-color: #ffffff;
   color: var(--text-main);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 /* ==========================================================================
@@ -130,6 +143,39 @@ body {
 .nav-content li a:hover,
 .nav-content li.active a {
   color: #ffffff;
+}
+
+/* --- Hamburger toggle button (hidden on desktop, shown at 768px) --- */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 20;
+}
+
+.nav-toggle span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-toggle.active span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+.nav-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle.active span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
 }
 
 /* ==========================================================================
@@ -1848,6 +1894,10 @@ body.page-leave {
   box-shadow: 0 0 8px rgba(11, 46, 89, 0.15);
 }
 
+.page-attendance .table-wrapper {
+  width: 100%;
+}
+
 .page-attendance .table {
   width: 100%;
   border-collapse: separate;
@@ -2119,5 +2169,349 @@ body.page-login {
   }
   .page-login .welcome-content h3 {
     font-size: 18px;
+  }
+}
+
+
+/* ==========================================================================
+   6. RESPONSIVE LAYOUT
+   Grouped by breakpoint (not by page) so the whole site's mobile behavior
+   can be scanned top-to-bottom in one place. Page-specific breakpoints
+   defined above in section 5 (page-leave, page-login) are left as-is and
+   simply layer on top of these.
+
+   Breakpoints:
+     1024px — tablets / small laptops
+      768px — large phones, portrait tablets
+      480px — phones
+   ========================================================================== */
+
+/* ---------------------------------------------------------------------- */
+/* 1024px and below — tablets                                             */
+/* ---------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  /* Global nav: stop clipping links; let them wrap onto a second line
+     instead of overflowing the viewport */
+  .nav {
+    flex-wrap: wrap;
+    row-gap: 14px;
+    padding: 16px 24px;
+  }
+
+  .nav-content {
+    flex-wrap: wrap;
+    row-gap: 10px;
+    column-gap: 20px;
+  }
+
+  /* Dashboard: 4-up KPI row -> 2-up; two-column chart rows -> stacked */
+  .page-dashboard .card-row-1 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .page-dashboard .card-row-2,
+  .page-dashboard .card-row-3 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Performance reviews: sidebar + detail panel stack, sidebar goes full width */
+  .page-reviews .reviews-container {
+    flex-direction: column;
+  }
+
+  .page-reviews .employee-panel {
+    width: 100%;
+  }
+
+  /* Wide data tables scroll horizontally instead of squeezing columns
+     illegibly or breaking the page layout */
+  .page-employees .main-content {
+    overflow-x: auto;
+  }
+
+  .page-employees .employee-table {
+    min-width: 760px;
+  }
+
+  .page-payroll .payroll-container {
+    overflow-x: auto;
+  }
+
+  .payroll-table {
+    min-width: 640px;
+  }
+
+  .page-attendance .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .page-attendance .table {
+    min-width: 640px;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* 768px and below — large phones / portrait tablets                      */
+/* ---------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 1.65rem;
+  }
+
+  .header .subtitle,
+  .header p {
+    font-size: 0.95rem;
+  }
+
+  /* Nav: hamburger takes over. Logo + toggle stay on one row, links
+     collapse into a full-width dropdown below the nav bar. */
+  .nav {
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 16px 20px;
+  }
+
+  .nav-toggle {
+    display: flex;
+    margin-left: auto;
+  }
+
+  .nav-bar {
+    width: 0;
+  }
+
+  .nav-content {
+    display: none;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 100%;
+    gap: 0;
+    row-gap: 0;
+    column-gap: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--primary);
+    box-shadow: var(--shadow-md);
+    z-index: 15;
+  }
+
+  .nav-content.open {
+    display: flex;
+  }
+
+  .nav-content li {
+    width: 100%;
+  }
+
+  .nav-content li a {
+    display: block;
+    padding: 14px 24px;
+    width: 100%;
+    font-size: 0.95rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Dashboard: single-column KPI cards, tighter side padding */
+  .page-dashboard .card-row-1 {
+    grid-template-columns: 1fr;
+  }
+
+  .page-dashboard .dashboard-container {
+    padding: 0 16px 40px;
+  }
+
+  /* Employees: header/actions area stacks, action buttons share the row
+     evenly instead of hugging the right edge */
+  .page-employees .header {
+    margin-top: 24px;
+    padding: 0 16px;
+  }
+
+  .page-employees .action-container {
+    padding: 0 16px;
+    flex-wrap: wrap;
+    justify-content: stretch;
+  }
+
+  .page-employees .action-container .btn {
+    flex: 1 1 auto;
+    min-width: 130px;
+  }
+
+  .page-employees .main-content {
+    padding: 0 16px;
+  }
+
+  /* Payroll: KPI cards and toolbar stack instead of squeezing side by side */
+  .page-payroll .main-content {
+    padding: 30px 16px;
+  }
+
+  .information-cards {
+    flex-direction: column;
+  }
+
+  .toolbar {
+    flex-direction: column;
+  }
+
+  .toolbar input {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .breakdown-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .breakdown-actions {
+    flex-direction: column;
+  }
+
+  /* Reviews: slider trio and the period/reviewer row both drop to one
+     column so nothing gets cramped */
+  .page-reviews .reviews-container {
+    padding: 0 16px 40px;
+  }
+
+  .page-reviews .sliders-row {
+    grid-template-columns: 1fr;
+  }
+
+  .page-reviews .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .page-reviews .detail-header {
+    flex-wrap: wrap;
+  }
+
+  .page-reviews .btn-primary {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  /* Leave: request form's date pickers stack */
+  .page-leave .date-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* Attendance: filter inputs take the full row width when they wrap */
+  .page-attendance .filter-group,
+  .page-attendance .filter-input {
+    width: 100%;
+  }
+
+  .page-attendance .app-container {
+    padding: 0 16px 40px;
+  }
+
+  /* Login card a touch tighter */
+  .page-login .login-card {
+    width: 92%;
+    padding: 30px;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* 480px and below — phones                                               */
+/* ---------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .nav {
+    padding: 14px 16px;
+  }
+
+  .logo {
+    font-size: 1.25rem;
+  }
+
+  .header h1 {
+    font-size: 1.4rem;
+  }
+
+  /* Dashboard KPI cards: less internal padding so numbers still breathe */
+  .page-dashboard .card-row-1 > div {
+    padding: 16px;
+  }
+
+  .page-dashboard .card-row-2 > div,
+  .page-dashboard .card-row-3 > div {
+    padding: 16px;
+  }
+
+  /* Employees modal narrower padding */
+  .page-employees .modal-content {
+    padding: 28px 22px;
+  }
+
+  /* Payroll KPI number shrinks slightly to avoid wrapping oddly */
+  .card p {
+    font-size: 1.6rem;
+  }
+
+  /* Reviews detail header padding */
+  .page-reviews .detail-header {
+    padding: 16px;
+  }
+
+  .page-reviews .avatar-lg {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Leave cards: badge drops below the name/role instead of squeezing
+     next to it */
+  .page-leave .card-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .page-leave .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .page-leave .main-content,
+  .page-leave .main {
+    padding: 24px 16px;
+  }
+
+  /* Attendance stat cards: icon and numbers stay legible at small sizes */
+  .page-attendance .stat-number {
+    font-size: 1.6rem;
+  }
+
+  .page-attendance .stat-icon {
+    font-size: 1.8rem;
+  }
+
+  /* Login: welcome + card scale down for small screens */
+  .page-login .welcome-content h1 {
+    font-size: 34px;
+  }
+
+  .page-login .welcome-content h3 {
+    font-size: 15px;
+    margin-bottom: 35px;
+  }
+
+  .page-login .logo {
+    font-size: 28px;
+    margin-bottom: 24px;
+  }
+
+  .page-login .login-card {
+    width: 94%;
+    padding: 24px;
+  }
+
+  .page-login .btn {
+    padding: 14px 30px;
+    font-size: 15px;
   }
 }

@@ -1,3 +1,8 @@
+// ---- Single admin credentials (demo only) ----
+const ADMIN_EMAIL = "admin@moderntech.com";
+const ADMIN_PASSWORD = "admin123";
+const AUTH_KEY = "moderntech_auth";
+
 const welcomeScreen = document.getElementById("welcome-screen");
 const loginScreen = document.getElementById("login-screen");
 
@@ -7,6 +12,8 @@ const password = document.getElementById("password");
 const togglePassword = document.getElementById("togglePassword");
 
 const loginForm = document.getElementById("loginForm");
+const loginError = document.getElementById("loginError");
+const loginBtn = document.querySelector(".login-btn");
 
 accessBtn.addEventListener("click", () => {
   // Hide Welcome Screen
@@ -30,6 +37,16 @@ togglePassword.addEventListener("click", () => {
   }
 });
 
+function showError(message) {
+  loginError.textContent = message;
+  loginError.style.display = "block";
+}
+
+function clearError() {
+  loginError.textContent = "";
+  loginError.style.display = "none";
+}
+
 loginForm.addEventListener("submit", function (e) {
   e.preventDefault();
 
@@ -37,20 +54,29 @@ loginForm.addEventListener("submit", function (e) {
   const pass = password.value.trim();
 
   if (email === "" || pass === "") {
-    alert("Please fill in all fields.");
-
+    showError("Please fill in all fields.");
     return;
   }
 
+  if (
+    email.toLowerCase() !== ADMIN_EMAIL ||
+    pass !== ADMIN_PASSWORD
+  ) {
+    showError("Incorrect email or password.");
+    return;
+  }
+
+  clearError();
+
   // Loading effect
-  const button = document.querySelector(".login-btn");
+  loginBtn.innerHTML = "Signing In...";
+  loginBtn.disabled = true;
 
-  button.innerHTML = "Signing In...";
+  // Mark the session as authenticated so other pages' auth-guard.js
+  // will let the user through instead of bouncing back here.
+  localStorage.setItem(AUTH_KEY, "true");
 
-  button.disabled = true;
-
-  // Simulate login
   setTimeout(() => {
     window.location.href = "dashboard.html";
-  }, 1500);
+  }, 800);
 });
