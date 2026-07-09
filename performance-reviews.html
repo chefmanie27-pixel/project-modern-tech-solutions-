@@ -13,10 +13,10 @@
         <div class="nav-bar">
           <ul class="nav-content">
             <li><a href="dashboard.html">Dashboard</a></li>
-            <li class="active"><a href="employees.html">Employees</a></li>
+            <li><a href="employees.html">Employees</a></li>
             <li><a href="payroll.html">Payroll</a></li>
             <li><a href="time-off.html">Time Off</a></li>
-            <li><a href="Modern Tech/index.html">Attendance</a></li>
+            <li class="active"><a href="performance-reviews.html">Performance Reviews</a></li>
           </ul>
         </div>
       </div>
@@ -33,55 +33,16 @@
           placeholder="Search employees"
         />
 
-        <div class="employee-list" id="employeeList">
-          <div class="employee-item active" data-id="1">
-            <img class="avatar" src="images/jane-doe.jpg" alt="Jane Doe" />
-            <div>
-              <p class="employee-name">Jane Doe</p>
-              <p class="employee-meta">Software Engineer - Last review Jun</p>
-            </div>
-          </div>
-
-          <div class="employee-item" data-id="2">
-            <img
-              class="avatar"
-              src="images/john-appleseed.jpg"
-              alt="John Appleseed"
-            />
-            <div>
-              <p class="employee-name">John Appleseed</p>
-              <p class="employee-meta">Sales Rep - Last review Dec</p>
-            </div>
-          </div>
-
-          <div class="employee-item" data-id="3">
-            <img class="avatar" src="images/amy-chen.jpg" alt="Amy Chen" />
-            <div>
-              <p class="employee-name">Amy Chen</p>
-              <p class="employee-meta">Marketing Lead - No reviews yet</p>
-            </div>
-          </div>
-
-          <div class="employee-item" data-id="4">
-            <img class="avatar" src="images/mark-smith.jpg" alt="Mark Smith" />
-            <div>
-              <p class="employee-name">Mark Smith</p>
-              <p class="employee-meta">HR Manager - Last review Jun</p>
-            </div>
-          </div>
-        </div>
+        
+        <div class="employee-list" id="employeeList"></div>
       </div>
 
       <div class="detail-panel">
         <div class="detail-header">
-          <img
-            class="avatar avatar-lg"
-            src="images/jane-doe.jpg"
-            alt="Jane Doe"
-          />
+          <img class="avatar avatar-lg" id="selectedAvatar" src="" alt="" />
           <div>
-            <h2 id="selectedName">Jane Doe</h2>
-            <p id="selectedMeta">Software Engineer - Engineering</p>
+            <h2 id="selectedName"></h2>
+            <p id="selectedMeta"></p>
           </div>
           <button class="btn-primary" id="newReviewBtn">+ New review</button>
         </div>
@@ -89,31 +50,8 @@
         <div class="history-section">
           <h3>Review history</h3>
 
-          <div class="timeline" id="reviewHistory">
-            <div class="timeline-item">
-              <p class="timeline-title">Q2 2026 - Jun 30, 2026 - Mark Smith</p>
-              <p class="timeline-summary">
-                Rating 4.5/5 - Strong on communication and delivery - Growth
-                area: delegation
-              </p>
-            </div>
-
-            <div class="timeline-item">
-              <p class="timeline-title">Q1 2026 - Mar 31, 2026 - Mark Smith</p>
-              <p class="timeline-summary">
-                Rating 4.0/5 - Solid technical execution - Growth area:
-                mentoring juniors
-              </p>
-            </div>
-
-            <div class="timeline-item">
-              <p class="timeline-title">Q4 2025 - Dec 20, 2025 - Linda Ray</p>
-              <p class="timeline-summary">
-                Rating 3.5/5 - Reliable output - Growth area: proactive
-                communication
-              </p>
-            </div>
-          </div>
+         
+          <div class="timeline" id="reviewHistory"></div>
         </div>
 
         <div class="form-section">
@@ -128,10 +66,9 @@
                 <option value="Q1-2026">Q1 2026</option>
               </select>
 
-              <select class="form-select" id="reviewer">
-                <option value="">Reviewer</option>
-                <option value="mark-smith">Mark Smith</option>
-                <option value="linda-ray">Linda Ray</option>
+              
+              <select class="form-select" id="reviewer" disabled>
+                <option value="sarah-johnson" selected>Sarah Johnson (HR Manager)</option>
               </select>
             </div>
 
@@ -198,5 +135,7 @@
         </div>
       </div>
     </div>
+
+    <script src="performance-reviews.js"></script>
   </body>
 </html>

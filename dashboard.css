@@ -244,6 +244,10 @@ body {
   margin-bottom: 20px;
 }
 
+.card-row-3 {
+  align-items: start;
+}
+
 .card-row-2 > div,
 .card-row-3 > div {
   background: #ffffff;
@@ -486,6 +490,13 @@ body {
 .trend-dot {
   fill: var(--accent);
   cursor: pointer;
+  transition: transform 0.15s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.trend-dot:hover {
+  transform: scale(1.6);
 }
 
 .chart-tooltip {

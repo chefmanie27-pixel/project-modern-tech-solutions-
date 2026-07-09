@@ -1,207 +1,234 @@
-/* ==========================================================================
-   DATA
-   employeeInfo is loaded from employee_info.json (instructor-provided,
-   not modified). DUMMY_REVIEWS is fully hardcoded since performance
-   review data doesn't exist in any JSON file. Single reviewer persona
-   (Sarah Johnson, HR Manager) since there's no manager hierarchy in
-   the dummy data and no employee-facing login.
-   ========================================================================== */
+// Employee list + search + click-to-select + review history +
+// button feedback.
+// ============================================================
 
-let employeeInfo = [];
+let EMPLOYEES = [];
+let selectedEmployeeId = null;
 
-const REVIEWER = "Sarah Johnson"; // HR Manager persona, sole reviewer
+
 
 const DUMMY_REVIEWS = {
   1: [
-    { period: "Q2 2026", date: "2026-06-30", technicalSkill: 4.5, collaboration: 4.0, communication: 4.0, strengths: "Strong on delivery and code quality.", areasToGrow: "Could delegate more to juniors." },
-    { period: "Q1 2026", date: "2026-03-31", technicalSkill: 4.0, collaboration: 3.5, communication: 4.0, strengths: "Solid technical execution.", areasToGrow: "Mentoring juniors." }
+    { period: "Q2 2026", date: "2026-06-30", rating: 4.5, strengths: "Strong on communication and delivery", growthArea: "Delegation" },
+    { period: "Q1 2026", date: "2026-03-31", rating: 4.0, strengths: "Solid technical execution", growthArea: "Mentoring juniors" },
   ],
   2: [
-    { period: "Q2 2026", date: "2026-06-28", technicalSkill: 4.0, collaboration: 4.5, communication: 5.0, strengths: "Excellent people management.", areasToGrow: "Delegate more day-to-day admin tasks." }
+    { period: "Q2 2026", date: "2026-06-28", rating: 4.8, strengths: "Excellent people management and conflict resolution", growthArea: "Delegating admin tasks" },
   ],
-  3: [],
-  4: [
-    { period: "Q1 2026", date: "2026-03-15", technicalSkill: 3.5, collaboration: 4.0, communication: 4.5, strengths: "Consistently hits sales targets.", areasToGrow: "Improve CRM record-keeping." }
+  3: [
+    { period: "Q1 2026", date: "2026-03-25", rating: 3.5, strengths: "Thorough, catches edge cases others miss", growthArea: "Speeding up test cycles" },
   ],
-  5: [],
+  4: [],
+  5: [
+    { period: "Q2 2026", date: "2026-06-20", rating: 4.2, strengths: "Creative campaign ideas, strong brand sense", growthArea: "Data-driven reporting" },
+    { period: "Q4 2025", date: "2025-12-15", rating: 3.9, strengths: "Good collaboration with sales", growthArea: "Meeting deadlines" },
+  ],
   6: [
-    { period: "Q2 2026", date: "2026-06-20", technicalSkill: 4.5, collaboration: 4.0, communication: 3.5, strengths: "Great eye for detail in UI work.", areasToGrow: "Speak up more in design reviews." }
+    { period: "Q2 2026", date: "2026-06-18", rating: 4.6, strengths: "Excellent UI polish and attention to detail", growthArea: "Documenting design decisions" },
   ],
-  7: [],
+  7: [
+    { period: "Q1 2026", date: "2026-03-30", rating: 4.3, strengths: "Reliable infrastructure, fast incident response", growthArea: "Cross-team communication" },
+  ],
   8: [],
   9: [
-    { period: "Q1 2026", date: "2026-03-10", technicalSkill: 4.0, collaboration: 3.5, communication: 3.5, strengths: "Accurate, dependable reporting.", areasToGrow: "Proactive communication with other teams." }
+    { period: "Q2 2026", date: "2026-06-10", rating: 3.8, strengths: "Accurate, detail-oriented reporting", growthArea: "Process automation" },
   ],
-  10: []
+  10: [
+    { period: "Q2 2026", date: "2026-06-05", rating: 4.1, strengths: "Great customer rapport, calm under pressure", growthArea: "Ticket triage speed" },
+  ],
 };
 
-let selectedEmployeeId = 1;
+const REVIEWER_NAME = "Sarah Johnson";
 
-/* ==========================================================================
-   DATA LOADING
-   ========================================================================== */
-
-async function loadEmployeeData() {
-  const res = await fetch("data/employee_info.json");
-  if (!res.ok) throw new Error("Failed to load employee data.");
-  const json = await res.json();
-  employeeInfo = json.employeeInformation;
+function avatarUrl(name) {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=4f46e5&color=fff&size=128`;
 }
 
-/* ==========================================================================
-   HELPERS
-   ========================================================================== */
-
-function avatarPath(name) {
-  return `images/${name.toLowerCase().replace(/\s+/g, "-")}.jpg`;
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
-function averageRating(review) {
-  return ((review.technicalSkill + review.collaboration + review.communication) / 3).toFixed(1);
+async function loadEmployees() {
+  try {
+    const res = await fetch("../M1 Project Module - Employee Dummy JSON Data/employee_info.json");
+    if (!res.ok) {
+      throw new Error(`Fetch failed with status ${res.status}`);
+    }
+    const data = await res.json();
+    EMPLOYEES = data.employeeInformation;
+  } catch (err) {
+    console.error("Could not load employee_info.json:", err);
+    console.error("Check that: 1) you're running via 'python -m http.server' (not opening the file directly), and 2) the 'data' folder is in the right place relative to this HTML file.");
+    EMPLOYEES = [];
+  }
 }
-
-function getLastReviewLabel(employeeId) {
-  const reviews = DUMMY_REVIEWS[employeeId] || [];
-  if (reviews.length === 0) return "No reviews yet";
-  const sorted = [...reviews].sort((a, b) => new Date(b.date) - new Date(a.date));
-  const monthLabel = new Date(sorted[0].date).toLocaleString("en-US", { month: "short" });
-  return `Last review ${monthLabel}`;
-}
-
-/* ==========================================================================
-   RENDER: EMPLOYEE LIST (left panel)
-   ========================================================================== */
 
 function renderEmployeeList(filter = "") {
   const container = document.getElementById("employeeList");
+  if (!container) {
+    console.error(`Could not find an element with id="employeeList" - check your HTML.`);
+    return;
+  }
   container.innerHTML = "";
 
-  const filtered = employeeInfo.filter(emp =>
-    emp.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const term = filter.trim().toLowerCase();
+  const filtered = EMPLOYEES.filter((emp) => emp.name.toLowerCase().includes(term));
 
-  filtered.forEach(emp => {
+  if (filtered.length === 0) {
+    container.innerHTML = `<p class="employee-meta">No employees found.</p>`;
+    return;
+  }
+
+  filtered.forEach((emp) => {
     const item = document.createElement("div");
     item.className = "employee-item" + (emp.employeeId === selectedEmployeeId ? " active" : "");
     item.dataset.id = emp.employeeId;
+
     item.innerHTML = `
-      <img class="avatar" src="${avatarPath(emp.name)}" alt="${emp.name}" />
-      <div>
+      <img class="avatar" src="${avatarUrl(emp.name)}" alt="${emp.name}" />
+      <div class="employee-info">
         <p class="employee-name">${emp.name}</p>
-        <p class="employee-meta">${emp.position} - ${getLastReviewLabel(emp.employeeId)}</p>
+        <p class="employee-meta">${emp.position}</p>
       </div>
     `;
-    item.addEventListener("click", () => {
-      selectedEmployeeId = emp.employeeId;
-      renderEmployeeList(document.getElementById("searchInput").value);
-      renderDetailHeader();
-      renderReviewHistory();
-    });
+
+    item.addEventListener("click", () => selectEmployee(emp.employeeId));
     container.appendChild(item);
   });
 }
 
-/* ==========================================================================
-   RENDER: DETAIL HEADER (right panel top)
-   ========================================================================== */
-
-function renderDetailHeader() {
-  const employee = employeeInfo.find(e => e.employeeId === selectedEmployeeId);
-
-  document.querySelector(".detail-header .avatar-lg").src = avatarPath(employee.name);
-  document.querySelector(".detail-header .avatar-lg").alt = employee.name;
-  document.getElementById("selectedName").textContent = employee.name;
-  document.getElementById("selectedMeta").textContent = `${employee.position} - ${employee.department}`;
-}
-
-/* ==========================================================================
-   RENDER: REVIEW HISTORY (timeline)
-   ========================================================================== */
-
-function renderReviewHistory() {
+function renderHistory(id) {
   const container = document.getElementById("reviewHistory");
+  if (!container) {
+    console.error(`Could not find an element with id="reviewHistory" - check your HTML.`);
+    return;
+  }
   container.innerHTML = "";
 
-  const reviews = (DUMMY_REVIEWS[selectedEmployeeId] || [])
-    .slice()
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+  const reviews = DUMMY_REVIEWS[id] || [];
 
   if (reviews.length === 0) {
     container.innerHTML = `<p class="timeline-summary">No reviews yet.</p>`;
     return;
   }
 
-  reviews.forEach(review => {
+  reviews.forEach((r) => {
     const item = document.createElement("div");
     item.className = "timeline-item";
     item.innerHTML = `
-      <p class="timeline-title">${review.period} - ${review.date} - ${REVIEWER}</p>
-      <p class="timeline-summary">
-        Rating ${averageRating(review)}/5 - ${review.strengths} Growth area: ${review.areasToGrow}
-      </p>
+      <span class="timeline-dot"></span>
+      <div class="timeline-content">
+        <div class="timeline-row">
+          <p class="timeline-title">${r.period} - ${formatDate(r.date)}</p>
+          <span class="timeline-reviewer">${REVIEWER_NAME}</span>
+        </div>
+        <p class="timeline-summary">Rating ${r.rating}/5 - ${r.strengths} - Growth area: ${r.growthArea}</p>
+      </div>
     `;
     container.appendChild(item);
   });
 }
 
-/* ==========================================================================
-   NEW REVIEW FORM
-   ========================================================================== */
+function selectEmployee(id) {
+  selectedEmployeeId = id;
 
-function handleReviewSubmit(e) {
-  e.preventDefault();
+  const searchInput = document.getElementById("searchInput");
+  renderEmployeeList(searchInput ? searchInput.value : ""); // re-render so the clicked item gets the "active" highlight
 
-  const period = document.getElementById("reviewPeriod").value;
-  if (!period) {
-    alert("Please select a review period.");
+  const emp = EMPLOYEES.find((e) => e.employeeId === id);
+  if (!emp) return;
+
+  document.getElementById("selectedName").textContent = emp.name;
+  document.getElementById("selectedMeta").textContent = `${emp.position} - ${emp.department}`;
+  document.getElementById("selectedAvatar").src = avatarUrl(emp.name);
+
+  renderHistory(id);
+
+  // Scroll to the review form so clicking an employee "takes you" to it
+  document.querySelector(".form-section").scrollIntoView({ behavior: "smooth" });
+}
+
+function setupSearch() {
+  const searchInput = document.getElementById("searchInput");
+  if (!searchInput) {
+    console.error(`Could not find an element with id="searchInput" - check your HTML input tag has this exact id.`);
     return;
   }
-
-  const newReview = {
-    period: period.replace("-", " "),
-    date: new Date().toISOString().slice(0, 10),
-    technicalSkill: parseFloat(document.getElementById("technicalSkill").value),
-    collaboration: parseFloat(document.getElementById("collaboration").value),
-    communication: parseFloat(document.getElementById("communication").value),
-    strengths: document.getElementById("strengths").value || "N/A",
-    areasToGrow: document.getElementById("areasToGrow").value || "N/A"
-  };
-
-  if (!DUMMY_REVIEWS[selectedEmployeeId]) {
-    DUMMY_REVIEWS[selectedEmployeeId] = [];
-  }
-  DUMMY_REVIEWS[selectedEmployeeId].push(newReview);
-
-  renderReviewHistory();
-  renderEmployeeList(document.getElementById("searchInput").value);
-  document.getElementById("reviewForm").reset();
+  searchInput.addEventListener("input", (e) => {
+    renderEmployeeList(e.target.value);
+  });
 }
 
-function handleSaveDraft() {
-  // Placeholder - no backend/storage to persist a draft to yet.
-  alert("Draft saved (not yet persisted - placeholder for now).");
+function setupNewReviewButton() {
+  document.getElementById("newReviewBtn").addEventListener("click", () => {
+    document.querySelector(".form-section").scrollIntoView({ behavior: "smooth" });
+  });
 }
 
-/* ==========================================================================
-   INIT
-   ========================================================================== */
+function setupReviewForm() {
+  const form = document.getElementById("reviewForm");
 
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    await loadEmployeeData();
-    renderEmployeeList();
-    renderDetailHeader();
-    renderReviewHistory();
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-    document.getElementById("searchInput").addEventListener("input", (e) => {
-      renderEmployeeList(e.target.value);
-    });
+    if (!selectedEmployeeId) {
+      alert("Please select an employee first.");
+      return;
+    }
 
-    document.getElementById("reviewForm").addEventListener("submit", handleReviewSubmit);
-    document.getElementById("saveDraftBtn").addEventListener("click", handleSaveDraft);
-  } catch (err) {
-    console.error(err);
-    document.querySelector(".reviews-container").innerHTML =
-      `<p style="color:#e5484d;">Couldn't load employee data. Make sure you're running this via a local server (e.g. <code>python -m http.server</code>), not opening the file directly.</p>`;
+    const period = document.getElementById("reviewPeriod").value;
+    if (!period) {
+      alert("Please select a review period.");
+      return;
+    }
+
+    const technical = parseFloat(document.getElementById("technicalSkill").value);
+    const collaboration = parseFloat(document.getElementById("collaboration").value);
+    const communication = parseFloat(document.getElementById("communication").value);
+    const avgRating = Math.round(((technical + collaboration + communication) / 3) * 10) / 10;
+
+    const strengths = document.getElementById("strengths").value.trim() || "N/A";
+    const growthArea = document.getElementById("areasToGrow").value.trim() || "N/A";
+
+    const newReview = {
+      period: period.replace("-", " "),
+      date: new Date().toISOString().split("T")[0],
+      rating: avgRating,
+      strengths,
+      growthArea,
+    };
+
+    if (!DUMMY_REVIEWS[selectedEmployeeId]) DUMMY_REVIEWS[selectedEmployeeId] = [];
+    DUMMY_REVIEWS[selectedEmployeeId].unshift(newReview);
+
+    renderHistory(selectedEmployeeId);
+
+    const emp = EMPLOYEES.find((emp) => emp.employeeId === selectedEmployeeId);
+    alert(`Review submitted for ${emp.name}.`);
+    form.reset();
+  });
+
+  document.getElementById("saveDraftBtn").addEventListener("click", () => {
+    alert("Draft saved.");
+  });
+}
+
+async function init() {
+  await loadEmployees();
+
+  if (EMPLOYEES.length > 0) {
+    selectedEmployeeId = EMPLOYEES[0].employeeId;
   }
-});
+
+  renderEmployeeList();
+  if (selectedEmployeeId !== null) {
+    selectEmployee(selectedEmployeeId);
+  }
+
+  setupSearch();
+  setupNewReviewButton();
+  setupReviewForm();
+}
+
+document.addEventListener("DOMContentLoaded", init);

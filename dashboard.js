@@ -233,53 +233,93 @@ function renderPayrollTrend() {
     { month: "Apr", value: 920000 },
     { month: "May", value: 950000 },
     {
-        month: "Jun",
-        value: payrollData.reduce((sum, p) => sum + p.finalSalary, 0)
+      month: "Jun",
+      value: payrollData.reduce((sum, p) => sum + p.finalSalary, 0)
     }
-];
-
-const point = payrollHistory[payrollHistory.length - 1];
+  ];
 
   const chartWidth = 600;
   const chartHeight = 300;
-  const padding = 30;
+  const paddingX = 20;
+  const paddingTop = 20;
+  const paddingBottom = 20;
 
-  const x = chartWidth / 2;
-  const y = chartHeight - padding - 20;
+  // Work out a "nice" rounded max for the y-axis (so ticks land on
+  // round numbers like 0k, 250k, 500k... instead of odd values).
+  function computeNiceScale(maxValue, tickCount = 5) {
+    const rawStep = maxValue / (tickCount - 1);
+    const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+    const residual = rawStep / magnitude;
+    let niceResidual;
+    if (residual > 5) niceResidual = 10;
+    else if (residual > 2) niceResidual = 5;
+    else if (residual > 1) niceResidual = 2;
+    else niceResidual = 1;
+    const step = niceResidual * magnitude;
+    return { step, niceMax: step * (tickCount - 1) };
+  }
+
+  const maxValue = Math.max(...payrollHistory.map(p => p.value));
+  const { step, niceMax } = computeNiceScale(maxValue);
+
+  // Map a data point to SVG coordinates
+  const xFor = (index) =>
+    paddingX + (index / (payrollHistory.length - 1)) * (chartWidth - paddingX * 2);
+
+  const yFor = (value) =>
+    chartHeight - paddingBottom - (value / niceMax) * (chartHeight - paddingTop - paddingBottom);
 
   const svg = document.getElementById("payrollChart");
   const polylineEl = svg.querySelector(".trend-line");
-  polylineEl.setAttribute("points", ""); // no line possible with one point
 
+  // Build the polyline points across ALL months, not just the last one
+  const pointsAttr = payrollHistory
+    .map((p, i) => `${xFor(i)},${yFor(p.value)}`)
+    .join(" ");
+  polylineEl.setAttribute("points", pointsAttr);
+
+  // Clear old dots before re-drawing
   svg.querySelectorAll(".trend-dot").forEach(el => el.remove());
 
-  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-  circle.setAttribute("class", "trend-dot");
-  circle.setAttribute("cx", x);
-  circle.setAttribute("cy", y);
-  circle.setAttribute("r", 6);
-  svg.appendChild(circle);
-
-  document.getElementById("payrollYAxis").innerHTML = `
-    <span>R ${Math.round(point.value / 1000)}k</span>
-    <span>R 0k</span>
-  `;
-
-  document.getElementById("payrollXAxis").innerHTML = `<span>${point.month}</span>`;
-
   const tooltip = document.getElementById("payrollTooltip");
-  circle.addEventListener("mouseenter", () => {
-    tooltip.textContent = `${point.month}: R ${Math.round(point.value / 1000)}k`;
-    tooltip.style.opacity = "1";
+
+  payrollHistory.forEach((p, i) => {
+    const cx = xFor(i);
+    const cy = yFor(p.value);
+
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("class", "trend-dot");
+    circle.setAttribute("cx", cx);
+    circle.setAttribute("cy", cy);
+    circle.setAttribute("r", 6);
+    svg.appendChild(circle);
+
+    circle.addEventListener("mouseenter", () => {
+      tooltip.textContent = `${p.month}: R ${Math.round(p.value / 1000)}k`;
+      tooltip.style.opacity = "1";
+    });
+    circle.addEventListener("mousemove", (e) => {
+      const rect = svg.getBoundingClientRect();
+      tooltip.style.left = `${e.clientX - rect.left + 10}px`;
+      tooltip.style.top = `${e.clientY - rect.top - 10}px`;
+    });
+    circle.addEventListener("mouseleave", () => {
+      tooltip.style.opacity = "0";
+    });
   });
-  circle.addEventListener("mousemove", (e) => {
-    const rect = svg.getBoundingClientRect();
-    tooltip.style.left = `${e.clientX - rect.left + 10}px`;
-    tooltip.style.top = `${e.clientY - rect.top - 10}px`;
-  });
-  circle.addEventListener("mouseleave", () => {
-    tooltip.style.opacity = "0";
-  });
+
+  // Y-axis: ticks from niceMax down to 0, evenly spaced
+  const tickCount = 5;
+  let yAxisHtml = "";
+  for (let i = tickCount - 1; i >= 0; i--) {
+    yAxisHtml += `<span>R ${Math.round((step * i) / 1000)}k</span>`;
+  }
+  document.getElementById("payrollYAxis").innerHTML = yAxisHtml;
+
+  // X-axis: one label per month, Jan through Jun
+  document.getElementById("payrollXAxis").innerHTML = payrollHistory
+    .map(p => `<span>${p.month}</span>`)
+    .join("");
 }
 
 /* ==========================================================================
