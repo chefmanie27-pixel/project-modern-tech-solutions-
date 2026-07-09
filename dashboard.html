@@ -15,32 +15,18 @@
     <header class="header">
       <div class="nav">
         <div class="logo">Modern<span>Tech</span></div>
-        <button
-          class="nav-toggle"
-          aria-label="Toggle menu"
-          aria-expanded="false"
-        >
+        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
           <span></span><span></span><span></span>
         </button>
         <div class="nav-bar">
           <ul class="nav-content">
-            <li class="active"><a href="dashboard.html">Dashboard</a></li>
+            <li class ="active"><a href="dashboard.html">Dashboard</a></li>
             <li><a href="employees.html">Employees</a></li>
             <li><a href="payroll.html">Payroll</a></li>
             <li><a href="time-off-page.html">Time Off</a></li>
             <li><a href="Modern Tech/attendance.html">Attendance</a></li>
             <li><a href="performance-reviews.html">Performance Reviews</a></li>
-            <li>
-              <a
-                href="#"
-                onclick="
-                  localStorage.removeItem('moderntech_auth');
-                  window.location.href = 'login.html';
-                  return false;
-                "
-                >Logout</a
-              >
-            </li>
+            <li><a href="#" onclick="localStorage.removeItem('moderntech_auth'); window.location.href='index.html'; return false;">Logout</a></li>
           </ul>
         </div>
       </div>
@@ -96,7 +82,7 @@
 
         <div
           class="pending-requests"
-          onclick="window.location.href = 'timeoff.html'"
+          onclick="window.location.href = 'time-off-page.html'"
         >
           <div class="icon">
             <svg
@@ -118,7 +104,7 @@
 
         <div
           class="avg-attendance"
-          onclick="window.location.href = 'attendance.html'"
+          onclick="window.location.href = 'Modern Tech/attendance.html'"
         >
           <div class="icon">
             <svg

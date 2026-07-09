@@ -14,5 +14,5 @@
   var scriptEl = document.currentScript;
   var base = scriptEl.src.replace(/auth-guard\.js.*$/, "");
 
-  window.location.replace(base + "login.html");
+  window.location.replace(base + "index.html");
 })();

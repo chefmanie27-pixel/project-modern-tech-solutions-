@@ -15,69 +15,71 @@ const employeeInfo = [
   { employeeId: 10, name: "Fatima Patel", position: "Customer Support Lead", department: "Support", salary: 58000, contact: "fatima.patel@moderntech.com" }
 ];
 
+// NOTE: each leaveRequests entry now has a "days" field so the dashboard
+// can show a real "Duration" value instead of "N/A".
 const attendanceData = [
   { employeeId: 1, attendance: [
     { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Absent" },
     { date: "2025-07-27", status: "Present" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
   ], leaveRequests: [
-    { date: "2025-07-22", reason: "Sick Leave", status: "Approved" },
-    { date: "2024-12-01", reason: "Personal", status: "Pending" }
+    { date: "2025-07-22", days: 3, reason: "Sick Leave", status: "Approved" },
+    { date: "2024-12-01", days: 1, reason: "Personal", status: "Pending" }
   ]},
   { employeeId: 2, attendance: [
     { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
     { date: "2025-07-27", status: "Absent" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
   ], leaveRequests: [
-    { date: "2025-07-15", reason: "Family Responsibility", status: "Denied" },
-    { date: "2024-12-02", reason: "Vacation", status: "Approved" }
+    { date: "2025-07-15", days: 1, reason: "Family Responsibility", status: "Denied" },
+    { date: "2024-12-02", days: 10, reason: "Vacation", status: "Approved" }
   ]},
   { employeeId: 3, attendance: [
     { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
     { date: "2025-07-27", status: "Present" }, { date: "2025-07-28", status: "Absent" }, { date: "2025-07-29", status: "Present" }
   ], leaveRequests: [
-    { date: "2025-07-10", reason: "Medical Appointment", status: "Approved" },
-    { date: "2024-12-05", reason: "Personal", status: "Pending" }
+    { date: "2025-07-10", days: 1, reason: "Medical Appointment", status: "Approved" },
+    { date: "2024-12-05", days: 2, reason: "Personal", status: "Pending" }
   ]},
   { employeeId: 4, attendance: [
     { date: "2025-07-25", status: "Absent" }, { date: "2025-07-26", status: "Present" },
     { date: "2025-07-27", status: "Present" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
   ], leaveRequests: [
-    { date: "2025-07-20", reason: "Bereavement", status: "Approved" }
+    { date: "2025-07-20", days: 3, reason: "Bereavement", status: "Approved" }
   ]},
   { employeeId: 5, attendance: [
     { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
     { date: "2025-07-27", status: "Absent" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
   ], leaveRequests: [
-    { date: "2024-12-01", reason: "Childcare", status: "Pending" }
+    { date: "2024-12-01", days: 2, reason: "Childcare", status: "Pending" }
   ]},
   { employeeId: 6, attendance: [
     { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
     { date: "2025-07-27", status: "Absent" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
   ], leaveRequests: [
-    { date: "2025-07-18", reason: "Sick Leave", status: "Approved" }
+    { date: "2025-07-18", days: 1, reason: "Sick Leave", status: "Approved" }
   ]},
   { employeeId: 7, attendance: [
     { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
     { date: "2025-07-27", status: "Present" }, { date: "2025-07-28", status: "Absent" }, { date: "2025-07-29", status: "Present" }
   ], leaveRequests: [
-    { date: "2025-07-22", reason: "Vacation", status: "Pending" }
+    { date: "2025-07-22", days: 5, reason: "Vacation", status: "Pending" }
   ]},
   { employeeId: 8, attendance: [
     { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Absent" },
     { date: "2025-07-27", status: "Present" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
   ], leaveRequests: [
-    { date: "2024-12-02", reason: "Medical Appointment", status: "Approved" }
+    { date: "2024-12-02", days: 1, reason: "Medical Appointment", status: "Approved" }
   ]},
   { employeeId: 9, attendance: [
     { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
     { date: "2025-07-27", status: "Present" }, { date: "2025-07-28", status: "Absent" }, { date: "2025-07-29", status: "Present" }
   ], leaveRequests: [
-    { date: "2025-07-19", reason: "Childcare", status: "Denied" }
+    { date: "2025-07-19", days: 2, reason: "Childcare", status: "Denied" }
   ]},
   { employeeId: 10, attendance: [
     { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
     { date: "2025-07-27", status: "Absent" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
   ], leaveRequests: [
-    { date: "2024-12-03", reason: "Vacation", status: "Pending" }
+    { date: "2024-12-03", days: 7, reason: "Vacation", status: "Pending" }
   ]}
 ];
 
@@ -219,10 +221,7 @@ function renderDepartmentHeadcount() {
 }
 
 /* ==========================================================================
-   PAYROLL TREND (line chart — single real data point)
-   GAP: payroll_data.json has no monthly history, only one current
-   snapshot. Rather than inventing 5 fake months, this shows the one
-   real value honestly. Flag to instructor if a true trend is expected.
+   PAYROLL TREND (line chart — six-month history with a "nice" y-axis scale)
    ========================================================================== */
 
 function renderPayrollTrend() {
@@ -233,62 +232,119 @@ function renderPayrollTrend() {
     { month: "Apr", value: 920000 },
     { month: "May", value: 950000 },
     {
-        month: "Jun",
-        value: payrollData.reduce((sum, p) => sum + p.finalSalary, 0)
+      month: "Jun",
+      value: payrollData.reduce((sum, p) => sum + p.finalSalary, 0)
     }
-];
-
-const point = payrollHistory[payrollHistory.length - 1];
+  ];
 
   const chartWidth = 600;
   const chartHeight = 300;
-  const padding = 30;
+  const paddingX = 20;
+  const paddingTop = 20;
+  const paddingBottom = 20;
 
-  const x = chartWidth / 2;
-  const y = chartHeight - padding - 20;
+  // Work out a "nice" rounded max for the y-axis (so ticks land on
+  // round numbers like 0k, 250k, 500k... instead of odd values).
+  function computeNiceScale(maxValue, tickCount = 5) {
+    const rawStep = maxValue / (tickCount - 1);
+    const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+    const residual = rawStep / magnitude;
+    let niceResidual;
+    if (residual > 5) niceResidual = 10;
+    else if (residual > 2) niceResidual = 5;
+    else if (residual > 1) niceResidual = 2;
+    else niceResidual = 1;
+    const step = niceResidual * magnitude;
+    return { step, niceMax: step * (tickCount - 1) };
+  }
+
+  const maxValue = Math.max(...payrollHistory.map(p => p.value));
+  const { step, niceMax } = computeNiceScale(maxValue);
+
+  // Map a data point to SVG coordinates
+  const xFor = (index) =>
+    paddingX + (index / (payrollHistory.length - 1)) * (chartWidth - paddingX * 2);
+
+  const yFor = (value) =>
+    chartHeight - paddingBottom - (value / niceMax) * (chartHeight - paddingTop - paddingBottom);
 
   const svg = document.getElementById("payrollChart");
   const polylineEl = svg.querySelector(".trend-line");
-  polylineEl.setAttribute("points", ""); // no line possible with one point
 
+  // Build the polyline points across ALL months, not just the last one
+  const pointsAttr = payrollHistory
+    .map((p, i) => `${xFor(i)},${yFor(p.value)}`)
+    .join(" ");
+  polylineEl.setAttribute("points", pointsAttr);
+
+  // Clear old dots before re-drawing
   svg.querySelectorAll(".trend-dot").forEach(el => el.remove());
 
-  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-  circle.setAttribute("class", "trend-dot");
-  circle.setAttribute("cx", x);
-  circle.setAttribute("cy", y);
-  circle.setAttribute("r", 6);
-  svg.appendChild(circle);
-
-  document.getElementById("payrollYAxis").innerHTML = `
-    <span>R ${Math.round(point.value / 1000)}k</span>
-    <span>R 0k</span>
-  `;
-
-  document.getElementById("payrollXAxis").innerHTML = `<span>${point.month}</span>`;
-
   const tooltip = document.getElementById("payrollTooltip");
-  circle.addEventListener("mouseenter", () => {
-    tooltip.textContent = `${point.month}: R ${Math.round(point.value / 1000)}k`;
-    tooltip.style.opacity = "1";
+
+  payrollHistory.forEach((p, i) => {
+    const cx = xFor(i);
+    const cy = yFor(p.value);
+
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("class", "trend-dot");
+    circle.setAttribute("cx", cx);
+    circle.setAttribute("cy", cy);
+    circle.setAttribute("r", 6);
+    svg.appendChild(circle);
+
+    circle.addEventListener("mouseenter", () => {
+      tooltip.textContent = `${p.month}: R ${Math.round(p.value / 1000)}k`;
+      tooltip.style.opacity = "1";
+    });
+    circle.addEventListener("mousemove", (e) => {
+      const rect = svg.getBoundingClientRect();
+      tooltip.style.left = `${e.clientX - rect.left + 10}px`;
+      tooltip.style.top = `${e.clientY - rect.top - 10}px`;
+    });
+    circle.addEventListener("mouseleave", () => {
+      tooltip.style.opacity = "0";
+    });
   });
-  circle.addEventListener("mousemove", (e) => {
-    const rect = svg.getBoundingClientRect();
-    tooltip.style.left = `${e.clientX - rect.left + 10}px`;
-    tooltip.style.top = `${e.clientY - rect.top - 10}px`;
-  });
-  circle.addEventListener("mouseleave", () => {
-    tooltip.style.opacity = "0";
-  });
+
+  // Y-axis: ticks from niceMax down to 0, evenly spaced
+  const tickCount = 5;
+  let yAxisHtml = "";
+  for (let i = tickCount - 1; i >= 0; i--) {
+    yAxisHtml += `<span>R ${Math.round((step * i) / 1000)}k</span>`;
+  }
+  document.getElementById("payrollYAxis").innerHTML = yAxisHtml;
+
+  // X-axis: one label per month, Jan through Jun
+  document.getElementById("payrollXAxis").innerHTML = payrollHistory
+    .map(p => `<span>${p.month}</span>`)
+    .join("");
 }
 
 /* ==========================================================================
    PENDING LEAVE LIST
    ========================================================================== */
 
+// Adds `days` to a start date and returns "YYYY-MM-DD" for the end date.
+// days=1 means a single-day leave request, so the end date equals the start date.
+function calculateEndDate(startDate, days) {
+  const date = new Date(startDate);
+  date.setDate(date.getDate() + (days - 1));
+  return date.toISOString().slice(0, 10);
+}
+
 function renderPendingLeave() {
   const container = document.getElementById("pendingLeaveList");
   container.innerHTML = "";
+
+  const hasPending = attendanceData.some(emp =>
+    emp.leaveRequests.some(r => r.status === "Pending")
+  );
+
+  if (!hasPending) {
+    container.innerHTML = `<p class="pending-leave-empty">No pending leave requests 🎉</p>`;
+    return;
+  }
 
   attendanceData.forEach(emp => {
     const pending = emp.leaveRequests.filter(r => r.status === "Pending");
@@ -297,14 +353,22 @@ function renderPendingLeave() {
     const employee = employeeInfo.find(e => e.employeeId === emp.employeeId);
 
     pending.forEach(req => {
+      const durationLabel = `${req.days} day${req.days > 1 ? "s" : ""}`;
+      const endDate = calculateEndDate(req.date, req.days);
+
       const card = document.createElement("div");
       card.className = "employee-cards";
       card.innerHTML = `
-        <img class="avatar-img" src="images/${employee.name.toLowerCase().replace(/\s+/g, "-")}.jpg" alt="${employee.name}" />
-        <h3>${employee.name}</h3>
-        <p>Type: ${req.reason}</p>
-        <p>Duration: N/A</p>
-        <p>Start Date: ${req.date}</p>
+        <div class="leave-card-body">
+          <div class="leave-card-top">
+            <h3>${employee.name}</h3>
+            <span class="leave-type-badge">${req.reason}</span>
+          </div>
+          <div class="leave-card-meta">
+            <span class="leave-duration">${durationLabel}</span>
+            <span class="leave-dates">${req.date} &rarr; ${endDate}</span>
+          </div>
+        </div>
       `;
       container.appendChild(card);
     });

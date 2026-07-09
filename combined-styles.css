@@ -33,15 +33,14 @@
      <body class="page-login">       ... login / welcome page ...
    ========================================================================== */
 
-
 /* ==========================================================================
    1. GLOBAL DESIGN TOKENS
    ========================================================================== */
 :root {
   /* Brand palette */
-  --primary: #0b2e59;          /* Premium Deep Navy */
+  --primary: #0b2e59; /* Premium Deep Navy */
   --primary-hover: #071f3d;
-  --accent: #f7941d;           /* Vibrant Orange */
+  --accent: #f7941d; /* Vibrant Orange */
   --accent-hover: #df8414;
 
   /* Contextual states */
@@ -165,7 +164,9 @@ img {
   width: 100%;
   background-color: #ffffff;
   border-radius: 2px;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
 .nav-toggle.active span:nth-child(1) {
@@ -268,7 +269,9 @@ img {
   background-color: #ffffff;
   outline: none;
   box-shadow: var(--shadow-sm);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .toolbar input {
@@ -295,7 +298,9 @@ img {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .card {
@@ -497,15 +502,24 @@ img {
 
 /* --- Shared keyframes --- */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
 
 /* ==========================================================================
    5a. PAGE: DASHBOARD  (body.page-dashboard)
@@ -522,10 +536,18 @@ img {
   opacity: 0.95;
 }
 
-.page-dashboard .active-emplpoyees .icon svg { color: var(--danger); }
-.page-dashboard .monthly-payroll .icon svg   { color: var(--accent); }
-.page-dashboard .pending-requests .icon svg  { color: var(--info); }
-.page-dashboard .avg-attendance .icon svg    { color: var(--success); }
+.page-dashboard .active-emplpoyees .icon svg {
+  color: var(--danger);
+}
+.page-dashboard .monthly-payroll .icon svg {
+  color: var(--accent);
+}
+.page-dashboard .pending-requests .icon svg {
+  color: var(--info);
+}
+.page-dashboard .avg-attendance .icon svg {
+  color: var(--success);
+}
 
 .page-dashboard .card-row-1 {
   display: grid;
@@ -542,7 +564,10 @@ img {
   cursor: pointer;
   background-color: #ffffff;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
 }
 
 .page-dashboard .active-emplpoyees {
@@ -565,13 +590,29 @@ img {
   background-color: #e6f6ef;
 }
 
-.page-dashboard .active-emplpoyees h2 { color: var(--danger); font-weight: 700; }
-.page-dashboard .monthly-payroll h2   { color: var(--accent); font-weight: 700; }
-.page-dashboard .pending-requests h2  { color: var(--info); font-weight: 700; }
-.page-dashboard .avg-attendance h2    { color: var(--success); font-weight: 700; }
+.page-dashboard .active-emplpoyees h2 {
+  color: var(--danger);
+  font-weight: 700;
+}
+.page-dashboard .monthly-payroll h2 {
+  color: var(--accent);
+  font-weight: 700;
+}
+.page-dashboard .pending-requests h2 {
+  color: var(--info);
+  font-weight: 700;
+}
+.page-dashboard .avg-attendance h2 {
+  color: var(--success);
+  font-weight: 700;
+}
 
-.page-dashboard .card-row-1 > div:hover { transform: translateY(-6px); }
-.page-dashboard .card-row-1 > div:active { transform: translateY(-2px); }
+.page-dashboard .card-row-1 > div:hover {
+  transform: translateY(-6px);
+}
+.page-dashboard .card-row-1 > div:active {
+  transform: translateY(-2px);
+}
 
 .page-dashboard .active-emplpoyees:hover {
   box-shadow: 0 12px 25px rgba(239, 68, 68, 0.25);
@@ -679,9 +720,16 @@ img {
   position: relative;
 }
 
-.page-dashboard .bar.present { background-color: var(--primary); }
-.page-dashboard .bar.absent  { background-color: #e5e7eb; }
-.page-dashboard .bar.leave   { background-color: var(--accent); opacity: 0.55; }
+.page-dashboard .bar.present {
+  background-color: var(--primary);
+}
+.page-dashboard .bar.absent {
+  background-color: #e5e7eb;
+}
+.page-dashboard .bar.leave {
+  background-color: var(--accent);
+  opacity: 0.55;
+}
 
 .page-dashboard .bar-label {
   font-size: 11px;
@@ -733,9 +781,15 @@ img {
   display: inline-block;
 }
 
-.page-dashboard .legend-dot.present { background-color: var(--primary); }
-.page-dashboard .legend-dot.absent  { background-color: #e5e7eb; }
-.page-dashboard .legend-dot.leave   { background-color: var(--accent); }
+.page-dashboard .legend-dot.present {
+  background-color: var(--primary);
+}
+.page-dashboard .legend-dot.absent {
+  background-color: #e5e7eb;
+}
+.page-dashboard .legend-dot.leave {
+  background-color: var(--accent);
+}
 
 .page-dashboard .dept-list {
   display: flex;
@@ -772,15 +826,33 @@ img {
   position: relative;
 }
 
-.page-dashboard .dept-bar-row:nth-child(1) .bar-fill { background-color: var(--danger); }
-.page-dashboard .dept-bar-row:nth-child(2) .bar-fill { background-color: var(--accent); }
-.page-dashboard .dept-bar-row:nth-child(3) .bar-fill { background-color: #f0c33e; }
-.page-dashboard .dept-bar-row:nth-child(4) .bar-fill { background-color: var(--info); }
-.page-dashboard .dept-bar-row:nth-child(5) .bar-fill { background-color: var(--violet); }
-.page-dashboard .dept-bar-row:nth-child(6) .bar-fill { background-color: var(--success); }
-.page-dashboard .dept-bar-row:nth-child(7) .bar-fill { background-color: var(--danger); }
-.page-dashboard .dept-bar-row:nth-child(8) .bar-fill { background-color: var(--accent); }
-.page-dashboard .dept-bar-row:nth-child(9) .bar-fill { background-color: #f0c33e; }
+.page-dashboard .dept-bar-row:nth-child(1) .bar-fill {
+  background-color: var(--danger);
+}
+.page-dashboard .dept-bar-row:nth-child(2) .bar-fill {
+  background-color: var(--accent);
+}
+.page-dashboard .dept-bar-row:nth-child(3) .bar-fill {
+  background-color: #f0c33e;
+}
+.page-dashboard .dept-bar-row:nth-child(4) .bar-fill {
+  background-color: var(--info);
+}
+.page-dashboard .dept-bar-row:nth-child(5) .bar-fill {
+  background-color: var(--violet);
+}
+.page-dashboard .dept-bar-row:nth-child(6) .bar-fill {
+  background-color: var(--success);
+}
+.page-dashboard .dept-bar-row:nth-child(7) .bar-fill {
+  background-color: var(--danger);
+}
+.page-dashboard .dept-bar-row:nth-child(8) .bar-fill {
+  background-color: var(--accent);
+}
+.page-dashboard .dept-bar-row:nth-child(9) .bar-fill {
+  background-color: #f0c33e;
+}
 
 .page-dashboard .dept-count {
   font-size: 13px;
@@ -861,28 +933,116 @@ img {
   text-decoration: underline;
 }
 
+/* --------------------------------------------------------------------------
+   Pending Leave Requests list
+   -------------------------------------------------------------------------- */
+
+.page-dashboard #pendingLeaveList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.page-dashboard #pendingLeaveList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.page-dashboard #pendingLeaveList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.page-dashboard #pendingLeaveList::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: var(--radius-pill);
+}
+
 .page-dashboard .employee-cards {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 14px;
   background-color: var(--neutral-light);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 12px 16px;
-  margin-bottom: 10px;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
-.page-dashboard .avatar-img {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-  border: 2px solid #ffffff;
+.page-dashboard .employee-cards:hover {
   box-shadow: var(--shadow-sm);
+  border-color: rgba(59, 130, 246, 0.35);
+  transform: translateY(-2px);
 }
 
+.page-dashboard .leave-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.page-dashboard .leave-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.page-dashboard .leave-card-top h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.page-dashboard .leave-type-badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  background-color: rgba(247, 148, 29, 0.12);
+  border: 1px solid rgba(247, 148, 29, 0.3);
+  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.page-dashboard .leave-card-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.page-dashboard .leave-duration {
+  font-weight: 600;
+  color: var(--info);
+  background-color: rgba(59, 130, 246, 0.1);
+  border-radius: var(--radius-pill);
+  padding: 2px 9px;
+}
+
+.page-dashboard .leave-dates {
+  white-space: nowrap;
+}
+
+.page-dashboard .pending-leave-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 24px 0;
+}
 
 /* ==========================================================================
    5b. PAGE: EMPLOYEE DIRECTORY  (body.page-employees)
@@ -1038,7 +1198,9 @@ img {
   color: var(--text-main);
   background-color: #ffffff;
   box-sizing: border-box;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .page-employees .edit-input:focus {
@@ -1111,7 +1273,9 @@ img {
   font-size: 0.95rem;
   background-color: transparent;
   box-sizing: border-box;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .page-employees .form-group input:focus {
@@ -1126,7 +1290,6 @@ img {
   gap: 12px;
   margin-top: 35px;
 }
-
 
 /* ==========================================================================
    5c. PAGE: PAYROLL  (body.page-payroll)
@@ -1155,7 +1318,6 @@ img {
 .page-payroll .badge {
   margin-left: 10px;
 }
-
 
 /* ==========================================================================
    5d. PAGE: PERFORMANCE REVIEWS  (body.page-reviews)
@@ -1189,7 +1351,9 @@ img {
   font-size: 0.9rem;
   color: var(--text-main);
   background-color: var(--neutral-light);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .page-reviews .search-input:focus {
@@ -1411,7 +1575,9 @@ img {
   font-size: 0.9rem;
   color: var(--text-main);
   background-color: #ffffff;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .page-reviews .form-select:focus {
@@ -1455,7 +1621,9 @@ img {
   font-size: 0.9rem;
   color: var(--text-main);
   resize: vertical;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .page-reviews .form-textarea:focus {
@@ -1470,7 +1638,6 @@ img {
   gap: 12px;
 }
 
-
 /* ==========================================================================
    5e. PAGE: LEAVE MANAGEMENT  (body.page-leave)
    ========================================================================== */
@@ -1484,7 +1651,7 @@ body.page-leave {
 .page-leave .main-content,
 .page-leave .main {
   flex: 1;
-  width: 100%;            /* Ensure it takes full width up to the max-width */
+  width: 100%; /* Ensure it takes full width up to the max-width */
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 30px;
@@ -1493,15 +1660,39 @@ body.page-leave {
 }
 
 .page-leave .header {
+  display: flex !important;
+  /* Forces the text to the absolute left and button to the absolute right */
+  justify-content: space-between !important;
+  align-items: center !important;
+
+  /* Ensures it takes up the exact same width as your cards and tabs */
+  width: 100% !important;
+  max-width: 1200px;
+  margin: 0 auto 35px auto !important;
+
+  /* Reset any stray positioning or floats */
+  float: none;
+  clear: both;
+}
+
+/* Ensure the heading text elements stay neatly stacked on the left */
+.page-leave .header > div {
   display: flex;
-  justify-content: space-between;
-  align-items: center; /* Changed from flex-start to center */
-  margin-bottom: 35px;
-  width: 100%;         /* Ensures it spans the full container width */
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.page-leave .header h1 {
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left;
 }
 
 .page-leave .header p {
-  margin-top: 0.25rem;
+  margin: 4px 0 0 0 !important;
+  padding: 0 !important;
+  text-align: left;
 }
 
 .page-leave .tabs {
@@ -1677,8 +1868,14 @@ body.page-leave {
 }
 
 @keyframes popup {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .page-leave .modal-header {
@@ -1729,7 +1926,9 @@ body.page-leave {
   color: var(--text-main);
   outline: none;
   background-color: #ffffff;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .page-leave select:focus,
@@ -1807,7 +2006,6 @@ body.page-leave {
   }
 }
 
-
 /* ==========================================================================
    5f. PAGE: ATTENDANCE  (body.page-attendance)
    ========================================================================== */
@@ -1817,7 +2015,9 @@ body.page-leave {
   border-radius: var(--radius-lg);
   padding: 24px;
   box-shadow: var(--shadow-md);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .page-attendance .stat-card:hover {
@@ -1886,7 +2086,9 @@ body.page-leave {
   color: var(--text-main);
   background-color: #ffffff;
   outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .page-attendance .filter-input:focus {
@@ -1991,7 +2193,6 @@ body.page-leave {
   background-color: #fce8e6;
   color: var(--danger);
 }
-
 
 /* ==========================================================================
    5g. PAGE: LOGIN / WELCOME  (body.page-login)
@@ -2171,7 +2372,6 @@ body.page-login {
     font-size: 18px;
   }
 }
-
 
 /* ==========================================================================
    6. RESPONSIVE LAYOUT

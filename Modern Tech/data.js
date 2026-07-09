@@ -1,6 +1,3 @@
-
-
-
 const employeeData = {
     employeeInformation: [
         {
