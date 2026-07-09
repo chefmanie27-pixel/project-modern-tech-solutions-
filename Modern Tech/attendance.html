@@ -17,11 +17,14 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="style.css" />
+    <!-- This page lives in a subfolder (see the "../" links below), so the
+         combined stylesheet is referenced one directory up. Adjust this
+         path if you move the file elsewhere. -->
+    <link rel="stylesheet" href="../combined-styles.css" />
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   </head>
-  <body>
+  <body class="page-attendance">
     <div id="app">
       <div class="nav">
         <div class="logo">Modern<span>Tech</span></div>
