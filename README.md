@@ -4,7 +4,7 @@
 
 A front-end web application (proof of concept) built for **ModernTech Solutions**, a healthcare software company, to replace their fragmented spreadsheet-and-email HR processes with a single, user-friendly HR portal.
 
-This project was built as the Module 1 Core Project for Life Choices Academy's Software Development course. It is a **client-side only** application — all data is dummy/demo data stored and manipulated in the browser (no back-end or database).
+This project was built as the Module 1 Core Project for Life Choices Academy's Software Development course. It is a **client-side only** application, all data is dummy/demo data stored and manipulated in the browser (no back-end or database).
 
 ## Features
 
@@ -73,7 +73,7 @@ project-modern-tech-solutions/
    - **Password:** `admin123`
 3. Click **Sign In**. You'll be redirected to the Dashboard.
 
-> Login uses hardcoded demo credentials and `localStorage` to simulate an authenticated session. Every page other than the login page is protected — if you aren't logged in, you'll automatically be redirected back to `index.html`.
+> Login uses hardcoded demo credentials and `localStorage` to simulate an authenticated session. Every page other than the login page is protected, if you aren't logged in, you'll automatically be redirected back to `index.html`.
 
 ### 3. Navigating the system
 
@@ -100,3 +100,6 @@ Once logged in, use the top navigation bar to move between pages:
 ### Figma Link
 
 - https://www.figma.com/design/XRBCO1Ay0vCAoLJJ9kVhI9/Untitled?node-id=0-1&t=2DelupChxbIR18RJ-1
+
+### Documentation
+- https://docs.google.com/document/d/1sxEHHnBx0LIYWaZP_X5DVdWOzyei0bht_WTkcLZKbXo/edit?usp=sharing
