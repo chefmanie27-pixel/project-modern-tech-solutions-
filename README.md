@@ -21,7 +21,7 @@ This project was built as the Module 1 Core Project for Life Choices Academy's S
 | Team Member | Contributions |
 |---|---|
 | **Azhar** | Employees page, Payroll page, project merging/integration lead — merged and linked all separate branch files, consolidated all CSS into a single stylesheet (`combined-styles.css`) |
-| **James** | Dashboard page, Performance Reviews page |
+| **James** | Dashboard page, Performance Reviews page and figma design |
 | **Wendy** | Login page, Time Off page |
 | **Avela** | Attendance page |
 
