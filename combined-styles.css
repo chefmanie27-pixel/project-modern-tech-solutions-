@@ -108,6 +108,19 @@ img {
   background-color: var(--primary);
   padding: 20px 40px;
   box-shadow: var(--shadow-sm);
+  line-height: 1; /* stop inheriting Bootstrap's --bs-body-line-height */
+}
+
+.nav-bar,
+.nav-content {
+  display: flex;
+  align-items: center;
+}
+
+.nav-content li a {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
 }
 
 .logo {
@@ -115,6 +128,9 @@ img {
   font-weight: 700;
   letter-spacing: -0.5px;
   color: #ffffff;
+  line-height: 1;
+  display: flex;
+  align-items: center;
 }
 
 .logo span {
@@ -129,6 +145,8 @@ img {
   display: flex;
   list-style: none;
   gap: 28px;
+  margin: 0;
+  padding: 0;
 }
 
 .nav-content li a {
@@ -1659,40 +1677,33 @@ body.page-leave {
   box-sizing: border-box; /* Prevents padding from adding to the width */
 }
 
+/* Heading block only — mirrors .page-employees .header, which holds just
+   the title + subtitle. The "+ New Request" button now lives in its own
+   .action-container row below, instead of being squeezed into this one. */
 .page-leave .header {
-  display: flex !important;
-  /* Forces the text to the absolute left and button to the absolute right */
-  justify-content: space-between !important;
-  align-items: center !important;
-
-  /* Ensures it takes up the exact same width as your cards and tabs */
   width: 100% !important;
   max-width: 1200px;
-  margin: 0 auto 35px auto !important;
-
-  /* Reset any stray positioning or floats */
+  margin: 0 auto 24px auto !important;
   float: none;
   clear: both;
 }
 
-/* Ensure the heading text elements stay neatly stacked on the left */
-.page-leave .header > div {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-}
-
 .page-leave .header h1 {
-  margin: 0 !important;
-  padding: 0 !important;
   text-align: left;
 }
 
 .page-leave .header p {
-  margin: 4px 0 0 0 !important;
-  padding: 0 !important;
   text-align: left;
+}
+
+/* Action row — mirrors .page-employees .action-container: its own row,
+   right-aligned, sitting under the heading block. */
+.page-leave .action-container {
+  max-width: 1200px;
+  margin: 0 auto 24px auto;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
 .page-leave .tabs {
@@ -1995,10 +2006,8 @@ body.page-leave {
   .page-leave .grid {
     grid-template-columns: 1fr;
   }
-  .page-leave .header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
+  .page-leave .action-container {
+    justify-content: flex-start;
   }
   .page-leave .breakdown-wrapper {
     flex-direction: column;
@@ -2596,9 +2605,21 @@ body.page-login {
     width: 100%;
   }
 
-  /* Leave: request form's date pickers stack */
+  /* Leave: request form's date pickers stack, action row stacks with the
+     heading, buttons stretch full width like the Employees page does */
   .page-leave .date-row {
     grid-template-columns: 1fr;
+  }
+
+  .page-leave .action-container {
+    padding: 0;
+    flex-wrap: wrap;
+    justify-content: stretch;
+  }
+
+  .page-leave .action-container .btn {
+    flex: 1 1 auto;
+    min-width: 130px;
   }
 
   /* Attendance: filter inputs take the full row width when they wrap */
