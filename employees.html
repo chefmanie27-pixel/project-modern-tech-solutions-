@@ -3,21 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="auth-guard.js"></script>
     <title>ModernTech | Employee Management</title>
-    <link rel="stylesheet" href="employees-style.css" />
+    <link rel="stylesheet" href="combined-styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
-  <body>
+  <body class="page-employees">
     <!-- Top Navigation -->
     <div class="nav">
       <div class="logo">Modern<span>Tech</span></div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
       <div class="nav-bar">
         <ul class="nav-content">
           <li><a href="dashboard.html">Dashboard</a></li>
           <li class="active"><a href="employees.html">Employees</a></li>
           <li><a href="payroll.html">Payroll</a></li>
-          <li><a href="time-off.html">Time Off</a></li>
-          <li><a href="attendance.html">Attendance</a></li>
+          <li><a href="time-off-page.html">Time Off</a></li>
+          <li><a href="Modern Tech/attendance.html">Attendance</a></li>
+          <li><a href="performance-reviews.html">Performance Reviews</a></li>
+          <li>
+            <a
+              href="#"
+              onclick="
+                localStorage.removeItem('moderntech_auth');
+                window.location.href = 'index.html';
+                return false;
+              "
+              >Logout</a
+            >
+          </li>
         </ul>
       </div>
     </div>
@@ -32,7 +52,11 @@
     <div class="action-container">
       <button class="btn btn-edit-mode" id="employeeBtn">Edit Employees</button>
       <button class="btn btn-add" id="addEmployeeBtn">+ Add Employee</button>
-      <button class="btn btn-reset" id="resetBtn" title="Restore the default demo dataset">
+      <button
+        class="btn btn-reset"
+        id="resetBtn"
+        title="Restore the default demo dataset"
+      >
         Reset to Defaults
       </button>
     </div>
@@ -501,5 +525,6 @@
         }
       });
     </script>
+    <script src="nav.js"></script>
   </body>
 </html>

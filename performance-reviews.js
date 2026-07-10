@@ -1,10 +1,10 @@
 /* ==========================================================================
    DATA
-   employeeInfo is loaded from employee_info.json (instructor-provided,
-   not modified). DUMMY_REVIEWS is fully hardcoded since performance
-   review data doesn't exist in any JSON file. Single reviewer persona
-   (Sarah Johnson, HR Manager) since there's no manager hierarchy in
-   the dummy data and no employee-facing login.
+   employeeInfo is loaded from data/employee_info.json (10 real employees).
+   DUMMY_REVIEWS is hardcoded since performance review data doesn't exist
+   in any JSON file — keyed by the same employeeId used in employee_info.json.
+   Single reviewer persona (Sarah Johnson, HR Manager) since there's no
+   manager hierarchy in the data and no employee-facing login.
    ========================================================================== */
 
 let employeeInfo = [];
@@ -56,6 +56,23 @@ function avatarPath(name) {
   return `images/${name.toLowerCase().replace(/\s+/g, "-")}.jpg`;
 }
 
+// Falls back to a generated initials avatar if a photo file isn't present
+// on disk (this project doesn't ship headshots for the real employee list).
+function handleAvatarError(imgEl, name) {
+  imgEl.onerror = null;
+  const initials = name
+    .split(" ")
+    .map(part => part[0])
+    .join("")
+    .toUpperCase();
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+    <rect width="100%" height="100%" fill="#0B2E59"/>
+    <text x="50%" y="50%" fill="#ffffff" font-family="Poppins, sans-serif"
+          font-size="30" font-weight="600" text-anchor="middle" dy=".35em">${initials}</text>
+  </svg>`;
+  imgEl.src = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
 function averageRating(review) {
   return ((review.technicalSkill + review.collaboration + review.communication) / 3).toFixed(1);
 }
@@ -80,6 +97,11 @@ function renderEmployeeList(filter = "") {
     emp.name.toLowerCase().includes(filter.toLowerCase())
   );
 
+  if (filtered.length === 0) {
+    container.innerHTML = `<p class="employee-meta">No employees match "${filter}".</p>`;
+    return;
+  }
+
   filtered.forEach(emp => {
     const item = document.createElement("div");
     item.className = "employee-item" + (emp.employeeId === selectedEmployeeId ? " active" : "");
@@ -91,6 +113,9 @@ function renderEmployeeList(filter = "") {
         <p class="employee-meta">${emp.position} - ${getLastReviewLabel(emp.employeeId)}</p>
       </div>
     `;
+    item.querySelector("img").addEventListener("error", function () {
+      handleAvatarError(this, emp.name);
+    });
     item.addEventListener("click", () => {
       selectedEmployeeId = emp.employeeId;
       renderEmployeeList(document.getElementById("searchInput").value);
@@ -107,9 +132,13 @@ function renderEmployeeList(filter = "") {
 
 function renderDetailHeader() {
   const employee = employeeInfo.find(e => e.employeeId === selectedEmployeeId);
+  if (!employee) return;
 
-  document.querySelector(".detail-header .avatar-lg").src = avatarPath(employee.name);
-  document.querySelector(".detail-header .avatar-lg").alt = employee.name;
+  const headerAvatar = document.querySelector(".detail-header .avatar-lg");
+  headerAvatar.src = avatarPath(employee.name);
+  headerAvatar.alt = employee.name;
+  headerAvatar.onerror = () => handleAvatarError(headerAvatar, employee.name);
+
   document.getElementById("selectedName").textContent = employee.name;
   document.getElementById("selectedMeta").textContent = `${employee.position} - ${employee.department}`;
 }

@@ -3,11 +3,49 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="auth-guard.js"></script>
     <title>Performance Reviews - ModernTech Solutions</title>
-    <link rel="stylesheet" href="performance-reviews.css" />
+    <link rel="stylesheet" href="combined-styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body>
+  <body class="page-reviews">
     <header class="header">
+      <div class="nav">
+        <div class="logo">Modern<span>Tech</span></div>
+        <button
+          class="nav-toggle"
+          aria-label="Toggle menu"
+          aria-expanded="false"
+        >
+          <span></span><span></span><span></span>
+        </button>
+        <div class="nav-bar">
+          <ul class="nav-content">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="employees.html">Employees</a></li>
+            <li><a href="payroll.html">Payroll</a></li>
+            <li><a href="time-off-page.html">Time Off</a></li>
+            <li><a href="Modern Tech/attendance.html">Attendance</a></li>
+            <li class="active">
+              <a href="performance-reviews.html">Performance Reviews</a>
+            </li>
+            <li>
+              <a
+                href="#"
+                onclick="
+                  localStorage.removeItem('moderntech_auth');
+                  window.location.href = 'index.html';
+                  return false;
+                "
+                >Logout</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
       <h1>Performance Reviews</h1>
       <p class="subtitle">Track review cycles and outcomes across the team</p>
     </header>
@@ -21,87 +59,26 @@
           placeholder="Search employees"
         />
 
+        <!-- Populated dynamically by reviews.js from data/employee_info.json -->
         <div class="employee-list" id="employeeList">
-          <div class="employee-item active" data-id="1">
-            <img class="avatar" src="images/jane-doe.jpg" alt="Jane Doe" />
-            <div>
-              <p class="employee-name">Jane Doe</p>
-              <p class="employee-meta">Software Engineer - Last review Jun</p>
-            </div>
-          </div>
-
-          <div class="employee-item" data-id="2">
-            <img
-              class="avatar"
-              src="images/john-appleseed.jpg"
-              alt="John Appleseed"
-            />
-            <div>
-              <p class="employee-name">John Appleseed</p>
-              <p class="employee-meta">Sales Rep - Last review Dec</p>
-            </div>
-          </div>
-
-          <div class="employee-item" data-id="3">
-            <img class="avatar" src="images/amy-chen.jpg" alt="Amy Chen" />
-            <div>
-              <p class="employee-name">Amy Chen</p>
-              <p class="employee-meta">Marketing Lead - No reviews yet</p>
-            </div>
-          </div>
-
-          <div class="employee-item" data-id="4">
-            <img class="avatar" src="images/mark-smith.jpg" alt="Mark Smith" />
-            <div>
-              <p class="employee-name">Mark Smith</p>
-              <p class="employee-meta">HR Manager - Last review Jun</p>
-            </div>
-          </div>
+          <p class="employee-meta">Loading employees...</p>
         </div>
       </div>
 
       <div class="detail-panel">
         <div class="detail-header">
-          <img
-            class="avatar avatar-lg"
-            src="images/jane-doe.jpg"
-            alt="Jane Doe"
-          />
+          <img class="avatar avatar-lg" src="" alt="" />
           <div>
-            <h2 id="selectedName">Jane Doe</h2>
-            <p id="selectedMeta">Software Engineer - Engineering</p>
+            <h2 id="selectedName">Loading...</h2>
+            <p id="selectedMeta"></p>
           </div>
-          <button class="btn-primary" id="newReviewBtn">+ New review</button>
         </div>
 
         <div class="history-section">
           <h3>Review history</h3>
 
-          <div class="timeline" id="reviewHistory">
-            <div class="timeline-item">
-              <p class="timeline-title">Q2 2026 - Jun 30, 2026 - Mark Smith</p>
-              <p class="timeline-summary">
-                Rating 4.5/5 - Strong on communication and delivery - Growth
-                area: delegation
-              </p>
-            </div>
-
-            <div class="timeline-item">
-              <p class="timeline-title">Q1 2026 - Mar 31, 2026 - Mark Smith</p>
-              <p class="timeline-summary">
-                Rating 4.0/5 - Solid technical execution - Growth area:
-                mentoring juniors
-              </p>
-            </div>
-
-            <div class="timeline-item">
-              <p class="timeline-title">Q4 2025 - Dec 20, 2025 - Linda Ray</p>
-              <p class="timeline-summary">
-                Rating 3.5/5 - Reliable output - Growth area: proactive
-                communication
-              </p>
-            </div>
-          </div>
+          <!-- Populated dynamically by reviews.js -->
+          <div class="timeline" id="reviewHistory"></div>
         </div>
 
         <div class="form-section">
@@ -118,8 +95,7 @@
 
               <select class="form-select" id="reviewer">
                 <option value="">Reviewer</option>
-                <option value="mark-smith">Mark Smith</option>
-                <option value="linda-ray">Linda Ray</option>
+                <option value="sarah-johnson">Sarah Johnson</option>
               </select>
             </div>
 
@@ -186,6 +162,7 @@
         </div>
       </div>
     </div>
-
   </body>
+  <script src="nav.js"></script>
+  <script src="performance-reviews.js"></script>
 </html>
