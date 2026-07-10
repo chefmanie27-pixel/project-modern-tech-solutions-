@@ -96,3 +96,7 @@ Once logged in, use the top navigation bar to move between pages:
 
 - This is a **proof-of-concept front-end only** build — no real back-end, database, or payment/payroll processing is connected.
 - Best viewed in an up-to-date version of Chrome, Firefox, Edge, or Safari.
+
+### Figma Link
+
+- https://www.figma.com/design/XRBCO1Ay0vCAoLJJ9kVhI9/Untitled?node-id=0-1&t=2DelupChxbIR18RJ-1
