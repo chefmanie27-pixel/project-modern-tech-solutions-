@@ -8,13 +8,13 @@ This project was built as the Module 1 Core Project for Life Choices Academy's S
 
 ## Features
 
-- **Login / Access Portal** — simple authentication gate before entering the system
-- **Dashboard** — KPI overview (active employees, monthly payroll, pending requests, average attendance) plus charts for attendance, department headcount, and payroll trends
-- **Employee Management** — add, view, and manage employee records (personal info, salary details, employment history)
-- **Payroll** — automated payroll calculations (gross pay, deductions, net pay) with digital payslip generation
-- **Time Off** — submit and manage leave requests
-- **Attendance** — track and view employee attendance
-- **Performance Reviews** — view review history and submit new performance reviews
+- **Login / Access Portal** - simple authentication gate before entering the system
+- **Dashboard** - KPI overview (active employees, monthly payroll, pending requests, average attendance) plus charts for attendance, department headcount, and payroll trends
+- **Employee Management** - add, view, and manage employee records (personal info, salary details, employment history)
+- **Payroll** - automated payroll calculations (gross pay, deductions, net pay) with digital payslip generation
+- **Time Off** - submit and manage leave requests
+- **Attendance** - track and view employee attendance
+- **Performance Reviews** - view review history and submit new performance reviews
 
 ## Team & Contributions
 
@@ -79,20 +79,20 @@ project-modern-tech-solutions/
 
 Once logged in, use the top navigation bar to move between pages:
 
-- **Dashboard** – snapshot of key HR metrics and charts
-- **Employees** – view the employee list and use the *Add New Employee* form to add a new record
-- **Payroll** – select an employee to view/generate their payslip (gross pay, deductions, net pay)
-- **Time Off** – submit a new leave request and view existing requests
-- **Attendance** – view attendance records per employee
-- **Performance Reviews** – select an employee to view their review history or submit a new review
+- **Dashboard** - snapshot of key HR metrics and charts
+- **Employees** - view the employee list and use the *Add New Employee* form to add a new record
+- **Payroll** - select an employee to view/generate their payslip (gross pay, deductions, net pay)
+- **Time Off** - submit a new leave request and view existing requests
+- **Attendance** - view attendance records per employee
+- **Performance Reviews** - select an employee to view their review history or submit a new review
 
 ### 4. Things to keep in mind
 
-- All data is **dummy data** stored in JavaScript files (`data.js`, `employee_info.json`) or generated in-browser — nothing is saved to a real database, so refreshing the page may reset any unsaved changes depending on the page.
-- The interface is **responsive** — try resizing your browser window, or open it on a tablet/phone, to see the layout adapt.
+- All data is **dummy data** stored in JavaScript files (`data.js`, `employee_info.json`) or generated in-browser - nothing is saved to a real database, so refreshing the page may reset any unsaved changes depending on the page.
+- The interface is **responsive** - try resizing your browser window, or open it on a tablet/phone, to see the layout adapt.
 - To log out and test the login flow again, clear your browser's local storage for the site (or open the site in a private/incognito window).
 
 ## Notes
 
-- This is a **proof-of-concept front-end only** build — no real back-end, database, or payment/payroll processing is connected.
+- This is a **proof-of-concept front-end only** build - no real back-end, database, or payment/payroll processing is connected.
 - Best viewed in an up-to-date version of Chrome, Firefox, Edge, or Safari.
