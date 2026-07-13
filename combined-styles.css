@@ -1,39 +1,4 @@
 /* ==========================================================================
-   COMBINED STYLESHEET
-   Merged from: dashboard, employee-directory, payroll, reviews,
-   leave-management, attendance, and login/welcome stylesheets.
-
-   HOW THIS FILE IS ORGANIZED
-   --------------------------
-   1) Global design tokens (:root) — union of every variable used anywhere.
-   2) Global reset + base body styles.
-   3) Global navigation bar (identical on every page, so defined once).
-   4) Shared components that were IDENTICAL (or safely compatible) across
-      multiple source files — buttons, cards, badges, tables, keyframes, etc.
-   5) Page-specific sections, each scoped under a body/page class
-      (.page-dashboard, .page-employees, .page-payroll, .page-reviews,
-      .page-leave, .page-attendance, .page-login) because several source
-      files reused the SAME class name (.header, .btn, .modal, .main-content,
-      form/input/select, etc.) with DIFFERENT rules. Scoping under a page
-      class keeps those from clobbering each other now that everything
-      lives in one file.
-   6) Responsive layout — breakpoints at 1024px / 768px / 480px, grouped by
-      breakpoint (not by page) so the whole site's mobile behavior can be
-      scanned in one place.
-
-   HOW TO USE
-   ----------
-   Add the matching class to the <body> tag of each page, e.g.:
-     <body class="page-dashboard">   ... dashboard page ...
-     <body class="page-employees">   ... employee directory page ...
-     <body class="page-payroll">     ... payroll page ...
-     <body class="page-reviews">     ... performance reviews page ...
-     <body class="page-leave">       ... leave management page ...
-     <body class="page-attendance">  ... attendance page ...
-     <body class="page-login">       ... login / welcome page ...
-   ========================================================================== */
-
-/* ==========================================================================
    1. GLOBAL DESIGN TOKENS
    ========================================================================== */
 :root {
