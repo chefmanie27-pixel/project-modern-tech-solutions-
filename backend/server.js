@@ -14,8 +14,8 @@ const employeesRoutes = require("./routes/employees.routes");
 // const authRoutes = require("./routes/auth.routes");            // Wendy
 // const timeoffRoutes = require("./routes/timeoff.routes");      // Wendy
 // const attendanceRoutes = require("./routes/attendance.routes");// Avela
-// const dashboardRoutes = require("./routes/dashboard.routes");  // James
-// const performanceRoutes = require("./routes/performance.routes"); // James
+const dashboardRoutes = require("./routes/dashboard.routes");  // James
+const performanceRoutes = require("./routes/performance.routes"); // James
 // const payrollRoutes = require("./routes/payroll.routes");      // Azhar
 
 const app = express();
@@ -36,8 +36,8 @@ app.use("/api/v1/employees", employeesRoutes);
 // app.use("/api/v1/auth", authRoutes);
 // app.use("/api/v1/timeoff", timeoffRoutes);
 // app.use("/api/v1/attendance", attendanceRoutes);
-// app.use("/api/v1/dashboard", dashboardRoutes);
-// app.use("/api/v1/performance", performanceRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
+app.use("/api/v1/performance", performanceRoutes);
 // app.use("/api/v1/payroll", payrollRoutes);
 
 // --- 404 fallback ---
