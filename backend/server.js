@@ -1,15 +1,19 @@
 const express = require("express");
 const cors = require("cors");
-const helmet = require("helmet");
-require("dotenv").config();
+
+const env = require("./config/env");
+const { testDatabaseConnection } = require("./config/db");
+const authRoutes = require("./routes/auth.routes");
 
 const app = express();
 
-app.use(cors());
-app.use(helmet());
-app.use(express.json());
+app.use(
+  cors({
+    origin: env.clientOrigin,
+  }),
+);
 
-const PORT = process.env.PORT || 5000;
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.json({
@@ -17,6 +21,14 @@ app.get("/", (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.use("/api/auth", authRoutes);
+
+const startServer = async () => {
+  await testDatabaseConnection();
+
+  app.listen(env.port, () => {
+    console.log(`Server running on port ${env.port}`);
+  });
+};
+
+startServer();
