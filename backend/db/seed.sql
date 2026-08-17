@@ -15,4 +15,4 @@ INSERT INTO employees (name, position, department_id, salary, contact, hire_date
 -- Password for this seed user is "admin123" — replace before real use.
 -- Hash generated with bcrypt, 10 salt rounds (see scripts/hash-password.js).
 INSERT INTO users (employee_id, email, password_hash, role) VALUES
-  (NULL, 'admin@moderntech.com', '$2b$10$replace_this_with_a_real_bcrypt_hash', 'admin');
+  (NULL, 'admin@moderntech.com', '$2b$10$FOWX3kxm8iKX5/FHTK3qvOsG6R7RCTPCwKSkxERoqDRu0w.89K0hq', 'admin');
