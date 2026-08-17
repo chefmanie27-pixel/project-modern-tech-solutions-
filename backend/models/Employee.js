@@ -4,6 +4,23 @@
 
 const { pool } = require("../config/db");
 
+// employees.html's form collects a free-text department name, not an id,
+// so resolve/create the matching departments row here rather than forcing
+// a frontend rework. Returns null (leaves department unset) for blank input.
+async function findOrCreateDepartmentId(departmentName) {
+  if (!departmentName || !departmentName.trim()) return null;
+  const name = departmentName.trim();
+
+  const [existing] = await pool.query(
+    `SELECT department_id FROM departments WHERE name = ?`,
+    [name]
+  );
+  if (existing[0]) return existing[0].department_id;
+
+  const [result] = await pool.query(`INSERT INTO departments (name) VALUES (?)`, [name]);
+  return result.insertId;
+}
+
 async function getAll() {
   const [rows] = await pool.query(
     `SELECT e.*, d.name AS department_name
@@ -50,4 +67,4 @@ async function remove(id) {
   return result.affectedRows > 0;
 }
 
-module.exports = { getAll, getById, create, update, remove };
+module.exports = { getAll, getById, create, update, remove, findOrCreateDepartmentId };

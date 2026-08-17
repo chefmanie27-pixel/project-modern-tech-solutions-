@@ -1,8 +1,3 @@
-// ---- Single admin credentials (demo only) ----
-const ADMIN_EMAIL = "admin@moderntech.com";
-const ADMIN_PASSWORD = "admin123";
-const AUTH_KEY = "moderntech_auth";
-
 const welcomeScreen = document.getElementById("welcome-screen");
 const loginScreen = document.getElementById("login-screen");
 
@@ -47,7 +42,7 @@ function clearError() {
   loginError.style.display = "none";
 }
 
-loginForm.addEventListener("submit", function (e) {
+loginForm.addEventListener("submit", async function (e) {
   e.preventDefault();
 
   const email = document.getElementById("email").value.trim();
@@ -58,25 +53,25 @@ loginForm.addEventListener("submit", function (e) {
     return;
   }
 
-  if (
-    email.toLowerCase() !== ADMIN_EMAIL ||
-    pass !== ADMIN_PASSWORD
-  ) {
-    showError("Incorrect email or password.");
-    return;
-  }
-
   clearError();
 
-  // Loading effect
   loginBtn.innerHTML = "Signing In...";
   loginBtn.disabled = true;
 
-  // Mark the session as authenticated so other pages' auth-guard.js
-  // will let the user through instead of bouncing back here.
-  localStorage.setItem(AUTH_KEY, "true");
+  try {
+    const result = await apiRequest("/auth/login", {
+      method: "POST",
+      auth: false, // no token to send yet — we're getting one
+      body: { email, password: pass },
+    });
 
-  setTimeout(() => {
+    localStorage.setItem("moderntech_token", result.token);
+    localStorage.setItem("moderntech_user", JSON.stringify(result.user));
+
     window.location.href = "dashboard.html";
-  }, 800);
+  } catch (err) {
+    showError(err.message || "Incorrect email or password.");
+    loginBtn.innerHTML = "Sign In";
+    loginBtn.disabled = false;
+  }
 });

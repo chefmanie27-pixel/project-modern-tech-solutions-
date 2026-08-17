@@ -62,7 +62,10 @@ Then: `GET http://localhost:3000/api/v1/employees` (requires a valid Bearer toke
 - ✅ MySQL connection pool (`config/db.js`)
 - ✅ Database schema + seed data (`db/`)
 - ✅ Auth + role middleware (`middleware/`) — ready for Wendy's auth routes to use
+- ✅ Minimal auth (`POST /auth/login`, `GET /auth/me`, `POST /auth/logout`) — just enough to issue/verify a real JWT so everything else is testable. Wendy still owns expanding this (`register`, logout blacklist, etc.)
 - ✅ Employees CRUD (`routes/`, `controllers/`, `models/`) — full working example to copy for other features
+- ✅ Payroll CRUD + calc (`run`, `disburse`, `payslip`) — disbursement is simulated until a real provider is picked (see `payrollApi.service.js`)
+- ✅ Frontend wired up: `js/api.js` shared fetch wrapper, `index.html`/`login.js`, `employees.html`, and `payroll.html` all talk to the live API now (no more localStorage-only data on these three pages)
 
 ## What everyone else adds
 
