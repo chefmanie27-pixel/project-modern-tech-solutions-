@@ -1,5 +1,5 @@
 // models/Attendance.js
-const pool = require('../config/db');
+import { query as _query } from '../config/db';
 
 
 async function findAll({ startDate, endDate, department, page = 1, limit = 50 } = {}) {
@@ -36,7 +36,7 @@ async function findAll({ startDate, endDate, department, page = 1, limit = 50 } 
   baseQuery += ` ORDER BY a.record_date DESC LIMIT $${idx++} OFFSET $${idx++}`;
   values.push(limit, offset);
 
-  const { rows } = await pool.query(baseQuery, values);
+  const { rows } = await _query(baseQuery, values);
   return rows;
 }
 
@@ -61,7 +61,7 @@ async function findByEmployeeId(employeeId, { startDate, endDate } = {}) {
     ORDER BY record_date DESC
   `;
 
-  const { rows } = await pool.query(query, values);
+  const { rows } = await _query(query, values);
   return rows;
 }
 
@@ -71,7 +71,7 @@ async function create({ employee_id, record_date, status, clock_in, clock_out })
     VALUES ($1, $2, $3, $4, $5)
     RETURNING attendance_id, employee_id, record_date, status, clock_in, clock_out
   `;
-  const { rows } = await pool.query(query, [employee_id, record_date, status, clock_in || null, clock_out || null]);
+  const { rows } = await _query(query, [employee_id, record_date, status, clock_in || null, clock_out || null]);
   return rows[0];
 }
 
@@ -97,7 +97,7 @@ async function update(attendanceId, fields) {
     WHERE attendance_id = $${idx}
     RETURNING attendance_id, employee_id, record_date, status, clock_in, clock_out
   `;
-  const { rows } = await pool.query(query, values);
+  const { rows } = await _query(query, values);
   return rows[0] || null;
 }
 
@@ -134,7 +134,7 @@ async function getSummary({ startDate, endDate } = {}) {
     ${whereClause}
   `;
 
-  const { rows } = await pool.query(query, values);
+  const { rows } = await _query(query, values);
   const r = rows[0];
   const total = Number(r.total_records) || 0;
   const present = Number(r.present_count) || 0;
@@ -156,8 +156,8 @@ async function existsForDate(employeeId, recordDate, excludeAttendanceId = null)
     query += ` AND attendance_id != $3`;
     values.push(excludeAttendanceId);
   }
-  const { rows } = await pool.query(query, values);
+  const { rows } = await _query(query, values);
   return rows.length > 0;
 }
 
-module.exports = { findAll, findByEmployeeId, create, update, getSummary, existsForDate };
+export default { findAll, findByEmployeeId, create, update, getSummary, existsForDate };

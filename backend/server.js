@@ -2,6 +2,7 @@
 // App entry point. Wires up middleware, routes, and error handling.
 
 require("dotenv").config();
+// import db from './config/db.js'
 import express, { json } from "express";
 import cors from "cors";
 import helmet from "helmet";
