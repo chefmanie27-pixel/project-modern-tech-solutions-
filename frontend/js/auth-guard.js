@@ -7,12 +7,44 @@
 // this script itself was loaded from, so the same file can be shared by
 // both root-level pages and subfolder pages like "Modern Tech/attendance.html".
 (function () {
-  var AUTH_KEY = "moderntech_auth";
+  const scriptEl = document.currentScript;
+  const base = scriptEl.src.replace(/auth-guard\.js.*$/, "");
 
-  if (localStorage.getItem(AUTH_KEY) === "true") return;
+  const token = localStorage.getItem("moderntech_token");
 
-  var scriptEl = document.currentScript;
-  var base = scriptEl.src.replace(/auth-guard\.js.*$/, "");
+  // No JWT means the user is not logged in.
+  if (!token) {
+    window.location.replace(base + "index.html");
+    return;
+  }
 
-  window.location.replace(base + "index.html");
+  fetch("http://localhost:3000/api/auth/me", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then(async (response) => {
+      if (response.status === 401) {
+        localStorage.removeItem("moderntech_token");
+        window.location.replace(base + "index.html");
+        return null;
+      }
+
+      if (!response.ok) {
+        throw new Error("Authentication check failed");
+      }
+
+      return response.json();
+    })
+    .then((data) => {
+      if (data) {
+        console.log("Authenticated user:", data.user);
+      }
+    })
+    .catch((error) => {
+      console.error("Auth check failed:", error);
+      localStorage.removeItem("moderntech_token");
+      window.location.replace(base + "index.html");
+    });
 })();
