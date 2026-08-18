@@ -2,7 +2,7 @@
 // Single shared connection pool — imported by every model.
 // Never open per-request connections (see plan §Azhar step 3).
 
-const { Pool } = require('pg');
+import { Pool } from 'pg';
 
 const pool = new Pool({
   host: process.env.DB_HOST,
@@ -19,4 +19,4 @@ pool.on('error', (err) => {
   process.exit(1);
 });
 
-module.exports = pool;
+export default pool;

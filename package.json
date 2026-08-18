@@ -1,0 +1,25 @@
+{
+  "name": "project-modern-tech-solutions-",
+  "version": "1.0.0",
+  "description": "A front-end web application (proof of concept) built for **ModernTech Solutions**, a healthcare software company, to replace their fragmented spreadsheet-and-email HR processes with a single, user-friendly HR portal.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chefmanie27-pixel/project-modern-tech-solutions-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/chefmanie27-pixel/project-modern-tech-solutions-/issues"
+  },
+  "homepage": "https://github.com/chefmanie27-pixel/project-modern-tech-solutions-#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "mysql2": "^3.23.3"
+  }
+}
