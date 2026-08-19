@@ -2,7 +2,7 @@
 // Verifies the JWT sent in the Authorization header and attaches the
 // decoded user info to req.user. Used on every protected route.
 
-import { verify } from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -14,7 +14,7 @@ function authMiddleware(req, res, next) {
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // e.g. { userId, role, employeeId }
     next();
   } catch (err) {
@@ -22,4 +22,4 @@ function authMiddleware(req, res, next) {
   }
 }
 
-export default authMiddleware;
+module.exports = authMiddleware;

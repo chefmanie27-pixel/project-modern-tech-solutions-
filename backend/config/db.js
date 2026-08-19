@@ -1,22 +1,31 @@
 // config/db.js
-// Single shared connection pool — imported by every model.
-// Never open per-request connections (see plan §Azhar step 3).
+// Single shared MySQL connection pool.
+// Every model imports this — never open a new connection per request.
 
-import { Pool } from 'pg';
+const mysql = require("mysql2/promise");
+require("dotenv").config();
 
-const pool = new Pool({
+const pool = mysql.createPool({
   host: process.env.DB_HOST,
+  port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3000,
-  max: 10,
-  idleTimeoutMillis: 30000,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle DB client', err);
-  process.exit(1);
-});
+// Quick sanity check you can call once on server startup
+async function testConnection() {
+  try {
+    const conn = await pool.getConnection();
+    console.log("MySQL connected");
+    conn.release();
+  } catch (err) {
+    console.error("MySQL connection failed:", err.message);
+    process.exit(1);
+  }
+}
 
-export default pool;
+module.exports = { pool, testConnection };

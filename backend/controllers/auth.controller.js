@@ -3,9 +3,9 @@
 // Wendy owns the full auth module per the plan (register, logout blacklist,
 // timeoff) — this covers just enough to issue and verify a real JWT.
 
-import { compare } from "bcrypt";
-import { sign } from "jsonwebtoken";
-import { getByEmail, touchLastLogin, getById } from "../models/User";
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
 // POST /api/v1/auth/login
 async function login(req, res, next) {
@@ -16,23 +16,23 @@ async function login(req, res, next) {
       return res.status(400).json({ message: "email and password are required" });
     }
 
-    const user = await getByEmail(email.trim().toLowerCase());
+    const user = await User.getByEmail(email.trim().toLowerCase());
     if (!user) {
       return res.status(401).json({ message: "Incorrect email or password." });
     }
 
-    const valid = await compare(password, user.password_hash);
+    const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) {
       return res.status(401).json({ message: "Incorrect email or password." });
     }
 
-    const token = sign(
+    const token = jwt.sign(
       { userId: user.user_id, role: user.role, employeeId: user.employee_id },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || "8h" }
     );
 
-    await touchLastLogin(user.user_id);
+    await User.touchLastLogin(user.user_id);
 
     res.json({
       token,
@@ -47,7 +47,7 @@ async function login(req, res, next) {
 async function me(req, res, next) {
   try {
     // req.user is set by authMiddleware from the verified JWT payload
-    const user = await getById(req.user.userId);
+    const user = await User.getById(req.user.userId);
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
   } catch (err) {
@@ -62,4 +62,4 @@ async function logout(req, res) {
   res.json({ message: "Logged out" });
 }
 
-export default { login, me, logout };
+module.exports = { login, me, logout };
