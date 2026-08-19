@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="auth-guard.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/api.js"></script>
     <title>ModernTech | Payroll</title>
-    <link rel="stylesheet" href="combined-styles.css" />
+    <link rel="stylesheet" href="css/combined-styles.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -25,13 +26,14 @@
           <li><a href="employees.html">Employees</a></li>
           <li class="active"><a href="payroll.html">Payroll</a></li>
           <li><a href="time-off-page.html">Time Off</a></li>
-          <li><a href="Modern Tech/attendance.html">Attendance</a></li>
+          <li><a href="vue-app/attendance.html">Attendance</a></li>
           <li><a href="performance-reviews.html">Performance Reviews</a></li>
           <li>
             <a
               href="#"
               onclick="
-                localStorage.removeItem('moderntech_auth');
+                localStorage.removeItem('moderntech_token');
+                localStorage.removeItem('moderntech_user');
                 window.location.href = 'index.html';
                 return false;
               "
@@ -106,163 +108,101 @@
 
     <!-- Application Controller Logic -->
     <script>
-      // ---- Shared storage keys ----
-      // Must match the key used in employees.html
-      const EMPLOYEE_STORAGE_KEY = "moderntech_employees";
-      // Payroll-only numbers (hours worked, leave deduction hours) that
-      // don't belong on the employee record itself.
-      const PAYROLL_META_KEY = "moderntech_payroll_meta";
-      // Standard hours in a pay period, used to derive an hourly rate from
-      // an employee's monthly salary.
-      const STANDARD_HOURS = 160;
-
-      // Fallback data, used only if employees.html has never been opened yet
-      // (so localStorage is still empty). Keeps this page working standalone.
-      const fallbackEmployees = [
-        { employeeId: 1, name: "Sibongile Nkosi", salary: 70000 },
-        { employeeId: 2, name: "Lungile Moyo", salary: 80000 },
-        { employeeId: 3, name: "Thabo Molefe", salary: 55000 },
-        { employeeId: 4, name: "Keshav Naidoo", salary: 60000 },
-        { employeeId: 5, name: "Zanele Khumalo", salary: 58000 },
-        { employeeId: 6, name: "Sipho Zulu", salary: 65000 },
-        { employeeId: 7, name: "Naledi Moeketsi", salary: 72000 },
-        { employeeId: 8, name: "Farai Gumbo", salary: 56000 },
-        { employeeId: 9, name: "Karabo Dlamini", salary: 62000 },
-        { employeeId: 10, name: "Fatima Patel", salary: 58000 },
-      ];
-
-      const fallbackMeta = {
-        1: { hoursWorked: 160, leaveDeductions: 8 },
-        2: { hoursWorked: 150, leaveDeductions: 10 },
-        3: { hoursWorked: 170, leaveDeductions: 4 },
-        4: { hoursWorked: 165, leaveDeductions: 6 },
-        5: { hoursWorked: 158, leaveDeductions: 5 },
-        6: { hoursWorked: 168, leaveDeductions: 2 },
-        7: { hoursWorked: 175, leaveDeductions: 3 },
-        8: { hoursWorked: 160, leaveDeductions: 0 },
-        9: { hoursWorked: 155, leaveDeductions: 5 },
-        10: { hoursWorked: 162, leaveDeductions: 4 },
-      };
-
-      const data = { payrollData: [] };
-
+      // ---- Live payroll data, fetched from the API ----
+      // A "run" for an employee/period is created on demand (POST /payroll/run)
+      // the first time you process them for the current pay period; until then
+      // they show as "Not yet run" with editable hours/leave-deduction inputs.
       const tableBody = document.getElementById("table-rows");
       const emptyState = document.getElementById("empty-state");
 
-      function getPayrollMeta() {
-        const stored = localStorage.getItem(PAYROLL_META_KEY);
-        if (stored) {
-          try {
-            return JSON.parse(stored);
-          } catch (e) {
-            console.warn("Corrupt payroll meta in storage, using defaults.");
-          }
+      let employees = [];
+      let runsByEmployeeId = {}; // employee_id -> payroll_runs row for the current period
+      let draftMeta = {}; // employee_id -> { hoursWorked, leaveDeductions } for not-yet-run employees
+
+      const STANDARD_HOURS = 160;
+
+      function currentPeriod() {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        const fmt = (d) => d.toISOString().slice(0, 10);
+        return { start: fmt(start), end: fmt(end) };
+      }
+
+      const period = currentPeriod();
+
+      async function loadPayroll() {
+        try {
+          const [employeeRows, runs] = await Promise.all([
+            apiRequest("/employees"),
+            apiRequest(`/payroll?periodStart=${period.start}&periodEnd=${period.end}`),
+          ]);
+
+          employees = employeeRows || [];
+          runsByEmployeeId = {};
+          (runs || []).forEach((run) => {
+            runsByEmployeeId[run.employee_id] = run;
+          });
+
+          employees.forEach((emp) => {
+            if (!draftMeta[emp.employee_id]) {
+              draftMeta[emp.employee_id] = { hoursWorked: STANDARD_HOURS, leaveDeductions: 0 };
+            }
+          });
+
+          calculateGlobalMetrics();
+          renderTable();
+        } catch (err) {
+          alert("Could not load payroll data: " + err.message);
         }
-        return {};
       }
 
-      function savePayrollMeta(meta) {
-        localStorage.setItem(PAYROLL_META_KEY, JSON.stringify(meta));
-      }
-
-      // Builds data.payrollData by combining the live employee list (name +
-      // current salary, sourced from employees.html) with payroll-only meta
-      // (hours worked / leave deductions), then recalculates net pay from
-      // the employee's *current* salary every time this runs.
-      function buildPayrollData() {
-        const storedEmployees = localStorage.getItem(EMPLOYEE_STORAGE_KEY);
-        let employees = fallbackEmployees;
-        if (storedEmployees) {
-          try {
-            employees = JSON.parse(storedEmployees);
-          } catch (e) {
-            console.warn("Corrupt employee data in storage, using fallback.");
-          }
-        }
-
-        const meta = getPayrollMeta();
-
-        data.payrollData = employees.map((emp) => {
-          const empMeta = meta[emp.employeeId] ||
-            fallbackMeta[emp.employeeId] || {
-              hoursWorked: STANDARD_HOURS,
-              leaveDeductions: 0,
-            };
-
-          const hourlyRate = emp.salary / STANDARD_HOURS;
-          const leaveCost = empMeta.leaveDeductions * hourlyRate;
-          const finalSalary = Math.round(emp.salary - leaveCost);
-
-          return {
-            employeeId: emp.employeeId,
-            employeeName: emp.name,
-            hoursWorked: empMeta.hoursWorked,
-            leaveDeductions: empMeta.leaveDeductions,
-            finalSalary,
-          };
-        });
-      }
-
-      // Dynamic Calculation Engine for Core Cards
       function calculateGlobalMetrics() {
         let totalGross = 0;
         let totalDeductions = 0;
         let totalNet = 0;
 
-        data.payrollData.forEach((item) => {
-          const hourlyRate = item.finalSalary / item.hoursWorked;
-          const leaveLoss = item.leaveDeductions * hourlyRate;
-          const gross = item.finalSalary + leaveLoss;
-
-          totalGross += gross;
-          totalDeductions += leaveLoss;
-          totalNet += item.finalSalary;
+        employees.forEach((emp) => {
+          const run = runsByEmployeeId[emp.employee_id];
+          if (!run) return; // not yet run this period — excluded from totals
+          totalGross += Number(run.gross_pay);
+          totalDeductions += Number(run.leave_deductions) + Number(run.tax_deductions);
+          totalNet += Number(run.net_pay);
         });
 
-        document.getElementById("total-gross").textContent =
-          `R ${Math.round(totalGross).toLocaleString()}`;
-        document.getElementById("total-deductions").textContent =
-          `R ${Math.round(totalDeductions).toLocaleString()}`;
-        document.getElementById("total-net").textContent =
-          `R ${Math.round(totalNet).toLocaleString()}`;
+        document.getElementById("total-gross").textContent = `R ${Math.round(totalGross).toLocaleString()}`;
+        document.getElementById("total-deductions").textContent = `R ${Math.round(totalDeductions).toLocaleString()}`;
+        document.getElementById("total-net").textContent = `R ${Math.round(totalNet).toLocaleString()}`;
       }
 
-      // Secure DOM Presentation Layer Generator
       function renderTable() {
-        tableBody.innerHTML = data.payrollData
-          .map((item) => {
-            const hourlyRate = (item.finalSalary / item.hoursWorked).toFixed(2);
-            const leaveCost = (item.leaveDeductions * hourlyRate).toFixed(2);
-            const basicSalary = (
-              item.finalSalary + parseFloat(leaveCost)
-            ).toFixed(2);
+        tableBody.innerHTML = employees
+          .map((emp) => {
+            const run = runsByEmployeeId[emp.employee_id];
+            const meta = draftMeta[emp.employee_id];
+            const leaveDeductions = run ? Number(run.leave_deductions) : meta.leaveDeductions;
+            const hoursWorked = run ? Number(run.hours_worked) : meta.hoursWorked;
 
-            const badgeHTML =
-              item.leaveDeductions === 0
-                ? `<span class="badge badge-success">Perfect Run</span>`
-                : "";
+            const badgeHTML = run
+              ? run.status === "paid"
+                ? `<span class="badge badge-success">Paid</span>`
+                : `<span class="badge">Processed</span>`
+              : `<span class="badge badge-warning">Not yet run</span>`;
+
+            const netDisplay = run ? `R ${Number(run.net_pay).toLocaleString()}` : "—";
 
             return `
-            <tr class="main-row" data-target="details-${item.employeeId}" data-deductions="${item.leaveDeductions}" tabindex="0" role="button" aria-expanded="false">
-              <td class="emp-name">#${item.employeeId} ${item.employeeName} ${badgeHTML}</td>
-              <td>${item.hoursWorked} hrs</td>
-              <td>${item.leaveDeductions} hrs</td>
-              <td class="salary-cell">R ${item.finalSalary.toLocaleString()}</td>
+            <tr class="main-row" data-target="details-${emp.employee_id}" data-deductions="${leaveDeductions}" tabindex="0" role="button" aria-expanded="false">
+              <td class="emp-name">#${emp.employee_id} ${emp.name} ${badgeHTML}</td>
+              <td>${hoursWorked} hrs</td>
+              <td>${leaveDeductions} hrs</td>
+              <td class="salary-cell">${netDisplay}</td>
               <td class="arrow-cell"><span class="toggle-arrow">▶</span></td>
             </tr>
-            <tr id="details-${item.employeeId}" class="detail-row" style="display: none;">
+            <tr id="details-${emp.employee_id}" class="detail-row" style="display: none;">
               <td colspan="5">
                 <div class="breakdown-wrapper">
-                  <div class="breakdown-box">
-                    <div class="breakdown-line"><span>Base Tracked Hours</span> <span>${item.hoursWorked} hrs @ R${hourlyRate}/hr</span></div>
-                    <div class="breakdown-line"><span>Calculated Gross Salary</span> <span>R ${parseFloat(basicSalary).toLocaleString()}</span></div>
-                    <div class="breakdown-line deductions"><span>- Unpaid Leave Deductions</span> <span>-${item.leaveDeductions} hrs (-R ${parseFloat(leaveCost).toLocaleString()})</span></div>
-                    <div class="breakdown-line net-pay"><span>Calculated Net Pay</span> <span>R ${item.finalSalary.toLocaleString()}</span></div>
-                  </div>
-                  <div class="breakdown-actions">
-                    <button class="btn btn-primary" onclick="alert('Payout Processed for ${item.employeeName}')">Approve Payout</button>
-                    <button class="btn btn-secondary" onclick="simulateEmailSlip('${item.employeeName}')">Email Slip</button>
-                  </div>
+                  ${renderBreakdown(emp, run, meta)}
                 </div>
               </td>
             </tr>
@@ -271,13 +211,135 @@
           .join("");
       }
 
-      function refreshPayroll() {
-        buildPayrollData();
-        calculateGlobalMetrics();
-        renderTable();
+      function renderBreakdown(emp, run, meta) {
+        if (run) {
+          return `
+            <div class="breakdown-box">
+              <div class="breakdown-line"><span>Gross Pay</span> <span>R ${Number(run.gross_pay).toLocaleString()}</span></div>
+              <div class="breakdown-line deductions"><span>- Leave Deductions</span> <span>-R ${Number(run.leave_deductions).toLocaleString()}</span></div>
+              <div class="breakdown-line deductions"><span>- Tax Deductions</span> <span>-R ${Number(run.tax_deductions).toLocaleString()}</span></div>
+              <div class="breakdown-line net-pay"><span>Net Pay</span> <span>R ${Number(run.net_pay).toLocaleString()}</span></div>
+            </div>
+            <div class="breakdown-actions">
+              ${
+                run.status === "paid"
+                  ? `<span class="badge badge-success">Already paid</span>`
+                  : `<button class="btn btn-primary" onclick="disbursePayroll(${run.payroll_id})">Approve Payout</button>`
+              }
+              <button class="btn btn-secondary" onclick="viewPayslip(${run.payroll_id})">View Payslip</button>
+              <button class="btn btn-secondary" onclick="simulateEmailSlip('${emp.name}')">Email Slip</button>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="breakdown-box">
+            <div class="breakdown-line">
+              <span>Hours Worked</span>
+              <span><input type="number" min="0" class="edit-input" style="width:80px" id="hours-${emp.employee_id}" value="${meta.hoursWorked}"></span>
+            </div>
+            <div class="breakdown-line">
+              <span>Leave Deduction Hours</span>
+              <span><input type="number" min="0" class="edit-input" style="width:80px" id="leave-${emp.employee_id}" value="${meta.leaveDeductions}"></span>
+            </div>
+          </div>
+          <div class="breakdown-actions">
+            <button class="btn btn-primary" onclick="runPayroll(${emp.employee_id})">Run Payroll</button>
+          </div>
+        `;
       }
 
-      // Row Drawer Animation/Expansion Toggle Trigger
+      async function runPayroll(employeeId) {
+        const hoursInput = document.getElementById(`hours-${employeeId}`);
+        const leaveInput = document.getElementById(`leave-${employeeId}`);
+        const hoursWorked = parseFloat(hoursInput.value);
+        const leaveDeductions = parseFloat(leaveInput.value);
+
+        if (isNaN(hoursWorked) || hoursWorked < 0) {
+          alert("Hours worked must be 0 or more.");
+          return;
+        }
+        if (isNaN(leaveDeductions) || leaveDeductions < 0) {
+          alert("Leave deduction hours must be 0 or more.");
+          return;
+        }
+
+        draftMeta[employeeId] = { hoursWorked, leaveDeductions };
+
+        try {
+          const run = await apiRequest("/payroll/run", {
+            method: "POST",
+            body: {
+              employee_id: employeeId,
+              pay_period_start: period.start,
+              pay_period_end: period.end,
+              hours_worked: hoursWorked,
+              leave_deductions: leaveDeductions,
+            },
+          });
+          runsByEmployeeId[employeeId] = run;
+          calculateGlobalMetrics();
+          renderTable();
+        } catch (err) {
+          alert("Could not run payroll: " + err.message);
+        }
+      }
+
+      async function disbursePayroll(payrollId) {
+        try {
+          const result = await apiRequest(`/payroll/${payrollId}/disburse`, { method: "POST" });
+          runsByEmployeeId[result.payroll.employee_id] = result.payroll;
+          calculateGlobalMetrics();
+          renderTable();
+          alert(
+            result.disbursement.simulated
+              ? "Payout processed (simulated — no live payment provider configured yet)."
+              : "Payout processed."
+          );
+        } catch (err) {
+          alert("Could not process payout: " + err.message);
+        }
+      }
+
+      async function viewPayslip(payrollId) {
+        try {
+          const slip = await apiRequest(`/payroll/${payrollId}/payslip`);
+          alert(
+            `Payslip for ${slip.employee.name}\n` +
+              `Period: ${slip.pay_period.start} to ${slip.pay_period.end}\n` +
+              `Gross: R ${Number(slip.earnings.gross_pay).toLocaleString()}\n` +
+              `Leave deductions: R ${Number(slip.deductions.leave_deductions).toLocaleString()}\n` +
+              `Tax deductions: R ${Number(slip.deductions.tax_deductions).toLocaleString()}\n` +
+              `Net pay: R ${Number(slip.net_pay).toLocaleString()}\n` +
+              `Status: ${slip.status}`
+          );
+        } catch (err) {
+          alert("Could not load payslip: " + err.message);
+        }
+      }
+
+      // Simulated Client-Side Email Workflow (real email sending isn't wired
+      // up on the backend yet — services/email.service.js is still a stub)
+      function simulateEmailSlip(employeeName) {
+        const recipientEmail = prompt(
+          `Enter the email address to send the payslip for ${employeeName}:`,
+        );
+
+        if (recipientEmail === null) return;
+        if (recipientEmail.trim() === "") {
+          alert("Email dispatch cancelled: Email address cannot be empty.");
+          return;
+        }
+        if (!recipientEmail.includes("@") || !recipientEmail.includes(".")) {
+          alert("Invalid email format. Please verify and try again.");
+          return;
+        }
+
+        alert(
+          `Payslip generated successfully! A copy has been simulated and sent to ${recipientEmail.trim()}.`,
+        );
+      }
+
       function toggleRow(mainRow) {
         const targetId = mainRow.getAttribute("data-target");
         const detailRow = document.getElementById(targetId);
@@ -289,11 +351,8 @@
         mainRow.setAttribute("aria-expanded", isOpen);
       }
 
-      // Search & Complex Parameter Filtering Engine
       function filterTable() {
-        const searchTerm = document
-          .getElementById("table-search")
-          .value.toLowerCase();
+        const searchTerm = document.getElementById("table-search").value.toLowerCase();
         const filterValue = document.getElementById("table-filter").value;
         const mainRows = document.querySelectorAll(".main-row");
         let visibleCount = 0;
@@ -324,33 +383,6 @@
         emptyState.style.display = visibleCount === 0 ? "block" : "none";
       }
 
-      // Simulated Client-Side Email Workflow
-      function simulateEmailSlip(employeeName) {
-        // Prompt user for email input
-        const recipientEmail = prompt(
-          `Enter the email address to send the payslip for ${employeeName}:`,
-        );
-
-        // Handle cancel option or completely blank entry inputs
-        if (recipientEmail === null) return;
-        if (recipientEmail.trim() === "") {
-          alert("Email dispatch cancelled: Email address cannot be empty.");
-          return;
-        }
-
-        // Fast structural check to evaluate basic input string format
-        if (!recipientEmail.includes("@") || !recipientEmail.includes(".")) {
-          alert("Invalid email format. Please verify and try again.");
-          return;
-        }
-
-        // Immediate responsive mockup confirmation message
-        alert(
-          `Payslip generated successfully! A copy has been simulated and sent to ${recipientEmail.trim()}.`,
-        );
-      }
-
-      // Context Centralized Event Group Mapping
       tableBody.addEventListener("click", (e) => {
         const mainRow = e.target.closest(".main-row");
         if (
@@ -365,36 +397,20 @@
       tableBody.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           const mainRow = e.target.closest(".main-row");
-          if (mainRow) {
+          if (mainRow && e.target === mainRow) {
             e.preventDefault();
             toggleRow(mainRow);
           }
         }
       });
 
-      document
-        .getElementById("table-search")
-        .addEventListener("input", filterTable);
-      document
-        .getElementById("table-filter")
-        .addEventListener("change", filterTable);
+      document.getElementById("table-search").addEventListener("input", filterTable);
+      document.getElementById("table-filter").addEventListener("change", filterTable);
 
-      // Refresh automatically if employee data (e.g. a salary change) or
-      // payroll meta is updated from another tab/page.
-      window.addEventListener("storage", (e) => {
-        if (e.key === EMPLOYEE_STORAGE_KEY || e.key === PAYROLL_META_KEY) {
-          refreshPayroll();
-        }
-      });
-
-      // Also refresh whenever this tab regains focus, in case employee data
-      // was changed in employees.html within the same tab via back/forward
-      // navigation.
-      window.addEventListener("focus", refreshPayroll);
-
-      // Lifecycle Run Initializer
-      refreshPayroll();
+      // ---- Lifecycle ----
+      loadPayroll();
     </script>
-    <script src="nav.js"></script>
+    </script>
+    <script src="js/nav.js"></script>
   </body>
 </html>

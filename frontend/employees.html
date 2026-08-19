@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="auth-guard.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/api.js"></script>
     <title>ModernTech HR | Employee Management</title>
-    <link rel="stylesheet" href="combined-styles.css" />
+    <link rel="stylesheet" href="css/combined-styles.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -25,13 +26,14 @@
           <li class="active"><a href="employees.html">Employees</a></li>
           <li><a href="payroll.html">Payroll</a></li>
           <li><a href="time-off-page.html">Time Off</a></li>
-          <li><a href="Modern Tech/attendance.html">Attendance</a></li>
+          <li><a href="vue-app/attendance.html">Attendance</a></li>
           <li><a href="performance-reviews.html">Performance Reviews</a></li>
           <li>
             <a
               href="#"
               onclick="
-                localStorage.removeItem('moderntech_auth');
+                localStorage.removeItem('moderntech_token');
+                localStorage.removeItem('moderntech_user');
                 window.location.href = 'index.html';
                 return false;
               "
@@ -55,7 +57,7 @@
       <button
         class="btn btn-reset"
         id="resetBtn"
-        title="Restore the default demo dataset"
+        title="Discard unsaved edits and reload from the server"
       >
         Reset to Defaults
       </button>
@@ -152,108 +154,9 @@
     </div>
 
     <script>
-      // ---- Shared storage keys (must match payroll.html) ----
-      const EMPLOYEE_STORAGE_KEY = "moderntech_employees";
-      const PAYROLL_META_KEY = "moderntech_payroll_meta";
-
-      // Kept separately so "Reset to Defaults" always has a clean copy to
-      // restore, even after data.employeeInformation has been mutated.
-      const defaultEmployees = [
-        {
-          employeeId: 1,
-          name: "Sibongile Nkosi",
-          position: "Software Engineer",
-          department: "Development",
-          salary: 70000,
-          employmentHistory: "Joined in 2015, promoted to Senior in 2018",
-          contact: "sibongile.nkosi@moderntech.com",
-        },
-        {
-          employeeId: 2,
-          name: "Lungile Moyo",
-          position: "HR Manager",
-          department: "HR",
-          salary: 80000,
-          employmentHistory: "Joined in 2013, promoted to Manager in 2017",
-          contact: "lungile.moyo@moderntech.com",
-        },
-        {
-          employeeId: 3,
-          name: "Thabo Molefe",
-          position: "Quality Analyst",
-          department: "QA",
-          salary: 55000,
-          employmentHistory: "Joined in 2018",
-          contact: "thabo.molefe@moderntech.com",
-        },
-        {
-          employeeId: 4,
-          name: "Keshav Naidoo",
-          position: "Sales Representative",
-          department: "Sales",
-          salary: 60000,
-          employmentHistory: "Joined in 2020",
-          contact: "keshav.naidoo@moderntech.com",
-        },
-        {
-          employeeId: 5,
-          name: "Zanele Khumalo",
-          position: "Marketing Specialist",
-          department: "Marketing",
-          salary: 58000,
-          employmentHistory: "Joined in 2019",
-          contact: "zanele.khumalo@moderntech.com",
-        },
-        {
-          employeeId: 6,
-          name: "Sipho Zulu",
-          position: "UI/UX Designer",
-          department: "Design",
-          salary: 65000,
-          employmentHistory: "Joined in 2016",
-          contact: "sipho.zulu@moderntech.com",
-        },
-        {
-          employeeId: 7,
-          name: "Naledi Moeketsi",
-          position: "DevOps Engineer",
-          department: "IT",
-          salary: 72000,
-          employmentHistory: "Joined in 2017",
-          contact: "naledi.moeketsi@moderntech.com",
-        },
-        {
-          employeeId: 8,
-          name: "Farai Gumbo",
-          position: "Content Strategist",
-          department: "Marketing",
-          salary: 56000,
-          employmentHistory: "Joined in 2021",
-          contact: "farai.gumbo@moderntech.com",
-        },
-        {
-          employeeId: 9,
-          name: "Karabo Dlamini",
-          position: "Accountant",
-          department: "Finance",
-          salary: 62000,
-          employmentHistory: "Joined in 2018",
-          contact: "karabo.dlamini@moderntech.com",
-        },
-        {
-          employeeId: 10,
-          name: "Fatima Patel",
-          position: "Customer Support Lead",
-          department: "Support",
-          salary: 58000,
-          employmentHistory: "Joined in 2016",
-          contact: "fatima.patel@moderntech.com",
-        },
-      ];
-
-      let data = {
-        employeeInformation: JSON.parse(JSON.stringify(defaultEmployees)),
-      };
+      // ---- Live employee data, fetched from the API ----
+      let employees = [];
+      let isEditing = false;
 
       const tableBody = document.getElementById("employee-rows");
       const employeeBtn = document.getElementById("employeeBtn");
@@ -263,78 +166,46 @@
       const closeModalBtn = document.getElementById("closeModalBtn");
       const addEmployeeForm = document.getElementById("addEmployeeForm");
 
-      let isEditing = false;
-
       // ---- Validation ----
       const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       function validateEmployee(emp) {
-        if (!emp.name || !emp.name.trim()) {
-          return "Name cannot be empty.";
-        }
-        if (!emp.position || !emp.position.trim()) {
-          return "Position cannot be empty.";
-        }
-        if (!emp.department || !emp.department.trim()) {
-          return "Department cannot be empty.";
-        }
-        if (isNaN(emp.salary) || emp.salary < 0) {
-          return "Salary must be a number of 0 or more.";
-        }
+        if (!emp.name || !emp.name.trim()) return "Name cannot be empty.";
+        if (!emp.position || !emp.position.trim()) return "Position cannot be empty.";
+        if (!emp.department || !emp.department.trim()) return "Department cannot be empty.";
+        if (isNaN(emp.salary) || emp.salary < 0) return "Salary must be a number of 0 or more.";
         if (!emp.contact || !EMAIL_PATTERN.test(emp.contact.trim())) {
           return "Contact must be a valid email address.";
         }
         return null;
       }
 
-      // ---- Persistence layer (with error handling) ----
-      function loadFromStorage() {
-        const stored = localStorage.getItem(EMPLOYEE_STORAGE_KEY);
-        if (stored) {
-          try {
-            data.employeeInformation = JSON.parse(stored);
-            return;
-          } catch (e) {
-            console.warn("Corrupt employee data in storage, using defaults.");
-          }
-        }
-        saveToStorage();
+      // Maps the API's DB-shaped row to what this page's UI expects.
+      function toViewModel(row) {
+        return {
+          employeeId: row.employee_id,
+          name: row.name,
+          position: row.position,
+          department: row.department_name || "",
+          salary: Number(row.salary),
+          employmentHistory: row.employment_history || "",
+          contact: row.contact,
+        };
       }
 
-      function saveToStorage() {
+      async function loadEmployees() {
         try {
-          localStorage.setItem(
-            EMPLOYEE_STORAGE_KEY,
-            JSON.stringify(data.employeeInformation),
-          );
-          return true;
-        } catch (e) {
-          console.error("Failed to save employee data:", e);
-          alert(
-            "Could not save changes to local storage. Your browser may be blocking storage (e.g. private browsing), or storage may be full.",
-          );
-          return false;
-        }
-      }
-
-      // Removes any leftover payroll-only entries (hours/leave deductions)
-      // for an employee that no longer exists, so localStorage doesn't
-      // quietly accumulate orphaned records over time.
-      function removeFromPayrollMeta(employeeId) {
-        const stored = localStorage.getItem(PAYROLL_META_KEY);
-        if (!stored) return;
-        try {
-          const meta = JSON.parse(stored);
-          delete meta[employeeId];
-          localStorage.setItem(PAYROLL_META_KEY, JSON.stringify(meta));
-        } catch (e) {
-          console.warn("Could not clean up payroll meta:", e);
+          const rows = await apiRequest("/employees");
+          employees = (rows || []).map(toViewModel);
+          renderTable();
+        } catch (err) {
+          alert("Could not load employees: " + err.message);
         }
       }
 
       function renderTable() {
         tableBody.innerHTML = "";
-        data.employeeInformation.forEach((employee) => {
+        employees.forEach((employee) => {
           const row = document.createElement("tr");
 
           if (isEditing) {
@@ -368,33 +239,29 @@
         });
       }
 
-      function deleteEmployee(id) {
-        const targetEmployee = data.employeeInformation.find(
-          (emp) => emp.employeeId === id,
-        );
-        if (!targetEmployee) return;
+      async function deleteEmployee(id) {
+        const target = employees.find((emp) => emp.employeeId === id);
+        if (!target) return;
 
         const confirmDelete = confirm(
-          `Are you sure you want to remove ${targetEmployee.name} from the system?`,
+          `Are you sure you want to remove ${target.name} from the system?`,
         );
-        if (confirmDelete) {
-          data.employeeInformation = data.employeeInformation.filter(
-            (emp) => emp.employeeId !== id,
-          );
-          if (saveToStorage()) {
-            removeFromPayrollMeta(id);
-          }
+        if (!confirmDelete) return;
+
+        try {
+          await apiRequest(`/employees/${id}`, { method: "DELETE" });
+          employees = employees.filter((emp) => emp.employeeId !== id);
           renderTable();
+        } catch (err) {
+          alert("Could not delete employee: " + err.message);
         }
       }
 
-      // Validates all edited rows before saving anything. If any row is
-      // invalid, nothing is written to storage and the offending field is
-      // flagged so edits aren't silently lost or half-applied.
-      function saveChanges() {
+      // Validates all edited rows, then PUTs each changed one. Stops (and
+      // stays in edit mode) on the first invalid row so nothing is lost.
+      async function saveChanges() {
         const inputs = document.querySelectorAll(".edit-input");
-        const draft = JSON.parse(JSON.stringify(data.employeeInformation));
-        let firstInvalid = null;
+        const draft = JSON.parse(JSON.stringify(employees));
 
         inputs.forEach((input) => {
           const id = parseInt(input.getAttribute("data-id"));
@@ -410,23 +277,36 @@
         for (const employee of draft) {
           const error = validateEmployee(employee);
           if (error) {
-            firstInvalid = { employee, error };
-            break;
+            alert(`Could not save: ${employee.name || "an employee"} — ${error}`);
+            return false;
           }
         }
 
-        if (firstInvalid) {
-          alert(
-            `Could not save: ${firstInvalid.employee.name || "an employee"} — ${firstInvalid.error}`,
+        try {
+          await Promise.all(
+            draft.map((employee) =>
+              apiRequest(`/employees/${employee.employeeId}`, {
+                method: "PUT",
+                body: {
+                  name: employee.name,
+                  position: employee.position,
+                  department: employee.department,
+                  salary: employee.salary,
+                  employmentHistory: employee.employmentHistory,
+                  contact: employee.contact,
+                },
+              }),
+            ),
           );
+          employees = draft;
+          return true;
+        } catch (err) {
+          alert("Could not save changes: " + err.message);
           return false;
         }
-
-        data.employeeInformation = draft;
-        return saveToStorage();
       }
 
-      employeeBtn.addEventListener("click", () => {
+      employeeBtn.addEventListener("click", async () => {
         if (!isEditing) {
           isEditing = true;
           employeeBtn.textContent = "Save Changes";
@@ -435,7 +315,7 @@
           employeeBtn.style.borderColor = "transparent";
           renderTable();
         } else {
-          const saved = saveChanges();
+          const saved = await saveChanges();
           if (!saved) return; // stay in edit mode so the user can fix the field
           isEditing = false;
           employeeBtn.textContent = "Edit Employees";
@@ -459,18 +339,10 @@
         addEmployeeForm.reset();
       });
 
-      addEmployeeForm.addEventListener("submit", (e) => {
+      addEmployeeForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const nextId =
-          data.employeeInformation.length > 0
-            ? Math.max(
-                ...data.employeeInformation.map((emp) => emp.employeeId),
-              ) + 1
-            : 1;
-
         const newEmployee = {
-          employeeId: nextId,
           name: document.getElementById("newName").value.trim(),
           position: document.getElementById("newPosition").value.trim(),
           department: document.getElementById("newDepartment").value.trim(),
@@ -485,46 +357,40 @@
           return;
         }
 
-        data.employeeInformation.push(newEmployee);
-        if (!saveToStorage()) {
-          data.employeeInformation.pop(); // roll back if the save failed
-          return;
+        try {
+          const created = await apiRequest("/employees", {
+            method: "POST",
+            body: newEmployee,
+          });
+          employees.push(toViewModel(created));
+          renderTable();
+          addModal.style.display = "none";
+          addEmployeeForm.reset();
+        } catch (err) {
+          alert("Could not add employee: " + err.message);
         }
-        renderTable();
-
-        addModal.style.display = "none";
-        addEmployeeForm.reset();
       });
 
-      resetBtn.addEventListener("click", () => {
+      // "Reset to Defaults" now means "discard local edits and reload from
+      // the server" — the server is the source of truth, so there's no
+      // local demo dataset to restore to anymore.
+      resetBtn.addEventListener("click", async () => {
         const confirmReset = confirm(
-          "This will discard all employee edits/additions and restore the original demo data. Continue?",
+          "This will discard any unsaved edits and reload employees from the server. Continue?",
         );
         if (!confirmReset) return;
 
-        data.employeeInformation = JSON.parse(JSON.stringify(defaultEmployees));
-        saveToStorage();
-        localStorage.removeItem(PAYROLL_META_KEY);
         isEditing = false;
         employeeBtn.textContent = "Edit Employees";
         employeeBtn.style.backgroundColor = "";
         employeeBtn.style.color = "";
         employeeBtn.style.borderColor = "";
-        renderTable();
+        await loadEmployees();
       });
 
       // ---- Lifecycle ----
-      loadFromStorage();
-      renderTable();
-
-      // Keep this tab in sync if employee data changes from another tab
-      window.addEventListener("storage", (e) => {
-        if (e.key === EMPLOYEE_STORAGE_KEY && !isEditing) {
-          loadFromStorage();
-          renderTable();
-        }
-      });
+      loadEmployees();
     </script>
-    <script src="nav.js"></script>
+    <script src="js/nav.js"></script>
   </body>
 </html>
