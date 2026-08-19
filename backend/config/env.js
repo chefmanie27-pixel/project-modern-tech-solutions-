@@ -18,6 +18,14 @@ const env = {
   },
 
   clientOrigin: process.env.CLIENT_ORIGIN || "http://127.0.0.1:5500",
+
+  email: {
+    smtpHost: process.env.SMTP_HOST || "",
+    smtpPort: Number(process.env.SMTP_PORT) || 587,
+    smtpUser: process.env.SMTP_USER || "",
+    smtpPass: process.env.SMTP_PASS || process.env.EMAIL_API_KEY || "",
+    fromAddress: process.env.EMAIL_FROM || "no-reply@moderntech.com",
+  },
 };
 
 module.exports = env;

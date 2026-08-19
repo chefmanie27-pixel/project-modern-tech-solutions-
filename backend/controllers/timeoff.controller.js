@@ -1,6 +1,12 @@
 const LeaveRequest = require("../models/LeaveRequest");
+const emailService = require("../services/email.service");
 
-const VALID_LEAVE_TYPES = ["Annual", "Sick", "Family Responsibility", "Unpaid"];
+const VALID_LEAVE_TYPES = [
+  "Annual Leave",
+  "Sick Leave",
+  "Family Responsibility",
+  "Study Leave",
+];
 
 const VALID_STATUSES = ["Pending", "Approved", "Denied"];
 
@@ -173,6 +179,9 @@ async function remove(req, res) {
 
 async function updateStatus(req, res) {
   try {
+    // Role check also happens at the route level via roleMiddleware, but we
+    // keep this as a defensive second layer in case the route is ever
+    // mounted without it.
     const allowedRoles = ["admin", "hr", "manager"];
 
     if (!allowedRoles.includes(req.user.role)) {
@@ -183,6 +192,15 @@ async function updateStatus(req, res) {
     }
 
     const { status } = req.body;
+
+    if (!VALID_STATUSES.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid status. Allowed values: ${VALID_STATUSES.join(", ")}`,
+      });
+    }
+
+    const existing = await LeaveRequest.getById(req.params.id);
 
     if (!existing) {
       return res.status(404).json({
@@ -196,6 +214,14 @@ async function updateStatus(req, res) {
       status,
       req.user.userId,
     );
+
+    // Best-effort notification — never let an email failure block the
+    // status update itself.
+    try {
+      await emailService.sendLeaveStatusNotification(request);
+    } catch (emailError) {
+      console.error("Leave status notification failed:", emailError);
+    }
 
     res.json({
       success: true,

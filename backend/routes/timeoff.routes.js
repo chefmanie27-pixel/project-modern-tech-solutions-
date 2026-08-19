@@ -3,6 +3,7 @@ const router = express.Router();
 
 const timeoffController = require("../controllers/timeoff.controller");
 const authMiddleware = require("../middleware/authMiddleware");
+const requireRole = require("../middleware/roleMiddleware");
 
 router.use(authMiddleware);
 
@@ -13,8 +14,10 @@ router.post("/", timeoffController.create);
 router.put("/:id", timeoffController.update);
 router.delete("/:id", timeoffController.remove);
 
-router.patch("/:id/status", timeoffController.updateStatus);
+router.patch(
+  "/:id/status",
+  requireRole("admin", "hr", "manager"),
+  timeoffController.updateStatus,
+);
 
 module.exports = router;
-
-router.use(authMiddleware);

@@ -31,8 +31,19 @@ async function updateLastLogin(userId) {
   );
 }
 
+async function create({ employeeId, email, passwordHash, role }) {
+  const [result] = await pool.execute(
+    `INSERT INTO users (employee_id, email, password_hash, role)
+     VALUES (?, ?, ?, ?)`,
+    [employeeId || null, email, passwordHash, role],
+  );
+
+  return findById(result.insertId);
+}
+
 module.exports = {
   findByEmail,
   findById,
   updateLastLogin,
+  create,
 };
