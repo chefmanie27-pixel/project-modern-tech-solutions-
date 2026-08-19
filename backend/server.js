@@ -1,39 +1,16 @@
 // server.js
 // App entry point. Wires up middleware, routes, and error handling.
 
-<<<<<<< HEAD
-require("dotenv").config();
-=======
->>>>>>> origin/backend/wendy
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 
-<<<<<<< HEAD
-const { testConnection } = require("./config/db");
-=======
 const env = require("./config/env");
 const { testDatabaseConnection } = require("./config/db");
->>>>>>> origin/backend/wendy
 const errorHandler = require("./middleware/errorHandler");
 
 // Route files — add each teammate's router here as they build it
 const employeesRoutes = require("./routes/employees.routes");
-<<<<<<< HEAD
-const payrollRoutes = require("./routes/payroll.routes");        // Azhar
-const authRoutes = require("./routes/auth.routes");             // minimal login/me — Wendy still owns expanding this
-// const timeoffRoutes = require("./routes/timeoff.routes");      // Wendy
-// const attendanceRoutes = require("./routes/attendance.routes");// Avela
-// const dashboardRoutes = require("./routes/dashboard.routes");  // James
-// const performanceRoutes = require("./routes/performance.routes"); // James
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// --- Core middleware ---
-app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_ORIGIN || "*" }));
-=======
 const payrollRoutes = require("./routes/payroll.routes");          // Azhar
 const dashboardRoutes = require("./routes/dashboard.routes");      // James
 const performanceRoutes = require("./routes/performance.routes");  // James
@@ -47,7 +24,6 @@ const PORT = env.port;
 // --- Core middleware ---
 app.use(helmet());
 app.use(cors({ origin: env.clientOrigin }));
->>>>>>> origin/backend/wendy
 app.use(express.json());
 
 // --- Health check ---
@@ -58,20 +34,11 @@ app.get("/api/v1/health", (req, res) => {
 // --- Routes ---
 app.use("/api/v1/employees", employeesRoutes);
 app.use("/api/v1/payroll", payrollRoutes);
-<<<<<<< HEAD
-app.use("/api/v1/auth", authRoutes);
-// app.use("/api/v1/timeoff", timeoffRoutes);
-// app.use("/api/v1/attendance", attendanceRoutes);
-// app.use("/api/v1/dashboard", dashboardRoutes);
-// app.use("/api/v1/performance", performanceRoutes);
-// app.use("/api/v1/payroll", payrollRoutes);
-=======
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/performance", performanceRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/timeoff", timeoffRoutes);
 // app.use("/api/v1/attendance", attendanceRoutes);
->>>>>>> origin/backend/wendy
 
 // --- 404 fallback ---
 app.use((req, res) => {
@@ -83,11 +50,7 @@ app.use(errorHandler);
 
 // --- Start server ---
 async function start() {
-<<<<<<< HEAD
-  await testConnection();
-=======
   await testDatabaseConnection();
->>>>>>> origin/backend/wendy
   app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
   });
