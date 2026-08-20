@@ -1,51 +1,37 @@
 /* ==========================================================================
    API HELPER (temporary — swap for Azhar's shared api.js once it exists)
    ========================================================================== */
-
 const API_BASE = "http://localhost:3000/api/v1";
-
 async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem("moderntech_token");
   const headers = { "Content-Type": "application/json" };
   if (token) headers.Authorization = `Bearer ${token}`;
-
   const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
   if (!res.ok) throw new Error(`Request failed: ${endpoint} (${res.status})`);
   return res.json();
 }
-
 /* ==========================================================================
    STATE
    ========================================================================== */
-
 let employeeInfo = [];
 let allReviews = [];
 let selectedEmployeeId = 1;
 
-/* ==========================================================================
-   DATA LOADING
-   ========================================================================== */
-
 async function loadEmployeeData() {
   employeeInfo = await apiRequest("/employees");
 }
-
 async function loadReviews() {
   allReviews = await apiRequest("/performance");
 }
-
 function reviewsForEmployee(employeeId) {
   return allReviews.filter(r => r.employee_id === employeeId);
 }
-
 /* ==========================================================================
    HELPERS
    ========================================================================== */
-
 function avatarPath(name) {
   return `images/${name.toLowerCase().replace(/\s+/g, "-")}.jpg`;
 }
-
 function handleAvatarError(imgEl, name) {
   imgEl.onerror = null;
   const initials = name.split(" ").map(part => part[0]).join("").toUpperCase();
@@ -56,11 +42,9 @@ function handleAvatarError(imgEl, name) {
   </svg>`;
   imgEl.src = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
-
 function averageRating(review) {
   return ((Number(review.technical_skill) + Number(review.collaboration) + Number(review.communication)) / 3).toFixed(1);
 }
-
 function getLastReviewLabel(employeeId) {
   const reviews = reviewsForEmployee(employeeId);
   if (reviews.length === 0) return "No reviews yet";
@@ -68,24 +52,19 @@ function getLastReviewLabel(employeeId) {
   const monthLabel = new Date(sorted[0].review_date).toLocaleString("en-US", { month: "short" });
   return `Last review ${monthLabel}`;
 }
-
 /* ==========================================================================
    RENDER: EMPLOYEE LIST
    ========================================================================== */
-
 function renderEmployeeList(filter = "") {
   const container = document.getElementById("employeeList");
   container.innerHTML = "";
-
   const filtered = employeeInfo.filter(emp =>
     emp.name.toLowerCase().includes(filter.toLowerCase())
   );
-
   if (filtered.length === 0) {
     container.innerHTML = `<p class="employee-meta">No employees match "${filter}".</p>`;
     return;
   }
-
   filtered.forEach(emp => {
     const item = document.createElement("div");
     item.className = "employee-item" + (emp.employee_id === selectedEmployeeId ? " active" : "");
@@ -109,42 +88,33 @@ function renderEmployeeList(filter = "") {
     container.appendChild(item);
   });
 }
-
 /* ==========================================================================
    RENDER: DETAIL HEADER
    ========================================================================== */
-
 function renderDetailHeader() {
   const employee = employeeInfo.find(e => e.employee_id === selectedEmployeeId);
   if (!employee) return;
-
   const headerAvatar = document.querySelector(".detail-header .avatar-lg");
   headerAvatar.src = avatarPath(employee.name);
   headerAvatar.alt = employee.name;
   headerAvatar.onerror = () => handleAvatarError(headerAvatar, employee.name);
-
   document.getElementById("selectedName").textContent = employee.name;
   document.getElementById("selectedMeta").textContent =
     `${employee.position}${employee.department ? " - " + employee.department : ""}`;
 }
-
 /* ==========================================================================
    RENDER: REVIEW HISTORY
    ========================================================================== */
-
 function renderReviewHistory() {
   const container = document.getElementById("reviewHistory");
   container.innerHTML = "";
-
   const reviews = reviewsForEmployee(selectedEmployeeId)
     .slice()
     .sort((a, b) => new Date(b.review_date) - new Date(a.review_date));
-
   if (reviews.length === 0) {
     container.innerHTML = `<p class="timeline-summary">No reviews yet.</p>`;
     return;
   }
-
   reviews.forEach(review => {
     const item = document.createElement("div");
     item.className = "timeline-item";
@@ -157,23 +127,19 @@ function renderReviewHistory() {
     container.appendChild(item);
   });
 }
-
 /* ==========================================================================
    NEW REVIEW FORM
    ========================================================================== */
-
 async function handleReviewSubmit(e) {
   e.preventDefault();
-
   const period = document.getElementById("reviewPeriod").value;
   if (!period) {
     alert("Please select a review period.");
     return;
   }
-
   const newReview = {
     employee_id: selectedEmployeeId,
-    reviewer_id: null, // reviewer dropdown not wired yet — no real reviewer users exist
+    reviewer_id: null,
     period: period.replace("-", " "),
     review_date: new Date().toISOString().slice(0, 10),
     technical_skill: parseFloat(document.getElementById("technicalSkill").value),
@@ -182,7 +148,6 @@ async function handleReviewSubmit(e) {
     strengths: document.getElementById("strengths").value || "N/A",
     areas_to_grow: document.getElementById("areasToGrow").value || "N/A",
   };
-
   try {
     await apiRequest("/performance", { method: "POST", body: JSON.stringify(newReview) });
     await loadReviews();
@@ -193,15 +158,12 @@ async function handleReviewSubmit(e) {
     alert("Couldn't save the review. Please try again.");
   }
 }
-
 function handleSaveDraft() {
   alert("Draft saved (not yet persisted - placeholder for now).");
 }
-
 /* ==========================================================================
    INIT
    ========================================================================== */
-
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     await loadEmployeeData();
@@ -209,11 +171,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderEmployeeList();
     renderDetailHeader();
     renderReviewHistory();
-
     document.getElementById("searchInput").addEventListener("input", (e) => {
       renderEmployeeList(e.target.value);
     });
-
     document.getElementById("reviewForm").addEventListener("submit", handleReviewSubmit);
     document.getElementById("saveDraftBtn").addEventListener("click", handleSaveDraft);
   } catch (err) {

@@ -1,64 +1,103 @@
-// js/api.js — shared fetch wrapper for all pages.
-// Load this on every page that talks to the backend, after auth-guard.js:
-//   <script src="js/api.js"></script>
-//
-// Usage:
-//   const employees = await apiRequest("/employees");
-//   const emp = await apiRequest("/employees", { method: "POST", body: {...} });
-
-const API_BASE = "http://localhost:3000/api/v1"; // swap for prod URL later
+// js/api.js - Updated to work with your auth system
+const API_BASE = "http://localhost:3000/api/v1";
 const TOKEN_KEY = "moderntech_token";
 
-async function apiRequest(endpoint, { method = "GET", body, auth = true } = {}) {
-  const headers = { "Content-Type": "application/json" };
+// Global API object
+const api = {
+  token: localStorage.getItem(TOKEN_KEY),
 
-  if (auth) {
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (token) headers["Authorization"] = `Bearer ${token}`;
-  }
+  setToken(token) {
+    this.token = token;
+    localStorage.setItem(TOKEN_KEY, token);
+  },
 
-  let res;
-  try {
-    res = await fetch(`${API_BASE}${endpoint}`, {
-      method,
-      headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-    });
-  } catch (networkErr) {
-    // Backend unreachable (not running, CORS, wrong host, etc.)
-    throw new Error(
-      "Could not reach the server. Is the backend running at " + API_BASE + "?"
-    );
-  }
+  getToken() {
+    return this.token || localStorage.getItem(TOKEN_KEY);
+  },
 
-  if (res.status === 401) {
-    // Token missing/expired — bounce to login, mirrors auth-guard.js behavior.
+  clearToken() {
+    this.token = null;
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem("moderntech_user");
-    window.location.replace(resolveLoginPath());
-    return;
-  }
+  },
 
-  if (res.status === 204) return null; // no content (e.g. DELETE)
+  getHeaders() {
+    const headers = { "Content-Type": "application/json" };
+    const token = this.getToken();
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    return headers;
+  },
 
-  const data = await res.json().catch(() => null);
+  async request(endpoint, options = {}) {
+    const url = `${API_BASE}${endpoint}`;
+    const headers = this.getHeaders();
 
-  if (!res.ok) {
-    throw new Error((data && data.message) || `Request failed (${res.status})`);
-  }
+    const config = {
+      ...options,
+      headers: {
+        ...headers,
+        ...options.headers,
+      },
+    };
 
-  return data;
-}
+    // Don't stringify body if it's FormData or already a string
+    if (config.body && typeof config.body === "object" && !(config.body instanceof FormData)) {
+      config.body = JSON.stringify(config.body);
+    }
 
-// Works out the path back to index.html (login) relative to wherever the
-// current page lives, same trick auth-guard.js uses, so this also works
-// for pages in subfolders like "Modern Tech/attendance.html".
-function resolveLoginPath() {
-  const scriptEl = document.currentScript || document.querySelector('script[src*="api.js"]');
-  if (scriptEl && scriptEl.src) {
-    // api.js normally lives in js/api.js, so go up one level from there.
-    const base = scriptEl.src.replace(/js\/api\.js.*$/, "");
-    return base + "index.html";
-  }
-  return "index.html";
-}
+    try {
+      const response = await fetch(url, config);
+
+      // Handle 401 Unauthorized
+      if (response.status === 401) {
+        this.clearToken();
+        const loginUrl = window.location.pathname.includes("/vue-app/") 
+          ? "../index.html" 
+          : "index.html";
+        window.location.href = loginUrl;
+        return null;
+      }
+
+      // Handle 204 No Content
+      if (response.status === 204) {
+        return null;
+      }
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || `Request failed (${response.status})`);
+      }
+
+      return data;
+    } catch (error) {
+      console.error("API Error:", error);
+      throw error;
+    }
+  },
+
+  get(endpoint) {
+    return this.request(endpoint, { method: "GET" });
+  },
+
+  post(endpoint, body) {
+    return this.request(endpoint, { method: "POST", body });
+  },
+
+  put(endpoint, body) {
+    return this.request(endpoint, { method: "PUT", body });
+  },
+
+  patch(endpoint, body) {
+    return this.request(endpoint, { method: "PATCH", body });
+  },
+
+  delete(endpoint) {
+    return this.request(endpoint, { method: "DELETE" });
+  },
+};
+
+// Make api globally available
+window.api = api;

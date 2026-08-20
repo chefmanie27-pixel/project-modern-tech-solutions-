@@ -1,32 +1,25 @@
+// js/login.js
 const welcomeScreen = document.getElementById("welcome-screen");
 const loginScreen = document.getElementById("login-screen");
-
 const accessBtn = document.getElementById("accessBtn");
-
 const password = document.getElementById("password");
 const togglePassword = document.getElementById("togglePassword");
-
 const loginForm = document.getElementById("loginForm");
 const loginError = document.getElementById("loginError");
 const loginBtn = document.querySelector(".login-btn");
 
 accessBtn.addEventListener("click", () => {
-  // Hide Welcome Screen
   welcomeScreen.classList.add("hidden");
-
-  // Show Login Screen
   loginScreen.classList.remove("hidden");
 });
 
 togglePassword.addEventListener("click", () => {
   if (password.type === "password") {
     password.type = "text";
-
     togglePassword.classList.remove("fa-eye");
     togglePassword.classList.add("fa-eye-slash");
   } else {
     password.type = "password";
-
     togglePassword.classList.remove("fa-eye-slash");
     togglePassword.classList.add("fa-eye");
   }
@@ -54,21 +47,17 @@ loginForm.addEventListener("submit", async function (e) {
   }
 
   clearError();
-
   loginBtn.innerHTML = "Signing In...";
   loginBtn.disabled = true;
 
   try {
-    const result = await apiRequest("/auth/login", {
-      method: "POST",
-      auth: false, // no token to send yet — we're getting one
-      body: { email, password: pass },
-    });
+    const result = await api.post("/auth/login", { email, password: pass });
 
-    localStorage.setItem("moderntech_token", result.token);
-    localStorage.setItem("moderntech_user", JSON.stringify(result.user));
-
-    window.location.href = "dashboard.html";
+    if (result.token) {
+      api.setToken(result.token);
+      localStorage.setItem("moderntech_user", JSON.stringify(result.user));
+      window.location.href = "dashboard.html";
+    }
   } catch (err) {
     showError(err.message || "Incorrect email or password.");
     loginBtn.innerHTML = "Sign In";
