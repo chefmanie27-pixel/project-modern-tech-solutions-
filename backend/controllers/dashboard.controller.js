@@ -12,7 +12,12 @@ async function getKpis(req, res, next) {
            WHERE pay_period_end = (SELECT MAX(pay_period_end) FROM payroll_runs)) AS monthly_payroll,
         (SELECT COUNT(*) FROM leave_requests WHERE status = 'Pending') AS pending_requests,
         (SELECT ROUND(100.0 * SUM(status = 'Present') / NULLIF(COUNT(*), 0))
-           FROM attendance_records WHERE record_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)) AS avg_attendance
+           FROM attendance_records
+           WHERE record_date >= (
+             SELECT MIN(record_date) FROM (
+               SELECT DISTINCT record_date FROM attendance_records ORDER BY record_date DESC LIMIT 7
+             ) AS recent_dates
+           )) AS avg_attendance
     `);
     res.json(row);
   } catch (err) {
@@ -22,13 +27,21 @@ async function getKpis(req, res, next) {
 
 async function getAttendanceChart(req, res, next) {
   try {
+    // Use the most recent 7 dates that actually have attendance data,
+    // rather than "today minus 7 days" — seed/demo data is dated in the
+    // past, so a CURDATE()-relative window can come back empty even
+    // though the table is full of records.
     const [rows] = await pool.query(`
       SELECT record_date,
         SUM(status = 'Present') AS present_count,
         SUM(status = 'Absent') AS absent_count,
         SUM(status = 'Half-Day') AS half_day_count
       FROM attendance_records
-      WHERE record_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+      WHERE record_date >= (
+        SELECT MIN(record_date) FROM (
+          SELECT DISTINCT record_date FROM attendance_records ORDER BY record_date DESC LIMIT 7
+        ) AS recent_dates
+      )
       GROUP BY record_date
       ORDER BY record_date
     `);
