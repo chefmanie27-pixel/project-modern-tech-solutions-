@@ -106,6 +106,96 @@
       </div>
     </div>
 
+    <!-- Payslip Modal -->
+    <div id="payslip-modal" class="payslip-modal" style="display: none;">
+      <div class="payslip-overlay" onclick="closePayslip()"></div>
+
+      <div class="payslip-modal-content">
+        <button
+          type="button"
+          class="payslip-close"
+          onclick="closePayslip()"
+          aria-label="Close payslip"
+        >
+          &times;
+        </button>
+
+        <div class="payslip-header">
+          <div>
+            <h2>ModernTech</h2>
+            <p>Employee Payslip</p>
+          </div>
+
+          <span class="payslip-status">READY</span>
+        </div>
+
+        <div class="payslip-period">
+          <span>Pay Period</span>
+          <strong id="payslip-period"></strong>
+        </div>
+
+        <div class="payslip-employee">
+          <h3>Employee Information</h3>
+
+          <div class="payslip-info-grid">
+            <div>
+              <span>Employee</span>
+              <strong id="payslip-employee-name"></strong>
+            </div>
+
+            <div>
+              <span>Employee ID</span>
+              <strong id="payslip-employee-id"></strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="payslip-breakdown">
+          <h3>Payment Breakdown</h3>
+
+          <div class="payslip-line">
+            <span>Gross Pay</span>
+            <strong id="payslip-gross"></strong>
+          </div>
+
+          <div class="payslip-line">
+            <span>Leave Deductions</span>
+            <strong id="payslip-leave"></strong>
+          </div>
+
+          <div class="payslip-line">
+            <span>Tax Deductions</span>
+            <strong id="payslip-tax"></strong>
+          </div>
+
+          <div class="payslip-divider"></div>
+
+          <div class="payslip-line net-pay">
+            <span>Net Pay</span>
+            <strong id="payslip-net"></strong>
+          </div>
+        </div>
+
+        <div class="payslip-actions">
+          <button
+            type="button"
+            class="btn-secondary"
+            onclick="closePayslip()"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            class="btn-primary"
+            id="confirm-disbursement-btn"
+          >
+            Confirm Disbursement
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Application Controller Logic -->
     <!-- In payroll.html, replace the inline script with this -->
     <script>
@@ -343,10 +433,19 @@
             });
 
           const disburseBtn = detailRow.querySelector('[data-action="disburse"]');
+
           disburseBtn.addEventListener("click", (e) => {
+            e.preventDefault();
             e.stopPropagation();
-            const payrollId = disburseBtn.getAttribute("data-payroll-id");
-            if (payrollId) disbursePayroll(payrollId);
+
+            const payrollId = disburseBtn.dataset.payrollId;
+
+            if (!payrollId) {
+              console.error("No payroll ID found for this button.");
+              return;
+            }
+
+            openPayslip(payrollId);
           });
 
           tbody.appendChild(mainRow);
@@ -393,6 +492,84 @@
           alert("Could not run payroll: " + err.message);
         }
       }
+
+      let selectedPayrollId = null;
+
+      function openPayslip(payrollId) {
+        const payroll = Object.values(runsByEmployeeId).find(
+          (run) => String(run.payroll_id) === String(payrollId)
+        );
+
+        if (!payroll) {
+          alert("Could not find this payroll record.");
+          return;
+        }
+
+        selectedPayrollId = payrollId;
+
+        const employee = employees.find(
+          (emp) => String(emp.employee_id) === String(payroll.employee_id)
+        );
+
+        if (!employee) {
+          alert("Could not find the employee for this payroll record.");
+          return;
+        }
+
+        document.getElementById("payslip-employee-name").textContent =
+          employee.name;
+
+        document.getElementById("payslip-employee-id").textContent =
+          `#${employee.employee_id}`;
+
+        document.getElementById("payslip-period").textContent =
+          `${payroll.pay_period_start} to ${payroll.pay_period_end}`;
+
+        document.getElementById("payslip-gross").textContent =
+          `R ${Number(payroll.gross_pay).toLocaleString()}`;
+
+        document.getElementById("payslip-leave").textContent =
+          `R ${Number(payroll.leave_deductions).toLocaleString()}`;
+
+        document.getElementById("payslip-tax").textContent =
+          `R ${Number(payroll.tax_deductions).toLocaleString()}`;
+
+        document.getElementById("payslip-net").textContent =
+          `R ${Number(payroll.net_pay).toLocaleString()}`;
+
+        document.getElementById("payslip-modal").style.display = "block";
+
+        document.body.style.overflow = "hidden";
+      }
+
+      function closePayslip() {
+        document.getElementById("payslip-modal").style.display = "none";
+
+        document.body.style.overflow = "";
+
+        selectedPayrollId = null;
+      }
+
+      document
+        .getElementById("confirm-disbursement-btn")
+        .addEventListener("click", async () => {
+          if (!selectedPayrollId) {
+            return;
+          }
+
+          const button = document.getElementById("confirm-disbursement-btn");
+
+          button.disabled = true;
+          button.textContent = "Processing...";
+
+          try {
+            await disbursePayroll(selectedPayrollId);
+            closePayslip();
+          } finally {
+            button.disabled = false;
+            button.textContent = "Confirm Disbursement";
+          }
+        });
 
       async function disbursePayroll(payrollId) {
         try {
