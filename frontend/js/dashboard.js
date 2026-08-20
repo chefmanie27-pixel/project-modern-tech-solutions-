@@ -143,16 +143,19 @@ function renderDepartmentHeadcount(rows) {
     .join("");
 }
 
-// --- Payroll Trend (line chart) ---
+// --- Payroll Trend (line chart with aligned Y-axis and 150k margins) ---
 function renderPayrollTrend(rows) {
   const svgEl = document.getElementById("payrollChart");
   const polyline = svgEl ? svgEl.querySelector(".trend-line") : null;
   const yAxisEl = document.getElementById("payrollYAxis");
   const xAxisEl = document.getElementById("payrollXAxis");
+  const tooltip = document.getElementById("payrollTooltip");
   if (!svgEl || !polyline) return;
 
-  rows = (rows || []).slice().reverse(); // controller returns most-recent-first; chart reads left-to-right
+  // Clear existing circles on re-render
+  svgEl.querySelectorAll(".trend-dot").forEach((el) => el.remove());
 
+  rows = rows || [];
   if (rows.length === 0) {
     polyline.setAttribute("points", "");
     if (yAxisEl) yAxisEl.innerHTML = "";
@@ -160,37 +163,102 @@ function renderPayrollTrend(rows) {
     return;
   }
 
-  const maxTotal = rows.reduce((max, row) => Math.max(max, Number(row.total || 0)), 0) || 1;
-  const width = 600;
-  const height = 300;
-  const stepX = rows.length > 1 ? width / (rows.length - 1) : 0;
-
-  const points = rows
-    .map((row, i) => {
-      const x = rows.length > 1 ? i * stepX : width / 2;
-      const y = height - (Number(row.total || 0) / maxTotal) * height;
-      return `${x},${y}`;
+  // Clean numbers and parse totals
+  const parsedRows = rows
+    .map((r) => {
+      const rawVal = String(r.total || r.monthly_payroll || 0).replace(/[^0-9.]/g, "");
+      return {
+        month: r.month || r.period || "",
+        total: parseFloat(rawVal) || 0,
+      };
     })
-    .join(" ");
+    .sort((a, b) => a.month.localeCompare(b.month));
 
+  // Scale setup: 150k step size up to a 900k ceiling (0k to 900k)
+  const stepSize = 150000;
+  const peakTotal = parsedRows.reduce((max, r) => Math.max(max, r.total), 0) || 1;
+  const maxTotal = Math.max(900000, Math.ceil(peakTotal / stepSize) * stepSize);
+  const minFloor = 0;
+
+  // Dimensions matching SVG viewBox (0 0 600 220)
+  const svgWidth = 600;
+  const svgHeight = 220;
+  const paddingTop = 15;
+  const paddingBottom = 15;
+  const usableHeight = svgHeight - paddingTop - paddingBottom;
+
+  const stepX = parsedRows.length > 1 ? svgWidth / (parsedRows.length - 1) : 0;
+
+  // Exact 1:1 mapping from data values to Y pixel coordinates
+  const coordinates = parsedRows.map((row, i) => {
+    const x = parsedRows.length > 1 ? i * stepX : svgWidth / 2;
+    const pct = Math.min(1, Math.max(0, (row.total - minFloor) / maxTotal));
+    // SVG origin (0,0) is top-left, so higher values move UP (smaller Y)
+    const y = svgHeight - paddingBottom - pct * usableHeight;
+    return { x, y, row };
+  });
+
+  // Plot trend line
+  const points = coordinates.map((c) => `${c.x.toFixed(1)},${c.y.toFixed(1)}`).join(" ");
   polyline.setAttribute("points", points);
 
+  // Draw SVG circles & restore tooltips
+  coordinates.forEach((c) => {
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("class", "trend-dot");
+    circle.setAttribute("cx", c.x);
+    circle.setAttribute("cy", c.y);
+    circle.setAttribute("r", "5");
+
+    svgEl.appendChild(circle);
+
+    if (tooltip) {
+      let monthLabel = c.row.month;
+      if (c.row.month && c.row.month.includes("-")) {
+        const parts = c.row.month.split("-");
+        const dateObj = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1);
+        monthLabel = dateObj.toLocaleString("en-ZA", { month: "short" });
+      }
+
+      circle.addEventListener("mouseenter", () => {
+        tooltip.textContent = `${monthLabel}: R ${Math.round(c.row.total / 1000)}k`;
+        tooltip.style.opacity = "1";
+      });
+      circle.addEventListener("mousemove", (e) => {
+        const rect = svgEl.getBoundingClientRect();
+        tooltip.style.left = `${e.clientX - rect.left + 10}px`;
+        tooltip.style.top = `${e.clientY - rect.top - 10}px`;
+      });
+      circle.addEventListener("mouseleave", () => {
+        tooltip.style.opacity = "0";
+      });
+    }
+  });
+
+  // Render Y-Axis labels (R 900k down to R 0k in 150k steps)
   if (yAxisEl) {
-    const steps = 4;
+    const stepCount = maxTotal / stepSize;
     const labels = [];
-    for (let i = steps; i >= 0; i--) {
-      labels.push(`R ${Math.round((maxTotal / steps) * i / 1000)}k`);
+    for (let i = stepCount; i >= 0; i--) {
+      labels.push(`R ${Math.round((i * stepSize) / 1000)}k`);
     }
     yAxisEl.innerHTML = labels.map((n) => `<span>${n}</span>`).join("");
   }
 
+  // Render X-Axis labels
   if (xAxisEl) {
-    xAxisEl.innerHTML = rows
-      .map((row) => `<span>${row.month}</span>`)
+    xAxisEl.innerHTML = parsedRows
+      .map((row) => {
+        if (!row.month) return `<span>--</span>`;
+        const parts = row.month.split("-");
+        if (parts.length < 2) return `<span>${row.month}</span>`;
+        const dateObj = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1);
+        const monthLabel = dateObj.toLocaleString("en-ZA", { month: "short" });
+        return `<span>${monthLabel}</span>`;
+      })
       .join("");
   }
 }
-
 // --- Pending Leave Requests ---
 function renderPendingLeave(response) {
   const listEl = document.getElementById("pendingLeaveList");
