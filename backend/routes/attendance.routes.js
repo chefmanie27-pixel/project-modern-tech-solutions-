@@ -1,36 +1,34 @@
+// routes/attendance.routes.js
+const express = require("express");
+const router = express.Router();
 
+const {
+  getAllAttendance,
+  getAttendanceByEmployee,
+  createAttendance,
+  updateAttendance,
+  getSummary,
+} = require("../controllers/attendance.controller");
 
-import { Router } from "express";
-const router = Router();
+const authMiddleware = require("../middleware/authMiddleware");
+const requireRole = require("../middleware/roleMiddleware");
 
-// Bring in the functions that actually handle each request
-import { getSummary, getAll, getByEmployee, create, update } from "../controllers/attendance.controller";
-
-
-import authMiddleware from "../middleware/authMiddleware"; // checks: are you logged in?
-import roleMiddleware from "../middleware/roleMiddleware"; // checks: are you allowed to do this?
-
-// Every single attendance route needs the user to be logged in first.
-// Putting it here once means we don't have to repeat it on every route below.
+// All attendance routes require authentication
 router.use(authMiddleware);
-
 
 // GET /api/v1/attendance/summary
 router.get("/summary", getSummary);
 
-
 // GET /api/v1/attendance
-router.get("/", getAll);
+router.get("/", getAllAttendance);
 
-
-// GET /api/v1/attendance/123
-router.get("/:employeeId", getByEmployee);
+// GET /api/v1/attendance/:employeeId
+router.get("/:employeeId", getAttendanceByEmployee);
 
 // POST /api/v1/attendance
-router.post("/", create);
+router.post("/", createAttendance);
 
+// PATCH /api/v1/attendance/:id
+router.patch("/:id", requireRole("admin", "hr"), updateAttendance);
 
-// PATCH /api/v1/attendance/45
-router.patch("/:id", roleMiddleware(["admin", "hr"]), update);
-
-export default router;
+module.exports = router;

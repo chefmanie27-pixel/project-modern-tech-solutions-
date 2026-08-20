@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "hash-password": "node scripts/hash-password.js"
+    "hash-password": "node scripts/hash-password.js",
+    "setup": "node scripts/setup-data.js",
+    "seed": "mysql -u root -p moderntech < db/seed.sql"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

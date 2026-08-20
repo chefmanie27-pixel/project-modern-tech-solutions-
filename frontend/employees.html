@@ -153,6 +153,7 @@
       </div>
     </div>
 
+    <!-- In employees.html, replace the inline script with this -->
     <script>
       // ---- Live employee data, fetched from the API ----
       let employees = [];
@@ -166,21 +167,22 @@
       const closeModalBtn = document.getElementById("closeModalBtn");
       const addEmployeeForm = document.getElementById("addEmployeeForm");
 
-      // ---- Validation ----
       const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       function validateEmployee(emp) {
         if (!emp.name || !emp.name.trim()) return "Name cannot be empty.";
-        if (!emp.position || !emp.position.trim()) return "Position cannot be empty.";
-        if (!emp.department || !emp.department.trim()) return "Department cannot be empty.";
-        if (isNaN(emp.salary) || emp.salary < 0) return "Salary must be a number of 0 or more.";
+        if (!emp.position || !emp.position.trim())
+          return "Position cannot be empty.";
+        if (!emp.department || !emp.department.trim())
+          return "Department cannot be empty.";
+        if (isNaN(emp.salary) || emp.salary < 0)
+          return "Salary must be a number of 0 or more.";
         if (!emp.contact || !EMAIL_PATTERN.test(emp.contact.trim())) {
           return "Contact must be a valid email address.";
         }
         return null;
       }
 
-      // Maps the API's DB-shaped row to what this page's UI expects.
       function toViewModel(row) {
         return {
           employeeId: row.employee_id,
@@ -195,7 +197,7 @@
 
       async function loadEmployees() {
         try {
-          const rows = await apiRequest("/employees");
+          const rows = await api.get("/employees");
           employees = (rows || []).map(toViewModel);
           renderTable();
         } catch (err) {
@@ -210,30 +212,30 @@
 
           if (isEditing) {
             row.innerHTML = `
-              <td>${employee.employeeId}</td>
-              <td><input type="text" class="edit-input" data-id="${employee.employeeId}" data-field="name" value="${employee.name}"></td>
-              <td><input type="text" class="edit-input" data-id="${employee.employeeId}" data-field="position" value="${employee.position}"></td>
-              <td><input type="text" class="edit-input" data-id="${employee.employeeId}" data-field="department" value="${employee.department}"></td>
-              <td><input type="number" class="edit-input" data-id="${employee.employeeId}" data-field="salary" min="0" value="${employee.salary}"></td>
-              <td><input type="text" class="edit-input" data-id="${employee.employeeId}" data-field="employmentHistory" value="${employee.employmentHistory}"></td>
-              <td><input type="email" class="edit-input" data-id="${employee.employeeId}" data-field="contact" value="${employee.contact}"></td>
-              <td class="text-center">
-                <button class="btn-delete" onclick="deleteEmployee(${employee.employeeId})">Delete</button>
-              </td>
-            `;
+          <td>${employee.employeeId}</td>
+          <td><input type="text" class="edit-input" data-id="${employee.employeeId}" data-field="name" value="${employee.name}"></td>
+          <td><input type="text" class="edit-input" data-id="${employee.employeeId}" data-field="position" value="${employee.position}"></td>
+          <td><input type="text" class="edit-input" data-id="${employee.employeeId}" data-field="department" value="${employee.department}"></td>
+          <td><input type="number" class="edit-input" data-id="${employee.employeeId}" data-field="salary" min="0" value="${employee.salary}"></td>
+          <td><input type="text" class="edit-input" data-id="${employee.employeeId}" data-field="employmentHistory" value="${employee.employmentHistory}"></td>
+          <td><input type="email" class="edit-input" data-id="${employee.employeeId}" data-field="contact" value="${employee.contact}"></td>
+          <td class="text-center">
+            <button class="btn-delete" onclick="deleteEmployee(${employee.employeeId})">Delete</button>
+          </td>
+        `;
           } else {
             row.innerHTML = `
-              <td>${employee.employeeId}</td>
-              <td><strong>${employee.name}</strong></td>
-              <td>${employee.position}</td>
-              <td><span class="dept-tag">${employee.department}</span></td>
-              <td>R ${employee.salary.toLocaleString()}</td>
-              <td>${employee.employmentHistory}</td>
-              <td><a href="mailto:${employee.contact}">${employee.contact}</a></td>
-              <td class="text-center">
-                <button class="btn-delete" onclick="deleteEmployee(${employee.employeeId})">Delete</button>
-              </td>
-            `;
+          <td>${employee.employeeId}</td>
+          <td><strong>${employee.name}</strong></td>
+          <td>${employee.position}</td>
+          <td><span class="dept-tag">${employee.department}</span></td>
+          <td>R ${employee.salary.toLocaleString()}</td>
+          <td>${employee.employmentHistory}</td>
+          <td><a href="mailto:${employee.contact}">${employee.contact}</a></td>
+          <td class="text-center">
+            <button class="btn-delete" onclick="deleteEmployee(${employee.employeeId})">Delete</button>
+          </td>
+        `;
           }
           tableBody.appendChild(row);
         });
@@ -244,12 +246,12 @@
         if (!target) return;
 
         const confirmDelete = confirm(
-          `Are you sure you want to remove ${target.name} from the system?`,
+          `Are you sure you want to remove ${target.name}?`,
         );
         if (!confirmDelete) return;
 
         try {
-          await apiRequest(`/employees/${id}`, { method: "DELETE" });
+          await api.delete(`/employees/${id}`);
           employees = employees.filter((emp) => emp.employeeId !== id);
           renderTable();
         } catch (err) {
@@ -257,8 +259,6 @@
         }
       }
 
-      // Validates all edited rows, then PUTs each changed one. Stops (and
-      // stays in edit mode) on the first invalid row so nothing is lost.
       async function saveChanges() {
         const inputs = document.querySelectorAll(".edit-input");
         const draft = JSON.parse(JSON.stringify(employees));
@@ -277,7 +277,9 @@
         for (const employee of draft) {
           const error = validateEmployee(employee);
           if (error) {
-            alert(`Could not save: ${employee.name || "an employee"} — ${error}`);
+            alert(
+              `Could not save: ${employee.name || "an employee"} — ${error}`,
+            );
             return false;
           }
         }
@@ -285,16 +287,13 @@
         try {
           await Promise.all(
             draft.map((employee) =>
-              apiRequest(`/employees/${employee.employeeId}`, {
-                method: "PUT",
-                body: {
-                  name: employee.name,
-                  position: employee.position,
-                  department: employee.department,
-                  salary: employee.salary,
-                  employmentHistory: employee.employmentHistory,
-                  contact: employee.contact,
-                },
+              api.put(`/employees/${employee.employeeId}`, {
+                name: employee.name,
+                position: employee.position,
+                department: employee.department,
+                salary: employee.salary,
+                employmentHistory: employee.employmentHistory,
+                contact: employee.contact,
               }),
             ),
           );
@@ -316,7 +315,7 @@
           renderTable();
         } else {
           const saved = await saveChanges();
-          if (!saved) return; // stay in edit mode so the user can fix the field
+          if (!saved) return;
           isEditing = false;
           employeeBtn.textContent = "Edit Employees";
           employeeBtn.style.backgroundColor = "";
@@ -358,10 +357,7 @@
         }
 
         try {
-          const created = await apiRequest("/employees", {
-            method: "POST",
-            body: newEmployee,
-          });
+          const created = await api.post("/employees", newEmployee);
           employees.push(toViewModel(created));
           renderTable();
           addModal.style.display = "none";
@@ -371,9 +367,6 @@
         }
       });
 
-      // "Reset to Defaults" now means "discard local edits and reload from
-      // the server" — the server is the source of truth, so there's no
-      // local demo dataset to restore to anymore.
       resetBtn.addEventListener("click", async () => {
         const confirmReset = confirm(
           "This will discard any unsaved edits and reload employees from the server. Continue?",
@@ -388,7 +381,6 @@
         await loadEmployees();
       });
 
-      // ---- Lifecycle ----
       loadEmployees();
     </script>
     <script src="js/nav.js"></script>

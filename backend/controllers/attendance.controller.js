@@ -1,5 +1,5 @@
 // controllers/attendance.controller.js
-import Attendance from '../models/Attendance';
+const Attendance = require('../models/Attendance');
 
 const VALID_STATUSES = ['Present', 'Absent', 'Late', 'Half-Day'];
 
@@ -49,8 +49,8 @@ async function createAttendance(req, res, next) {
     const record = await Attendance.create({ employee_id, record_date, status, clock_in, clock_out });
     res.status(201).json({ data: record });
   } catch (err) {
-    // Also guard against a race on the DB's UNIQUE(employee_id, record_date) constraint
-    if (err.code === '23505') {
+    // MySQL duplicate entry error code
+    if (err.code === 'ER_DUP_ENTRY') {
       return res.status(409).json({ message: 'An attendance record already exists for this employee on this date.' });
     }
     next(err);
@@ -86,4 +86,10 @@ async function getSummary(req, res, next) {
   }
 }
 
-export default { getAllAttendance, getAttendanceByEmployee, createAttendance, updateAttendance, getSummary };
+module.exports = {
+  getAllAttendance,
+  getAttendanceByEmployee,
+  createAttendance,
+  updateAttendance,
+  getSummary,
+};

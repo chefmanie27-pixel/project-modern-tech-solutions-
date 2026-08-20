@@ -1,11 +1,9 @@
 // models/Attendance.js
-import { query as _query } from '../config/db';
-
+const { query } = require('../config/db');
 
 async function findAll({ startDate, endDate, department, page = 1, limit = 50 } = {}) {
   const conditions = [];
   const values = [];
-  let idx = 1;
 
   let baseQuery = `
     SELECT a.attendance_id, a.employee_id, e.name AS employee_name,
@@ -16,15 +14,15 @@ async function findAll({ startDate, endDate, department, page = 1, limit = 50 } 
 
   if (department) {
     baseQuery += ` JOIN departments d ON d.department_id = e.department_id `;
-    conditions.push(`d.name = $${idx++}`);
+    conditions.push(`d.name = ?`);
     values.push(department);
   }
   if (startDate) {
-    conditions.push(`a.record_date >= $${idx++}`);
+    conditions.push(`a.record_date >= ?`);
     values.push(startDate);
   }
   if (endDate) {
-    conditions.push(`a.record_date <= $${idx++}`);
+    conditions.push(`a.record_date <= ?`);
     values.push(endDate);
   }
 
@@ -33,45 +31,48 @@ async function findAll({ startDate, endDate, department, page = 1, limit = 50 } 
   }
 
   const offset = (Math.max(1, page) - 1) * limit;
-  baseQuery += ` ORDER BY a.record_date DESC LIMIT $${idx++} OFFSET $${idx++}`;
+  baseQuery += ` ORDER BY a.record_date DESC LIMIT ? OFFSET ?`;
   values.push(limit, offset);
 
-  const { rows } = await _query(baseQuery, values);
+  const rows = await query(baseQuery, values);
   return rows;
 }
 
 async function findByEmployeeId(employeeId, { startDate, endDate } = {}) {
-  const conditions = ['employee_id = $1'];
+  const conditions = ['employee_id = ?'];
   const values = [employeeId];
-  let idx = 2;
 
   if (startDate) {
-    conditions.push(`record_date >= $${idx++}`);
+    conditions.push(`record_date >= ?`);
     values.push(startDate);
   }
   if (endDate) {
-    conditions.push(`record_date <= $${idx++}`);
+    conditions.push(`record_date <= ?`);
     values.push(endDate);
   }
 
-  const query = `
+  const sql = `
     SELECT attendance_id, employee_id, record_date, status, clock_in, clock_out
     FROM attendance_records
     WHERE ${conditions.join(' AND ')}
     ORDER BY record_date DESC
   `;
 
-  const { rows } = await _query(query, values);
+  const rows = await query(sql, values);
   return rows;
 }
 
 async function create({ employee_id, record_date, status, clock_in, clock_out }) {
-  const query = `
+  const sql = `
     INSERT INTO attendance_records (employee_id, record_date, status, clock_in, clock_out)
-    VALUES ($1, $2, $3, $4, $5)
-    RETURNING attendance_id, employee_id, record_date, status, clock_in, clock_out
+    VALUES (?, ?, ?, ?, ?)
   `;
-  const { rows } = await _query(query, [employee_id, record_date, status, clock_in || null, clock_out || null]);
+  const result = await query(sql, [employee_id, record_date, status, clock_in || null, clock_out || null]);
+  
+  // Get the inserted record
+  const rows = await query(
+    'SELECT attendance_id, employee_id, record_date, status, clock_in, clock_out FROM attendance_records WHERE attendance_id = LAST_INSERT_ID()'
+  );
   return rows[0];
 }
 
@@ -79,11 +80,10 @@ async function update(attendanceId, fields) {
   const allowed = ['status', 'clock_in', 'clock_out', 'record_date'];
   const sets = [];
   const values = [];
-  let idx = 1;
 
   for (const key of allowed) {
     if (fields[key] !== undefined) {
-      sets.push(`${key} = $${idx++}`);
+      sets.push(`${key} = ?`);
       values.push(fields[key]);
     }
   }
@@ -91,51 +91,49 @@ async function update(attendanceId, fields) {
   if (!sets.length) return null;
 
   values.push(attendanceId);
-  const query = `
+  const sql = `
     UPDATE attendance_records
     SET ${sets.join(', ')}
-    WHERE attendance_id = $${idx}
-    RETURNING attendance_id, employee_id, record_date, status, clock_in, clock_out
+    WHERE attendance_id = ?
   `;
-  const { rows } = await _query(query, values);
+  await query(sql, values);
+
+  // Return updated record
+  const rows = await query(
+    'SELECT attendance_id, employee_id, record_date, status, clock_in, clock_out FROM attendance_records WHERE attendance_id = ?',
+    [attendanceId]
+  );
   return rows[0] || null;
 }
 
-/**
- * Aggregated present/absent/late/half-day counts for a date range.
- * Mirrors what dashboard.js's calculateKPIs() currently computes
- * client-side, so James's dashboard can call this instead of
- * recomputing from raw records.
- */
 async function getSummary({ startDate, endDate } = {}) {
   const conditions = [];
   const values = [];
-  let idx = 1;
 
   if (startDate) {
-    conditions.push(`record_date >= $${idx++}`);
+    conditions.push(`record_date >= ?`);
     values.push(startDate);
   }
   if (endDate) {
-    conditions.push(`record_date <= $${idx++}`);
+    conditions.push(`record_date <= ?`);
     values.push(endDate);
   }
 
   const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
 
-  const query = `
+  const sql = `
     SELECT
-      COUNT(*) FILTER (WHERE status = 'Present')  AS present_count,
-      COUNT(*) FILTER (WHERE status = 'Absent')   AS absent_count,
-      COUNT(*) FILTER (WHERE status = 'Late')     AS late_count,
-      COUNT(*) FILTER (WHERE status = 'Half-Day') AS half_day_count,
+      SUM(CASE WHEN status = 'Present' THEN 1 ELSE 0 END) AS present_count,
+      SUM(CASE WHEN status = 'Absent' THEN 1 ELSE 0 END) AS absent_count,
+      SUM(CASE WHEN status = 'Late' THEN 1 ELSE 0 END) AS late_count,
+      SUM(CASE WHEN status = 'Half-Day' THEN 1 ELSE 0 END) AS half_day_count,
       COUNT(*) AS total_records
     FROM attendance_records
     ${whereClause}
   `;
 
-  const { rows } = await _query(query, values);
-  const r = rows[0];
+  const rows = await query(sql, values);
+  const r = rows[0] || {};
   const total = Number(r.total_records) || 0;
   const present = Number(r.present_count) || 0;
 
@@ -150,14 +148,21 @@ async function getSummary({ startDate, endDate } = {}) {
 }
 
 async function existsForDate(employeeId, recordDate, excludeAttendanceId = null) {
-  let query = `SELECT 1 FROM attendance_records WHERE employee_id = $1 AND record_date = $2`;
+  let sql = `SELECT 1 FROM attendance_records WHERE employee_id = ? AND record_date = ?`;
   const values = [employeeId, recordDate];
   if (excludeAttendanceId) {
-    query += ` AND attendance_id != $3`;
+    sql += ` AND attendance_id != ?`;
     values.push(excludeAttendanceId);
   }
-  const { rows } = await _query(query, values);
+  const rows = await query(sql, values);
   return rows.length > 0;
 }
 
-export default { findAll, findByEmployeeId, create, update, getSummary, existsForDate };
+module.exports = {
+  findAll,
+  findByEmployeeId,
+  create,
+  update,
+  getSummary,
+  existsForDate,
+};
