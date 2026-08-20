@@ -1,40 +1,25 @@
 /* ==========================================================================
-   DATA
-   employeeInfo is loaded from data/employee_info.json (10 real employees).
-   DUMMY_REVIEWS is hardcoded since performance review data doesn't exist
-   in any JSON file — keyed by the same employeeId used in employee_info.json.
-   Single reviewer persona (Sarah Johnson, HR Manager) since there's no
-   manager hierarchy in the data and no employee-facing login.
+   API HELPER (temporary — swap for Azhar's shared api.js once it exists)
+   ========================================================================== */
+
+const API_BASE = "http://localhost:3000/api/v1";
+
+async function apiRequest(endpoint, options = {}) {
+  const token = localStorage.getItem("moderntech_token");
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
+  if (!res.ok) throw new Error(`Request failed: ${endpoint} (${res.status})`);
+  return res.json();
+}
+
+/* ==========================================================================
+   STATE
    ========================================================================== */
 
 let employeeInfo = [];
-
-const REVIEWER = "Sarah Johnson"; // HR Manager persona, sole reviewer
-
-const DUMMY_REVIEWS = {
-  1: [
-    { period: "Q2 2026", date: "2026-06-30", technicalSkill: 4.5, collaboration: 4.0, communication: 4.0, strengths: "Strong on delivery and code quality.", areasToGrow: "Could delegate more to juniors." },
-    { period: "Q1 2026", date: "2026-03-31", technicalSkill: 4.0, collaboration: 3.5, communication: 4.0, strengths: "Solid technical execution.", areasToGrow: "Mentoring juniors." }
-  ],
-  2: [
-    { period: "Q2 2026", date: "2026-06-28", technicalSkill: 4.0, collaboration: 4.5, communication: 5.0, strengths: "Excellent people management.", areasToGrow: "Delegate more day-to-day admin tasks." }
-  ],
-  3: [],
-  4: [
-    { period: "Q1 2026", date: "2026-03-15", technicalSkill: 3.5, collaboration: 4.0, communication: 4.5, strengths: "Consistently hits sales targets.", areasToGrow: "Improve CRM record-keeping." }
-  ],
-  5: [],
-  6: [
-    { period: "Q2 2026", date: "2026-06-20", technicalSkill: 4.5, collaboration: 4.0, communication: 3.5, strengths: "Great eye for detail in UI work.", areasToGrow: "Speak up more in design reviews." }
-  ],
-  7: [],
-  8: [],
-  9: [
-    { period: "Q1 2026", date: "2026-03-10", technicalSkill: 4.0, collaboration: 3.5, communication: 3.5, strengths: "Accurate, dependable reporting.", areasToGrow: "Proactive communication with other teams." }
-  ],
-  10: []
-};
-
+let allReviews = [];
 let selectedEmployeeId = 1;
 
 /* ==========================================================================
@@ -42,10 +27,15 @@ let selectedEmployeeId = 1;
    ========================================================================== */
 
 async function loadEmployeeData() {
-  const res = await fetch("data/employee_info.json");
-  if (!res.ok) throw new Error("Failed to load employee data.");
-  const json = await res.json();
-  employeeInfo = json.employeeInformation;
+  employeeInfo = await apiRequest("/employees");
+}
+
+async function loadReviews() {
+  allReviews = await apiRequest("/performance");
+}
+
+function reviewsForEmployee(employeeId) {
+  return allReviews.filter(r => r.employee_id === employeeId);
 }
 
 /* ==========================================================================
@@ -56,15 +46,9 @@ function avatarPath(name) {
   return `images/${name.toLowerCase().replace(/\s+/g, "-")}.jpg`;
 }
 
-// Falls back to a generated initials avatar if a photo file isn't present
-// on disk (this project doesn't ship headshots for the real employee list).
 function handleAvatarError(imgEl, name) {
   imgEl.onerror = null;
-  const initials = name
-    .split(" ")
-    .map(part => part[0])
-    .join("")
-    .toUpperCase();
+  const initials = name.split(" ").map(part => part[0]).join("").toUpperCase();
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80">
     <rect width="100%" height="100%" fill="#0B2E59"/>
     <text x="50%" y="50%" fill="#ffffff" font-family="Poppins, sans-serif"
@@ -74,19 +58,19 @@ function handleAvatarError(imgEl, name) {
 }
 
 function averageRating(review) {
-  return ((review.technicalSkill + review.collaboration + review.communication) / 3).toFixed(1);
+  return ((Number(review.technical_skill) + Number(review.collaboration) + Number(review.communication)) / 3).toFixed(1);
 }
 
 function getLastReviewLabel(employeeId) {
-  const reviews = DUMMY_REVIEWS[employeeId] || [];
+  const reviews = reviewsForEmployee(employeeId);
   if (reviews.length === 0) return "No reviews yet";
-  const sorted = [...reviews].sort((a, b) => new Date(b.date) - new Date(a.date));
-  const monthLabel = new Date(sorted[0].date).toLocaleString("en-US", { month: "short" });
+  const sorted = [...reviews].sort((a, b) => new Date(b.review_date) - new Date(a.review_date));
+  const monthLabel = new Date(sorted[0].review_date).toLocaleString("en-US", { month: "short" });
   return `Last review ${monthLabel}`;
 }
 
 /* ==========================================================================
-   RENDER: EMPLOYEE LIST (left panel)
+   RENDER: EMPLOYEE LIST
    ========================================================================== */
 
 function renderEmployeeList(filter = "") {
@@ -104,20 +88,20 @@ function renderEmployeeList(filter = "") {
 
   filtered.forEach(emp => {
     const item = document.createElement("div");
-    item.className = "employee-item" + (emp.employeeId === selectedEmployeeId ? " active" : "");
-    item.dataset.id = emp.employeeId;
+    item.className = "employee-item" + (emp.employee_id === selectedEmployeeId ? " active" : "");
+    item.dataset.id = emp.employee_id;
     item.innerHTML = `
       <img class="avatar" src="${avatarPath(emp.name)}" alt="${emp.name}" />
       <div>
         <p class="employee-name">${emp.name}</p>
-        <p class="employee-meta">${emp.position} - ${getLastReviewLabel(emp.employeeId)}</p>
+        <p class="employee-meta">${emp.position} - ${getLastReviewLabel(emp.employee_id)}</p>
       </div>
     `;
     item.querySelector("img").addEventListener("error", function () {
       handleAvatarError(this, emp.name);
     });
     item.addEventListener("click", () => {
-      selectedEmployeeId = emp.employeeId;
+      selectedEmployeeId = emp.employee_id;
       renderEmployeeList(document.getElementById("searchInput").value);
       renderDetailHeader();
       renderReviewHistory();
@@ -127,11 +111,11 @@ function renderEmployeeList(filter = "") {
 }
 
 /* ==========================================================================
-   RENDER: DETAIL HEADER (right panel top)
+   RENDER: DETAIL HEADER
    ========================================================================== */
 
 function renderDetailHeader() {
-  const employee = employeeInfo.find(e => e.employeeId === selectedEmployeeId);
+  const employee = employeeInfo.find(e => e.employee_id === selectedEmployeeId);
   if (!employee) return;
 
   const headerAvatar = document.querySelector(".detail-header .avatar-lg");
@@ -140,20 +124,21 @@ function renderDetailHeader() {
   headerAvatar.onerror = () => handleAvatarError(headerAvatar, employee.name);
 
   document.getElementById("selectedName").textContent = employee.name;
-  document.getElementById("selectedMeta").textContent = `${employee.position} - ${employee.department}`;
+  document.getElementById("selectedMeta").textContent =
+    `${employee.position}${employee.department ? " - " + employee.department : ""}`;
 }
 
 /* ==========================================================================
-   RENDER: REVIEW HISTORY (timeline)
+   RENDER: REVIEW HISTORY
    ========================================================================== */
 
 function renderReviewHistory() {
   const container = document.getElementById("reviewHistory");
   container.innerHTML = "";
 
-  const reviews = (DUMMY_REVIEWS[selectedEmployeeId] || [])
+  const reviews = reviewsForEmployee(selectedEmployeeId)
     .slice()
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+    .sort((a, b) => new Date(b.review_date) - new Date(a.review_date));
 
   if (reviews.length === 0) {
     container.innerHTML = `<p class="timeline-summary">No reviews yet.</p>`;
@@ -164,9 +149,9 @@ function renderReviewHistory() {
     const item = document.createElement("div");
     item.className = "timeline-item";
     item.innerHTML = `
-      <p class="timeline-title">${review.period} - ${review.date} - ${REVIEWER}</p>
+      <p class="timeline-title">${review.period} - ${review.review_date.slice(0, 10)}</p>
       <p class="timeline-summary">
-        Rating ${averageRating(review)}/5 - ${review.strengths} Growth area: ${review.areasToGrow}
+        Rating ${averageRating(review)}/5 - ${review.strengths} Growth area: ${review.areas_to_grow}
       </p>
     `;
     container.appendChild(item);
@@ -177,7 +162,7 @@ function renderReviewHistory() {
    NEW REVIEW FORM
    ========================================================================== */
 
-function handleReviewSubmit(e) {
+async function handleReviewSubmit(e) {
   e.preventDefault();
 
   const period = document.getElementById("reviewPeriod").value;
@@ -187,27 +172,29 @@ function handleReviewSubmit(e) {
   }
 
   const newReview = {
+    employee_id: selectedEmployeeId,
+    reviewer_id: null, // reviewer dropdown not wired yet — no real reviewer users exist
     period: period.replace("-", " "),
-    date: new Date().toISOString().slice(0, 10),
-    technicalSkill: parseFloat(document.getElementById("technicalSkill").value),
+    review_date: new Date().toISOString().slice(0, 10),
+    technical_skill: parseFloat(document.getElementById("technicalSkill").value),
     collaboration: parseFloat(document.getElementById("collaboration").value),
     communication: parseFloat(document.getElementById("communication").value),
     strengths: document.getElementById("strengths").value || "N/A",
-    areasToGrow: document.getElementById("areasToGrow").value || "N/A"
+    areas_to_grow: document.getElementById("areasToGrow").value || "N/A",
   };
 
-  if (!DUMMY_REVIEWS[selectedEmployeeId]) {
-    DUMMY_REVIEWS[selectedEmployeeId] = [];
+  try {
+    await apiRequest("/performance", { method: "POST", body: JSON.stringify(newReview) });
+    await loadReviews();
+    renderReviewHistory();
+    renderEmployeeList(document.getElementById("searchInput").value);
+    document.getElementById("reviewForm").reset();
+  } catch (err) {
+    alert("Couldn't save the review. Please try again.");
   }
-  DUMMY_REVIEWS[selectedEmployeeId].push(newReview);
-
-  renderReviewHistory();
-  renderEmployeeList(document.getElementById("searchInput").value);
-  document.getElementById("reviewForm").reset();
 }
 
 function handleSaveDraft() {
-  // Placeholder - no backend/storage to persist a draft to yet.
   alert("Draft saved (not yet persisted - placeholder for now).");
 }
 
@@ -218,6 +205,7 @@ function handleSaveDraft() {
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     await loadEmployeeData();
+    await loadReviews();
     renderEmployeeList();
     renderDetailHeader();
     renderReviewHistory();
@@ -231,6 +219,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (err) {
     console.error(err);
     document.querySelector(".reviews-container").innerHTML =
-      `<p style="color:#e5484d;">Couldn't load employee data. Make sure you're running this via a local server (e.g. <code>python -m http.server</code>), not opening the file directly.</p>`;
+      `<p style="color:#e5484d;">Couldn't load data. Make sure the server is running and you're logged in.</p>`;
   }
 });

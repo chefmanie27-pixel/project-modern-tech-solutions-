@@ -1,183 +1,46 @@
 /* ==========================================================================
-   DATA
+   API HELPER (temporary — swap for Azhar's shared api.js once it exists)
    ========================================================================== */
 
-const employeeInfo = [
-  { employeeId: 1, name: "Sibongile Nkosi", position: "Software Engineer", department: "Development", salary: 70000, contact: "sibongile.nkosi@moderntech.com" },
-  { employeeId: 2, name: "Lungile Moyo", position: "HR Manager", department: "HR", salary: 80000, contact: "lungile.moyo@moderntech.com" },
-  { employeeId: 3, name: "Thabo Molefe", position: "Quality Analyst", department: "QA", salary: 55000, contact: "thabo.molefe@moderntech.com" },
-  { employeeId: 4, name: "Keshav Naidoo", position: "Sales Representative", department: "Sales", salary: 60000, contact: "keshav.naidoo@moderntech.com" },
-  { employeeId: 5, name: "Zanele Khumalo", position: "Marketing Specialist", department: "Marketing", salary: 58000, contact: "zanele.khumalo@moderntech.com" },
-  { employeeId: 6, name: "Sipho Zulu", position: "UI/UX Designer", department: "Design", salary: 65000, contact: "sipho.zulu@moderntech.com" },
-  { employeeId: 7, name: "Naledi Moeketsi", position: "DevOps Engineer", department: "IT", salary: 72000, contact: "naledi.moeketsi@moderntech.com" },
-  { employeeId: 8, name: "Farai Gumbo", position: "Content Strategist", department: "Marketing", salary: 56000, contact: "farai.gumbo@moderntech.com" },
-  { employeeId: 9, name: "Karabo Dlamini", position: "Accountant", department: "Finance", salary: 62000, contact: "karabo.dlamini@moderntech.com" },
-  { employeeId: 10, name: "Fatima Patel", position: "Customer Support Lead", department: "Support", salary: 58000, contact: "fatima.patel@moderntech.com" }
-];
+const API_BASE = "http://localhost:3000/api/v1";
 
-// NOTE: each leaveRequests entry now has a "days" field so the dashboard
-// can show a real "Duration" value instead of "N/A".
-const attendanceData = [
-  { employeeId: 1, attendance: [
-    { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Absent" },
-    { date: "2025-07-27", status: "Present" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
-  ], leaveRequests: [
-    { date: "2025-07-22", days: 3, reason: "Sick Leave", status: "Approved" },
-    { date: "2024-12-01", days: 1, reason: "Personal", status: "Pending" }
-  ]},
-  { employeeId: 2, attendance: [
-    { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
-    { date: "2025-07-27", status: "Absent" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
-  ], leaveRequests: [
-    { date: "2025-07-15", days: 1, reason: "Family Responsibility", status: "Denied" },
-    { date: "2024-12-02", days: 10, reason: "Vacation", status: "Approved" }
-  ]},
-  { employeeId: 3, attendance: [
-    { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
-    { date: "2025-07-27", status: "Present" }, { date: "2025-07-28", status: "Absent" }, { date: "2025-07-29", status: "Present" }
-  ], leaveRequests: [
-    { date: "2025-07-10", days: 1, reason: "Medical Appointment", status: "Approved" },
-    { date: "2024-12-05", days: 2, reason: "Personal", status: "Pending" }
-  ]},
-  { employeeId: 4, attendance: [
-    { date: "2025-07-25", status: "Absent" }, { date: "2025-07-26", status: "Present" },
-    { date: "2025-07-27", status: "Present" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
-  ], leaveRequests: [
-    { date: "2025-07-20", days: 3, reason: "Bereavement", status: "Approved" }
-  ]},
-  { employeeId: 5, attendance: [
-    { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
-    { date: "2025-07-27", status: "Absent" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
-  ], leaveRequests: [
-    { date: "2024-12-01", days: 2, reason: "Childcare", status: "Pending" }
-  ]},
-  { employeeId: 6, attendance: [
-    { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
-    { date: "2025-07-27", status: "Absent" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
-  ], leaveRequests: [
-    { date: "2025-07-18", days: 1, reason: "Sick Leave", status: "Approved" }
-  ]},
-  { employeeId: 7, attendance: [
-    { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
-    { date: "2025-07-27", status: "Present" }, { date: "2025-07-28", status: "Absent" }, { date: "2025-07-29", status: "Present" }
-  ], leaveRequests: [
-    { date: "2025-07-22", days: 5, reason: "Vacation", status: "Pending" }
-  ]},
-  { employeeId: 8, attendance: [
-    { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Absent" },
-    { date: "2025-07-27", status: "Present" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
-  ], leaveRequests: [
-    { date: "2024-12-02", days: 1, reason: "Medical Appointment", status: "Approved" }
-  ]},
-  { employeeId: 9, attendance: [
-    { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
-    { date: "2025-07-27", status: "Present" }, { date: "2025-07-28", status: "Absent" }, { date: "2025-07-29", status: "Present" }
-  ], leaveRequests: [
-    { date: "2025-07-19", days: 2, reason: "Childcare", status: "Denied" }
-  ]},
-  { employeeId: 10, attendance: [
-    { date: "2025-07-25", status: "Present" }, { date: "2025-07-26", status: "Present" },
-    { date: "2025-07-27", status: "Absent" }, { date: "2025-07-28", status: "Present" }, { date: "2025-07-29", status: "Present" }
-  ], leaveRequests: [
-    { date: "2024-12-03", days: 7, reason: "Vacation", status: "Pending" }
-  ]}
-];
-
-const payrollData = [
-  { employeeId: 1, hoursWorked: 160, leaveDeductions: 8, finalSalary: 69500 },
-  { employeeId: 2, hoursWorked: 150, leaveDeductions: 10, finalSalary: 79000 },
-  { employeeId: 3, hoursWorked: 170, leaveDeductions: 4, finalSalary: 54800 },
-  { employeeId: 4, hoursWorked: 165, leaveDeductions: 6, finalSalary: 59700 },
-  { employeeId: 5, hoursWorked: 158, leaveDeductions: 5, finalSalary: 57850 },
-  { employeeId: 6, hoursWorked: 168, leaveDeductions: 2, finalSalary: 64800 },
-  { employeeId: 7, hoursWorked: 175, leaveDeductions: 3, finalSalary: 71800 },
-  { employeeId: 8, hoursWorked: 160, leaveDeductions: 0, finalSalary: 56000 },
-  { employeeId: 9, hoursWorked: 155, leaveDeductions: 5, finalSalary: 61500 },
-  { employeeId: 10, hoursWorked: 162, leaveDeductions: 4, finalSalary: 57750 }
-];
-
-/* ==========================================================================
-   KPI CALCULATIONS
-   ========================================================================== */
-
-function calculateKPIs() {
-  const totalEmployees = employeeInfo.length;
-
-  const onLeaveCount = attendanceData.filter(emp =>
-    emp.leaveRequests.some(r => r.status === "Approved")
-  ).length;
-
-  const activeEmployees = totalEmployees - onLeaveCount;
-  const monthlyPayroll = payrollData.reduce((sum, p) => sum + p.finalSalary, 0);
-
-  const pendingRequests = attendanceData.reduce((count, emp) =>
-    count + emp.leaveRequests.filter(r => r.status === "Pending").length, 0
-  );
-
-  const totalDays = attendanceData.reduce((sum, emp) => sum + emp.attendance.length, 0);
-  const presentDays = attendanceData.reduce((sum, emp) =>
-    sum + emp.attendance.filter(a => a.status === "Present").length, 0
-  );
-  const avgAttendance = Math.round((presentDays / totalDays) * 100);
-
-  return { totalEmployees, activeEmployees, onLeaveCount, monthlyPayroll, pendingRequests, avgAttendance };
-}
-
-function renderKPIs() {
-  const kpis = calculateKPIs();
-
-  document.getElementById("kpi-active-employees").textContent = kpis.activeEmployees;
-  document.getElementById("kpi-active-sub").textContent = `${kpis.totalEmployees} in total - ${kpis.onLeaveCount} on leave`;
-  document.getElementById("kpi-monthly-payroll").textContent = `R ${Math.round(kpis.monthlyPayroll / 1000)}k`;
-  document.getElementById("kpi-pending-requests").textContent = kpis.pendingRequests;
-  document.getElementById("kpi-avg-attendance").textContent = `${kpis.avgAttendance}%`;
+async function apiRequest(endpoint) {
+  const token = localStorage.getItem("moderntech_token");
+  const res = await fetch(`${API_BASE}${endpoint}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) throw new Error(`Request failed: ${endpoint} (${res.status})`);
+  return res.json();
 }
 
 /* ==========================================================================
-   ATTENDANCE CHART (grouped bars + y-axis + hover tooltips)
+   KPIs
    ========================================================================== */
 
-function renderAttendanceChart() {
+async function renderKPIs() {
+  const kpis = await apiRequest("/dashboard/kpis");
+
+  document.getElementById("kpi-active-employees").textContent = kpis.active_employees;
+  document.getElementById("kpi-active-sub").textContent =
+    `${kpis.total_employees} in total - ${kpis.on_leave_count} on leave`;
+  document.getElementById("kpi-monthly-payroll").textContent =
+    `R ${Math.round(kpis.monthly_payroll / 1000)}k`;
+  document.getElementById("kpi-pending-requests").textContent = kpis.pending_requests;
+  document.getElementById("kpi-avg-attendance").textContent =
+    kpis.avg_attendance !== null ? `${kpis.avg_attendance}%` : "N/A";
+
+  return kpis;
+}
+
+/* ==========================================================================
+   ATTENDANCE CHART
+   ========================================================================== */
+
+async function renderAttendanceChart(totalEmployees) {
+  const rows = await apiRequest("/dashboard/attendance-chart");
   const container = document.getElementById("attendanceChart");
   container.innerHTML = "";
 
-  const totalEmployees = employeeInfo.length;
-  const allDates = attendanceData[0].attendance.map(a => a.date);
-
-  allDates.forEach(date => {
-    let presentCount = 0;
-    let absentCount = 0;
-
-    attendanceData.forEach(emp => {
-      const entry = emp.attendance.find(a => a.date === date);
-      if (entry?.status === "Present") presentCount++;
-      if (entry?.status === "Absent") absentCount++;
-    });
-
-    // GAP: leave request dates don't overlap the attendance dates in the
-    // data, so this always computes to 0. Kept for structure/consistency.
-    const leaveCount = 0;
-
-    const presentPct = Math.round((presentCount / totalEmployees) * 100);
-    const absentPct = Math.round((absentCount / totalEmployees) * 100);
-    const leavePct = Math.round((leaveCount / totalEmployees) * 100);
-
-    const shortDate = date.slice(5);
-
-    const group = document.createElement("div");
-    group.className = "bar-group";
-    group.innerHTML = `
-      <div class="bar-cluster">
-        <div class="bar present" style="--pct: ${presentPct}" data-value="${presentCount} present"></div>
-        <div class="bar absent" style="--pct: ${absentPct}" data-value="${absentCount} absent"></div>
-        <div class="bar leave" style="--pct: ${leavePct}" data-value="${leaveCount} on leave"></div>
-      </div>
-      <span class="bar-label">${shortDate}</span>
-    `;
-    container.appendChild(group);
-  });
-
-  // y-axis: bars are % of total employees, so scale is fixed 0-100
   document.getElementById("attendanceYAxis").innerHTML = `
     <span>100%</span>
     <span>75%</span>
@@ -185,34 +48,53 @@ function renderAttendanceChart() {
     <span>25%</span>
     <span>0%</span>
   `;
+
+  if (rows.length === 0) {
+    container.innerHTML = `<p style="padding:1rem;">No attendance data yet.</p>`;
+    return;
+  }
+
+  rows.forEach(row => {
+    const presentPct = Math.round((row.present_count / totalEmployees) * 100);
+    const absentPct = Math.round((row.absent_count / totalEmployees) * 100);
+    const leavePct = Math.round((row.half_day_count / totalEmployees) * 100);
+    const shortDate = row.record_date.slice(5, 10);
+
+    const group = document.createElement("div");
+    group.className = "bar-group";
+    group.innerHTML = `
+      <div class="bar-cluster">
+        <div class="bar present" style="--pct: ${presentPct}" data-value="${row.present_count} present"></div>
+        <div class="bar absent" style="--pct: ${absentPct}" data-value="${row.absent_count} absent"></div>
+        <div class="bar leave" style="--pct: ${leavePct}" data-value="${row.half_day_count} on leave"></div>
+      </div>
+      <span class="bar-label">${shortDate}</span>
+    `;
+    container.appendChild(group);
+  });
 }
 
 /* ==========================================================================
-   DEPARTMENT HEADCOUNT (horizontal bar list + hover tooltips)
+   DEPARTMENT HEADCOUNT
    ========================================================================== */
 
-function renderDepartmentHeadcount() {
+async function renderDepartmentHeadcount() {
+  const rows = await apiRequest("/dashboard/department-headcount");
   const container = document.getElementById("deptHeadcount");
   container.innerHTML = "";
 
-  const deptCounts = {};
-  employeeInfo.forEach(emp => {
-    deptCounts[emp.department] = (deptCounts[emp.department] || 0) + 1;
-  });
+  const total = rows.reduce((sum, d) => sum + d.count, 0);
 
-  const total = employeeInfo.length;
-
-  Object.entries(deptCounts).forEach(([dept, count]) => {
-    const pct = Math.round((count / total) * 100);
-
+  rows.forEach(d => {
+    const pct = total > 0 ? Math.round((d.count / total) * 100) : 0;
     const row = document.createElement("div");
     row.className = "dept-bar-row";
     row.innerHTML = `
-      <span class="dept-name">${dept}</span>
+      <span class="dept-name">${d.department}</span>
       <div class="bar-track">
-        <div class="bar-fill" style="--pct: ${pct}" data-value="${count} employees"></div>
+        <div class="bar-fill" style="--pct: ${pct}" data-value="${d.count} employees"></div>
       </div>
-      <span class="dept-count">${count}</span>
+      <span class="dept-count">${d.count}</span>
     `;
     container.appendChild(row);
   });
@@ -221,33 +103,28 @@ function renderDepartmentHeadcount() {
 }
 
 /* ==========================================================================
-   PAYROLL TREND (line chart — six-month history with a "nice" y-axis scale)
+   PAYROLL TREND
    ========================================================================== */
 
-function renderPayrollTrend() {
-  const payrollHistory = [
-    { month: "Jan", value: 860000 },
-    { month: "Feb", value: 900000 },
-    { month: "Mar", value: 875000 },
-    { month: "Apr", value: 920000 },
-    { month: "May", value: 950000 },
-    {
-      month: "Jun",
-      value: payrollData.reduce((sum, p) => sum + p.finalSalary, 0)
-    }
-  ];
+async function renderPayrollTrend() {
+  const rows = await apiRequest("/dashboard/payroll-trend");
+  const svg = document.getElementById("payrollChart");
+  const polylineEl = svg.querySelector(".trend-line");
 
-  const chartWidth = 600;
-  const chartHeight = 300;
-  const paddingX = 20;
-  const paddingTop = 20;
-  const paddingBottom = 20;
+  if (rows.length === 0) {
+    document.getElementById("payrollYAxis").innerHTML = "";
+    document.getElementById("payrollXAxis").innerHTML = `<span>No payroll data yet</span>`;
+    polylineEl.setAttribute("points", "");
+    return;
+  }
 
-  // Work out a "nice" rounded max for the y-axis (so ticks land on
-  // round numbers like 0k, 250k, 500k... instead of odd values).
+  const payrollHistory = rows.slice().reverse().map(r => ({ month: r.month, value: Number(r.total) }));
+
+  const chartWidth = 600, chartHeight = 300, paddingX = 20, paddingTop = 20, paddingBottom = 20;
+
   function computeNiceScale(maxValue, tickCount = 5) {
     const rawStep = maxValue / (tickCount - 1);
-    const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+    const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep || 1)));
     const residual = rawStep / magnitude;
     let niceResidual;
     if (residual > 5) niceResidual = 10;
@@ -258,34 +135,24 @@ function renderPayrollTrend() {
     return { step, niceMax: step * (tickCount - 1) };
   }
 
-  const maxValue = Math.max(...payrollHistory.map(p => p.value));
+  const maxValue = Math.max(...payrollHistory.map(p => p.value), 1);
   const { step, niceMax } = computeNiceScale(maxValue);
 
-  // Map a data point to SVG coordinates
   const xFor = (index) =>
-    paddingX + (index / (payrollHistory.length - 1)) * (chartWidth - paddingX * 2);
-
+    payrollHistory.length > 1
+      ? paddingX + (index / (payrollHistory.length - 1)) * (chartWidth - paddingX * 2)
+      : chartWidth / 2;
   const yFor = (value) =>
     chartHeight - paddingBottom - (value / niceMax) * (chartHeight - paddingTop - paddingBottom);
 
-  const svg = document.getElementById("payrollChart");
-  const polylineEl = svg.querySelector(".trend-line");
-
-  // Build the polyline points across ALL months, not just the last one
-  const pointsAttr = payrollHistory
-    .map((p, i) => `${xFor(i)},${yFor(p.value)}`)
-    .join(" ");
+  const pointsAttr = payrollHistory.map((p, i) => `${xFor(i)},${yFor(p.value)}`).join(" ");
   polylineEl.setAttribute("points", pointsAttr);
 
-  // Clear old dots before re-drawing
   svg.querySelectorAll(".trend-dot").forEach(el => el.remove());
-
   const tooltip = document.getElementById("payrollTooltip");
 
   payrollHistory.forEach((p, i) => {
-    const cx = xFor(i);
-    const cy = yFor(p.value);
-
+    const cx = xFor(i), cy = yFor(p.value);
     const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     circle.setAttribute("class", "trend-dot");
     circle.setAttribute("cx", cx);
@@ -307,15 +174,12 @@ function renderPayrollTrend() {
     });
   });
 
-  // Y-axis: ticks from niceMax down to 0, evenly spaced
-  const tickCount = 5;
   let yAxisHtml = "";
-  for (let i = tickCount - 1; i >= 0; i--) {
+  for (let i = 4; i >= 0; i--) {
     yAxisHtml += `<span>R ${Math.round((step * i) / 1000)}k</span>`;
   }
   document.getElementById("payrollYAxis").innerHTML = yAxisHtml;
 
-  // X-axis: one label per month, Jan through Jun
   document.getElementById("payrollXAxis").innerHTML = payrollHistory
     .map(p => `<span>${p.month}</span>`)
     .join("");
@@ -323,66 +187,60 @@ function renderPayrollTrend() {
 
 /* ==========================================================================
    PENDING LEAVE LIST
+   NOTE: depends on Wendy's /timeoff endpoint — field names below
+   (employee_name, leave_type, start_date, end_date) are a best guess,
+   confirm with Wendy once her route is live.
    ========================================================================== */
 
-// Adds `days` to a start date and returns "YYYY-MM-DD" for the end date.
-// days=1 means a single-day leave request, so the end date equals the start date.
-function calculateEndDate(startDate, days) {
-  const date = new Date(startDate);
-  date.setDate(date.getDate() + (days - 1));
-  return date.toISOString().slice(0, 10);
-}
-
-function renderPendingLeave() {
+async function renderPendingLeave() {
   const container = document.getElementById("pendingLeaveList");
   container.innerHTML = "";
 
-  const hasPending = attendanceData.some(emp =>
-    emp.leaveRequests.some(r => r.status === "Pending")
-  );
+  try {
+    const response = await apiRequest("/timeoff");
+    const allRequests = response.data;
+    const pending = allRequests.filter(req => req.status === "Pending");
 
-  if (!hasPending) {
-    container.innerHTML = `<p class="pending-leave-empty">No pending leave requests 🎉</p>`;
-    return;
-  }
-
-  attendanceData.forEach(emp => {
-    const pending = emp.leaveRequests.filter(r => r.status === "Pending");
-    if (pending.length === 0) return;
-
-    const employee = employeeInfo.find(e => e.employeeId === emp.employeeId);
+    if (pending.length === 0) {
+      container.innerHTML = `<p class="pending-leave-empty">No pending leave requests 🎉</p>`;
+      return;
+    }
 
     pending.forEach(req => {
-      const durationLabel = `${req.days} day${req.days > 1 ? "s" : ""}`;
-      const endDate = calculateEndDate(req.date, req.days);
-
       const card = document.createElement("div");
       card.className = "employee-cards";
       card.innerHTML = `
         <div class="leave-card-body">
           <div class="leave-card-top">
-            <h3>${employee.name}</h3>
-            <span class="leave-type-badge">${req.reason}</span>
+            <h3>${req.employee}</h3>
+            <span class="leave-type-badge">${req.leave_type}</span>
           </div>
           <div class="leave-card-meta">
-            <span class="leave-duration">${durationLabel}</span>
-            <span class="leave-dates">${req.date} &rarr; ${endDate}</span>
+            <span class="leave-dates">${req.start_date} &rarr; ${req.end_date}</span>
           </div>
         </div>
       `;
       container.appendChild(card);
     });
-  });
+  } catch (err) {
+    container.innerHTML = `<p class="pending-leave-empty">Couldn't load pending leave yet.</p>`;
+  }
 }
 
 /* ==========================================================================
    INIT
    ========================================================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderKPIs();
-  renderAttendanceChart();
-  renderDepartmentHeadcount();
-  renderPayrollTrend();
-  renderPendingLeave();
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const kpis = await renderKPIs();
+    await renderAttendanceChart(kpis.total_employees);
+    await renderDepartmentHeadcount();
+    await renderPayrollTrend();
+    await renderPendingLeave();
+  } catch (err) {
+    console.error(err);
+    document.querySelector(".dashboard-container").innerHTML =
+      `<p style="color:#e5484d; padding:2rem;">Couldn't load dashboard data. Make sure the server is running and you're logged in.</p>`;
+  }
 });
