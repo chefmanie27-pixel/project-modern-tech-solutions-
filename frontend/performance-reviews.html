@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="js/auth-guard.js"></script>
+    <script src="js/api.js"></script>
     <title>Performance Reviews - ModernTech Solutions</title>
     <link rel="stylesheet" href="css/combined-styles.css" />
     <link
@@ -94,10 +95,13 @@
                 <option value="Q1-2026">Q1 2026</option>
               </select>
 
-              <select class="form-select" id="reviewer">
-                <option value="">Reviewer</option>
-                <option value="sarah-johnson">Sarah Johnson</option>
-              </select>
+              <input
+                type="text"
+                class="form-select"
+                id="reviewer"
+                readonly
+                placeholder="Reviewer"
+              />
             </div>
 
             <div class="sliders-row">

@@ -12,21 +12,48 @@ const app = createApp({
     const employees = ref([]);
     const attendanceRecords = ref([]);
     const leaveRequests = ref([]);
-    const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+    const weekDays = ref(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
+
+    // Normalizes both the live API shape (snake_case, e.g. employee_id,
+    // department_name) and the fallback JSON shape (camelCase, department
+    // as a plain string) into one consistent view model.
+    function toEmployeeViewModel(row) {
+      return {
+        employeeId: row.employeeId != null ? row.employeeId : row.employee_id,
+        name: row.name,
+        position: row.position,
+        department: row.department || row.department_name || '',
+      };
+    }
+
+    function toAttendanceViewModel(row) {
+      return {
+        employeeId: row.employeeId != null ? row.employeeId : row.employee_id,
+        date: row.date || row.record_date,
+        status: row.status,
+      };
+    }
+
+    function toLeaveViewModel(row) {
+      return {
+        employeeId: row.employeeId != null ? row.employeeId : row.employee_id,
+        status: row.status,
+      };
+    }
 
     async function loadData() {
       try {
         // Load employees
         const empData = await api.get("/employees");
-        employees.value = empData || [];
+        employees.value = (empData || []).map(toEmployeeViewModel);
 
         // Load attendance records
         const attData = await api.get("/attendance");
-        attendanceRecords.value = attData.data || [];
+        attendanceRecords.value = (attData.data || []).map(toAttendanceViewModel);
 
         // Load leave requests
         const leaveData = await api.get("/timeoff");
-        leaveRequests.value = leaveData.data || [];
+        leaveRequests.value = (leaveData.data || []).map(toLeaveViewModel);
 
       } catch (error) {
         console.error("Error loading data:", error);
@@ -39,103 +66,80 @@ const app = createApp({
       const empList = employeeData.employeeInformation;
       const attList = attendanceData.attendanceAndLeave;
 
-      employees.value = empList;
+      employees.value = empList.map(toEmployeeViewModel);
 
+      const records = [];
       const leaves = [];
       attList.forEach(item => {
-        const emp = empList.find(e => e.employeeId === item.employeeId);
-        const empName = emp ? emp.name : item.name;
-
-        item.leaveRequests.forEach((lr, idx) => {
-          leaves.push({
-            _uid: `${item.employeeId}-${idx}-${Date.now()}`,
-            employeeId: item.employeeId,
-            employeeName: empName,
-            date: lr.date,
-            reason: lr.reason,
-            status: lr.status,
-            _attRef: item,
-            _lrRef: lr
-          });
+        (item.attendance || []).forEach(a => {
+          records.push({ employeeId: item.employeeId, date: a.date, status: a.status });
+        });
+        (item.leaveRequests || []).forEach(lr => {
+          leaves.push({ employeeId: item.employeeId, status: lr.status });
         });
       });
 
+      attendanceRecords.value = records;
       leaveRequests.value = leaves;
-      attendanceRecords.value = attList;
     }
 
-    // --- Normalization helpers -------------------------------------------
-    // The live API and the hardcoded fallback data use different field
-    // names (snake_case DB columns vs. the original camelCase mock data).
-    // Everything below reads from these normalized views instead of
-    // touching employees.value / attendanceRecords.value / leaveRequests.value
-    // directly, so the table renders correctly no matter which data source
-    // loadData() ended up using.
+    // ---- Derived "week" of dates from whatever attendance data we have,
+    // so the table works regardless of what today's real date is. ----
+    const recentDates = computed(() => {
+      const unique = [...new Set(attendanceRecords.value.map(r => r.date))];
+      unique.sort(); // ISO dates sort correctly as strings
+      return unique.slice(-5); // most recent 5 distinct days, ascending
+    });
 
-    const normalizedEmployees = computed(() =>
-      employees.value.map(e => ({
-        employeeId: e.employeeId ?? e.employee_id,
-        name: e.name,
-        position: e.position,
-        department: e.department ?? e.department_name ?? '',
-      }))
+    const latestDate = computed(() => {
+      const dates = recentDates.value;
+      return dates.length ? dates[dates.length - 1] : null;
+    });
+
+    const dayLabels = computed(() =>
+      recentDates.value.map(d =>
+        new Date(d + 'T00:00:00').toLocaleDateString('en-ZA', { weekday: 'short' }),
+      ),
     );
 
-    // Map<employeeId, [{ date: 'YYYY-MM-DD', status }]> sorted oldest -> newest
-    const attendanceByEmployee = computed(() => {
-      const map = new Map();
-      const addEntry = (employeeId, date, status) => {
-        if (employeeId == null || !date) return;
-        if (!map.has(employeeId)) map.set(employeeId, []);
-        map.get(employeeId).push({ date, status });
-      };
-
-      attendanceRecords.value.forEach(item => {
-        if (Array.isArray(item.attendance)) {
-          // Fallback shape: { employeeId, attendance: [{ date, status }] }
-          item.attendance.forEach(a => addEntry(item.employeeId, a.date, a.status));
-        } else {
-          // API shape: { employee_id, record_date, status }
-          addEntry(item.employeeId ?? item.employee_id, item.date ?? item.record_date, item.status);
-        }
-      });
-
-      map.forEach(list => list.sort((a, b) => a.date.localeCompare(b.date)));
-      return map;
-    });
-
-    // Map<employeeId, true> for anyone with at least one Pending leave request
-    const pendingLeaveByEmployee = computed(() => {
-      const map = new Map();
-      leaveRequests.value.forEach(item => {
-        if (item.status === 'Pending') {
-          map.set(item.employeeId ?? item.employee_id, true);
-        }
+    const dayLabelToDate = computed(() => {
+      const map = {};
+      recentDates.value.forEach((date, i) => {
+        map[dayLabels.value[i]] = date;
       });
       return map;
     });
 
-    // --- Employee Overview tab ---------------------------------------------
+    // Keep the template's weekDays in sync with the real data.
+    const weekDaysComputed = computed(() =>
+      dayLabels.value.length ? dayLabels.value : weekDays.value,
+    );
 
-    const filteredDashboardEmployees = computed(() => {
-      const term = dashboardFilter.value.trim().toLowerCase();
-      if (!term) return normalizedEmployees.value;
-      return normalizedEmployees.value.filter(emp =>
-        (emp.name || '').toLowerCase().includes(term) ||
-        (emp.position || '').toLowerCase().includes(term) ||
-        (emp.department || '').toLowerCase().includes(term)
+    function recordFor(employeeId, date) {
+      return attendanceRecords.value.find(
+        r => r.employeeId === employeeId && r.date === date,
       );
-    });
-
-    function latestAttendance(employeeId) {
-      const records = attendanceByEmployee.value.get(employeeId);
-      if (!records || records.length === 0) return null;
-      return records[records.length - 1]; // list is sorted ascending by date
     }
 
+    // ---- Present / Absent Today ----
+    const presentToday = computed(() => {
+      if (!latestDate.value) return 0;
+      return attendanceRecords.value.filter(
+        r => r.date === latestDate.value && r.status === 'Present',
+      ).length;
+    });
+
+    const absentToday = computed(() => {
+      if (!latestDate.value) return 0;
+      return attendanceRecords.value.filter(
+        r => r.date === latestDate.value && r.status === 'Absent',
+      ).length;
+    });
+
     function getTodayStatus(employeeId) {
-      const latest = latestAttendance(employeeId);
-      return latest ? latest.status : 'No Data';
+      if (!latestDate.value) return 'No record';
+      const record = recordFor(employeeId, latestDate.value);
+      return record ? record.status : 'No record';
     }
 
     function getTodayStatusClass(employeeId) {
@@ -147,66 +151,70 @@ const app = createApp({
     }
 
     function hasPendingLeave(employeeId) {
-      return pendingLeaveByEmployee.value.get(employeeId) === true;
-    }
-
-    const presentToday = computed(() =>
-      normalizedEmployees.value.filter(emp => getTodayStatus(emp.employeeId) === 'Present').length
-    );
-
-    const absentToday = computed(() =>
-      normalizedEmployees.value.filter(emp => getTodayStatus(emp.employeeId) === 'Absent').length
-    );
-
-    // --- Weekly Attendance tab ----------------------------------------------
-
-    const filteredAttendanceEmployees = computed(() => {
-      const term = attendanceFilter.value.trim().toLowerCase();
-      if (!term) return normalizedEmployees.value;
-      return normalizedEmployees.value.filter(emp =>
-        (emp.name || '').toLowerCase().includes(term) ||
-        (emp.department || '').toLowerCase().includes(term)
+      return leaveRequests.value.some(
+        lr => lr.employeeId === employeeId && lr.status === 'Pending',
       );
-    });
-
-    // weekDays are positional labels (Mon..Fri) mapped onto each employee's
-    // most recent 5 attendance records, oldest to newest.
-    function weekRecordFor(employeeId, day) {
-      const records = attendanceByEmployee.value.get(employeeId) || [];
-      const lastFive = records.slice(-weekDays.length);
-      const index = weekDays.indexOf(day);
-      return lastFive[index] || null;
     }
 
+    // ---- Weekly attendance grid ----
     function getDayStatusLetter(employeeId, day) {
-      const record = weekRecordFor(employeeId, day);
-      return record ? record.status.charAt(0) : '-';
+      const date = dayLabelToDate.value[day];
+      if (!date) return '—';
+      const record = recordFor(employeeId, date);
+      if (!record) return '—';
+      if (record.status === 'Present') return 'P';
+      if (record.status === 'Absent') return 'A';
+      if (record.status === 'Late') return 'L';
+      if (record.status === 'Half-Day') return 'H';
+      return '—';
     }
 
     function getDayStatusClass(employeeId, day) {
-      const record = weekRecordFor(employeeId, day);
-      if (!record) return '';
-      if (record.status === 'Present') return 'day-present';
-      if (record.status === 'Absent') return 'day-absent';
+      const letter = getDayStatusLetter(employeeId, day);
+      if (letter === 'P') return 'day-present';
+      if (letter === 'A') return 'day-absent';
       return '';
     }
 
     function getWeeklySummary(employeeId) {
-      const records = attendanceByEmployee.value.get(employeeId) || [];
-      const lastFive = records.slice(-weekDays.length);
-      const presentCount = lastFive.filter(r => r.status === 'Present').length;
-      return `${presentCount}/${lastFive.length || weekDays.length}`;
+      const days = recentDates.value;
+      if (days.length === 0) return '—';
+      const presentCount = days.filter(date => {
+        const record = recordFor(employeeId, date);
+        return record && record.status === 'Present';
+      }).length;
+      return `${presentCount}/${days.length}`;
     }
 
     function getWeeklySummaryClass(employeeId) {
-      const records = attendanceByEmployee.value.get(employeeId) || [];
-      const lastFive = records.slice(-weekDays.length);
-      const total = lastFive.length || weekDays.length;
-      const presentCount = lastFive.filter(r => r.status === 'Present').length;
-      if (presentCount === total) return 'badge-present';
-      if (presentCount === 0) return 'badge-absent';
-      return 'badge-pending';
+      const days = recentDates.value;
+      if (days.length === 0) return 'badge-secondary';
+      const presentCount = days.filter(date => {
+        const record = recordFor(employeeId, date);
+        return record && record.status === 'Present';
+      }).length;
+      const ratio = presentCount / days.length;
+      if (ratio >= 0.8) return 'badge-present';
+      if (ratio >= 0.5) return 'badge-pending';
+      return 'badge-absent';
     }
+
+    // ---- Filters ----
+    const filteredDashboardEmployees = computed(() => {
+      const search = dashboardFilter.value.trim().toLowerCase();
+      if (!search) return employees.value;
+      return employees.value.filter(emp =>
+        emp.name.toLowerCase().includes(search),
+      );
+    });
+
+    const filteredAttendanceEmployees = computed(() => {
+      const search = attendanceFilter.value.trim().toLowerCase();
+      if (!search) return employees.value;
+      return employees.value.filter(emp =>
+        emp.name.toLowerCase().includes(search),
+      );
+    });
 
     onMounted(() => {
       loadData();
@@ -221,9 +229,7 @@ const app = createApp({
       employees,
       attendanceRecords,
       leaveRequests,
-      weekDays,
-      filteredDashboardEmployees,
-      filteredAttendanceEmployees,
+      weekDays: weekDaysComputed,
       presentToday,
       absentToday,
       getTodayStatus,
@@ -233,6 +239,8 @@ const app = createApp({
       getDayStatusClass,
       getWeeklySummary,
       getWeeklySummaryClass,
+      filteredDashboardEmployees,
+      filteredAttendanceEmployees,
     };
   }
 });

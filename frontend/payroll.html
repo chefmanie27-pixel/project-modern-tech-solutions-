@@ -114,6 +114,32 @@
       let draftMeta = {};
 
       const STANDARD_HOURS = 160;
+      const TAX_RATE = 0.18; // mirrors backend payrollCalc.service.js
+
+      function round2(n) {
+        return Math.round((n + Number.EPSILON) * 100) / 100;
+      }
+
+      // Client-side mirror of the backend's payroll calculation, used to
+      // show a live preview for employees who don't have a saved run yet
+      // (e.g. an employee added after the last payroll run) instead of
+      // leaving their row blank.
+      function previewPayroll(baseSalary, hoursWorked, leaveDeductions) {
+        const salary = Number(baseSalary) || 0;
+        const grossPay =
+          hoursWorked != null
+            ? round2(salary * (hoursWorked / STANDARD_HOURS))
+            : round2(salary);
+        const afterLeave = Math.max(0, round2(grossPay - (leaveDeductions || 0)));
+        const taxDeductions = round2(afterLeave * TAX_RATE);
+        const netPay = round2(afterLeave - taxDeductions);
+        return {
+          gross_pay: grossPay,
+          leave_deductions: round2(leaveDeductions || 0),
+          tax_deductions: taxDeductions,
+          net_pay: netPay,
+        };
+      }
 
       function currentPeriod() {
         const now = new Date();
@@ -127,17 +153,22 @@
 
       async function loadPayroll() {
         try {
+          // Fetch every run (no period filter) rather than only the real
+          // current calendar month — demo/seed payroll data is dated in
+          // the past, so filtering by "today's" month would always come
+          // back empty. Runs are returned most-recent-first, so the first
+          // one we see per employee is their latest.
           const [employeeRows, runs] = await Promise.all([
             api.get("/employees"),
-            api.get(
-              `/payroll?periodStart=${period.start}&periodEnd=${period.end}`,
-            ),
+            api.get("/payroll"),
           ]);
 
           employees = employeeRows || [];
           runsByEmployeeId = {};
           (runs || []).forEach((run) => {
-            runsByEmployeeId[run.employee_id] = run;
+            if (!runsByEmployeeId[run.employee_id]) {
+              runsByEmployeeId[run.employee_id] = run;
+            }
           });
 
           employees.forEach((emp) => {
@@ -163,11 +194,16 @@
 
         employees.forEach((emp) => {
           const run = runsByEmployeeId[emp.employee_id];
-          if (!run) return;
-          totalGross += Number(run.gross_pay);
+          const meta = draftMeta[emp.employee_id] || {
+            hoursWorked: STANDARD_HOURS,
+            leaveDeductions: 0,
+          };
+          const figures = run || previewPayroll(emp.salary, meta.hoursWorked, meta.leaveDeductions);
+
+          totalGross += Number(figures.gross_pay);
           totalDeductions +=
-            Number(run.leave_deductions) + Number(run.tax_deductions);
-          totalNet += Number(run.net_pay);
+            Number(figures.leave_deductions) + Number(figures.tax_deductions);
+          totalNet += Number(figures.net_pay);
         });
 
         document.getElementById("total-gross").textContent =
@@ -178,8 +214,152 @@
           `R ${Math.round(totalNet).toLocaleString()}`;
       }
 
-      // ... rest of your renderTable, runPayroll, disbursePayroll, etc. functions
-      // Just replace apiRequest with api.get, api.post, etc.
+      function getFilteredEmployees() {
+        const search = (document.getElementById("table-search").value || "")
+          .trim()
+          .toLowerCase();
+        const filter = document.getElementById("table-filter").value;
+
+        return employees.filter((emp) => {
+          if (search && !emp.name.toLowerCase().includes(search)) return false;
+
+          const run = runsByEmployeeId[emp.employee_id];
+          const meta = draftMeta[emp.employee_id] || {
+            hoursWorked: STANDARD_HOURS,
+            leaveDeductions: 0,
+          };
+          const leaveDeductions = run
+            ? Number(run.leave_deductions)
+            : Number(meta.leaveDeductions);
+
+          if (filter === "deductions" && !(leaveDeductions > 0)) return false;
+          if (filter === "perfect" && leaveDeductions > 0) return false;
+
+          return true;
+        });
+      }
+
+      function renderTable() {
+        const tbody = document.getElementById("table-rows");
+        const emptyState = document.getElementById("empty-state");
+        const rows = getFilteredEmployees();
+
+        tbody.innerHTML = "";
+
+        if (rows.length === 0) {
+          emptyState.style.display = "block";
+          return;
+        }
+        emptyState.style.display = "none";
+
+        rows.forEach((emp) => {
+          const run = runsByEmployeeId[emp.employee_id];
+          const meta = draftMeta[emp.employee_id] || {
+            hoursWorked: STANDARD_HOURS,
+            leaveDeductions: 0,
+          };
+          const figures = run || previewPayroll(emp.salary, meta.hoursWorked, meta.leaveDeductions);
+
+          const mainRow = document.createElement("tr");
+          mainRow.className = "main-row";
+          mainRow.tabIndex = 0;
+
+          const netPay = `R ${Math.round(Number(figures.net_pay)).toLocaleString()}`;
+          const leaveDeductions = Number(figures.leave_deductions);
+          const hoursWorked = run ? run.hours_worked : meta.hoursWorked;
+
+          mainRow.innerHTML = `
+            <td class="emp-name">${emp.name}</td>
+            <td>${hoursWorked != null ? hoursWorked : "—"}</td>
+            <td>${leaveDeductions}</td>
+            <td class="salary-cell">${netPay}</td>
+            <td class="arrow-cell"><span class="toggle-arrow">▶</span></td>
+          `;
+
+          const detailRow = document.createElement("tr");
+          detailRow.className = "detail-row";
+          detailRow.style.display = "none";
+
+          const statusBadge = run
+            ? run.status === "paid"
+              ? `<span class="badge badge-success">Paid</span>`
+              : `<span class="badge badge-warning">Processed</span>`
+            : `<span class="badge badge-warning">Preview — not run yet</span>`;
+
+          detailRow.innerHTML = `
+            <td colspan="5">
+              <div class="breakdown-wrapper">
+                <div class="breakdown-box">
+                  <div class="breakdown-line">
+                    <span>Hours worked</span>
+                    <input type="number" id="hours-${emp.employee_id}" min="0" step="0.5"
+                      value="${meta.hoursWorked}" style="width:90px;text-align:right;" />
+                  </div>
+                  <div class="breakdown-line">
+                    <span>Leave deduction hours</span>
+                    <input type="number" id="leave-${emp.employee_id}" min="0" step="0.5"
+                      value="${meta.leaveDeductions}" style="width:90px;text-align:right;" />
+                  </div>
+                  ${statusBadge}
+                </div>
+                <div class="breakdown-box">
+                  <div class="breakdown-line">
+                    <span>Gross pay</span>
+                    <span>R ${Math.round(Number(figures.gross_pay)).toLocaleString()}</span>
+                  </div>
+                  <div class="breakdown-line deductions">
+                    <span>Leave + tax deductions</span>
+                    <span>-R ${Math.round(Number(figures.leave_deductions) + Number(figures.tax_deductions)).toLocaleString()}</span>
+                  </div>
+                  <div class="breakdown-line net-pay">
+                    <span>Net pay</span>
+                    <span>${netPay}</span>
+                  </div>
+                  <div class="breakdown-actions">
+                    <button type="button" class="btn-primary" data-action="run" data-id="${emp.employee_id}">
+                      ${run ? "Re-run payroll" : "Run payroll"}
+                    </button>
+                    <button type="button" class="btn-secondary" data-action="disburse"
+                      data-payroll-id="${run ? run.payroll_id : ""}" ${!run || run.status === "paid" ? "disabled" : ""}>
+                      Disburse
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          `;
+
+          mainRow.addEventListener("click", () => {
+            const isOpen = detailRow.style.display !== "none";
+            detailRow.style.display = isOpen ? "none" : "table-row";
+            mainRow.classList.toggle("open", !isOpen);
+          });
+
+          detailRow
+            .querySelector('[data-action="run"]')
+            .addEventListener("click", (e) => {
+              e.stopPropagation();
+              runPayroll(emp.employee_id);
+            });
+
+          const disburseBtn = detailRow.querySelector('[data-action="disburse"]');
+          disburseBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const payrollId = disburseBtn.getAttribute("data-payroll-id");
+            if (payrollId) disbursePayroll(payrollId);
+          });
+
+          tbody.appendChild(mainRow);
+          tbody.appendChild(detailRow);
+        });
+      }
+
+      document
+        .getElementById("table-search")
+        .addEventListener("input", renderTable);
+      document
+        .getElementById("table-filter")
+        .addEventListener("change", renderTable);
 
       async function runPayroll(employeeId) {
         const hoursInput = document.getElementById(`hours-${employeeId}`);
