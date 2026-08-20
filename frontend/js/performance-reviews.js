@@ -1,14 +1,23 @@
 /* ==========================================================================
-   API HELPER (temporary — swap for Azhar's shared api.js once it exists)
+   API HELPER
+   Uses the shared `api` object from js/api.js (loaded before this file).
+   NOTE: this file used to declare its own API_BASE/apiRequest, which
+   collided with the const already declared in api.js and threw
+   "Identifier 'API_BASE' has already been declared" — crashing this whole
+   script before anything could run. Route every call through the shared
+   `api` helper instead so there's only one source of truth.
    ========================================================================== */
-const API_BASE = "http://localhost:3000/api/v1";
 async function apiRequest(endpoint, options = {}) {
-  const token = localStorage.getItem("moderntech_token");
-  const headers = { "Content-Type": "application/json" };
-  if (token) headers.Authorization = `Bearer ${token}`;
-  const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
-  if (!res.ok) throw new Error(`Request failed: ${endpoint} (${res.status})`);
-  return res.json();
+  const method = options.method || "GET";
+  const body = options.body ? JSON.parse(options.body) : undefined;
+
+  if (method === "GET") return api.get(endpoint);
+  if (method === "POST") return api.post(endpoint, body);
+  if (method === "PUT") return api.put(endpoint, body);
+  if (method === "PATCH") return api.patch(endpoint, body);
+  if (method === "DELETE") return api.delete(endpoint);
+
+  throw new Error(`Unsupported method: ${method}`);
 }
 
 /* ==========================================================================
