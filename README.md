@@ -185,22 +185,22 @@ All endpoints are mounted under `/api/v1` and (except `/auth/login`) require a `
 Role-restricted routes (leave approval, payroll runs/disbursement/attendance corrections) require the requesting user's role to be `admin`, `hr`, or `manager` as noted per route.
 
 ### env
-# Server
+Server
 PORT=3000
 NODE_ENV=development
 
-# MySQL database
+MySQL database
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=your_mysql_password
 DB_NAME=moderntech
 
-# Auth
+Auth
 JWT_SECRET=replace_with_a_long_random_string
 JWT_EXPIRES_IN=8h
 
-# Front-end origin (for CORS)
+Front-end origin (for CORS)
 CLIENT_ORIGIN=http://127.0.0.1:5500
 
 
