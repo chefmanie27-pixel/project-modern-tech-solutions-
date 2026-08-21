@@ -3,7 +3,7 @@
 -- Example: mysql -u root -p moderntech < db/schema.sql
 DROP DATABASE IF EXISTS moderntech;
 CREATE DATABASE IF NOT EXISTS moderntech;
-USE moderntech;
+USE railway;
 
 -- DEPARTMENTS -------------------------------------------------------
 CREATE TABLE IF NOT EXISTS departments (
