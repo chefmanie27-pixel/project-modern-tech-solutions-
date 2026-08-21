@@ -51,8 +51,12 @@ const api = {
     try {
       const response = await fetch(url, config);
 
-      // Handle 401 Unauthorized
-      if (response.status === 401) {
+      // Handle 401 Unauthorized (but not for the login/register endpoints
+      // themselves — a 401 there just means wrong credentials, and should
+      // surface as a normal error message rather than redirecting).
+      const isAuthEndpoint = endpoint.startsWith("/auth/login") || endpoint.startsWith("/auth/register");
+
+      if (response.status === 401 && !isAuthEndpoint) {
         this.clearToken();
         const loginUrl = window.location.pathname.includes("/vue-app/") 
           ? "../index.html" 
