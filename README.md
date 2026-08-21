@@ -7,9 +7,13 @@ A full-stack HR portal built for **ModernTech Solutions**, a healthcare software
 Originally built as the Module 1 Core Project for Life Choices Academy's Software Development course as a client-side-only proof of concept, the project has since grown a real Node.js/Express + MySQL backend. The frontend is deployed on **Netlify** and the backend API is deployed on **Railway**.
 
 **Frontend site:** https://chefmanie27-pixel.github.io/project-modern-tech-frontend/
+
 **Live app:** [https://roaring-fenglisu-d675db.netlify.app/)](https://roaring-fenglisu-d675db.netlify.app/)
+
 **Live API:** `https://project-modern-tech-solutions-production.up.railway.app/api/v1`
+
 **Github Frontend:** https://github.com/chefmanie27-pixel/project-modern-tech-frontend.git
+
 **Github Backend:** https://github.com/chefmanie27-pixel/project-modern-tech-solutions-.git
 
 ## Features
