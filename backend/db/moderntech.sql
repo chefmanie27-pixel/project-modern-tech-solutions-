@@ -1,7 +1,7 @@
 -- schema.sql
 -- Run this against your MySQL database to create all tables.
 -- Example: mysql -u root -p moderntech < db/schema.sql
-
+DROP DATABASE IF EXISTS moderntech;
 CREATE DATABASE IF NOT EXISTS moderntech;
 USE moderntech;
 

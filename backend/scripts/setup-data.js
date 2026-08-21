@@ -1,8 +1,9 @@
 // scripts/setup-data.js
 // Run this to properly link users with employees and setup test data
 
-const mysql = require('mysql2/promise');
-require('dotenv').config();
+import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
+dotenv.config();
 
 async function setupData() {
   const connection = await mysql.createConnection({

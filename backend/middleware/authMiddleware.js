@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const env = require("../config/env");
+import jwt from "jsonwebtoken";
+import env from "../config/env.js";
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -25,4 +25,4 @@ function authenticateToken(req, res, next) {
   }
 }
 
-module.exports = authenticateToken;
+export default authenticateToken;

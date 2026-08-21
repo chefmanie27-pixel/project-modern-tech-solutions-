@@ -1,5 +1,5 @@
 // controllers/dashboard.controller.js
-const { pool } = require("../config/db");
+import { pool } from "../config/db.js";
 
 async function getKpis(req, res, next) {
   try {
@@ -81,4 +81,4 @@ async function getPayrollTrend(req, res, next) {
   }
 }
 
-module.exports = { getKpis, getAttendanceChart, getDepartmentHeadcount, getPayrollTrend };
+export { getKpis, getAttendanceChart, getDepartmentHeadcount, getPayrollTrend };

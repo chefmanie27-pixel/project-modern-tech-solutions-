@@ -1,5 +1,5 @@
 // models/Attendance.js
-const { query } = require('../config/db');
+import { query } from '../config/db.js';
 
 async function findAll({ startDate, endDate, department, page = 1, limit = 50 } = {}) {
   const conditions = [];
@@ -158,7 +158,7 @@ async function existsForDate(employeeId, recordDate, excludeAttendanceId = null)
   return rows.length > 0;
 }
 
-module.exports = {
+export {
   findAll,
   findByEmployeeId,
   create,

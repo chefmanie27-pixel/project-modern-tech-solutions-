@@ -1,5 +1,5 @@
 // controllers/performance.controller.js
-const PerformanceReview = require("../models/PerformanceReview");
+import * as PerformanceReview from "../models/PerformanceReview.js";
 
 async function listReviews(req, res, next) {
   try {
@@ -37,4 +37,4 @@ async function createReview(req, res, next) {
   }
 }
 
-module.exports = { listReviews, getReviewsForEmployee, createReview };
+export { listReviews, getReviewsForEmployee, createReview };

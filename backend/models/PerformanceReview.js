@@ -1,5 +1,5 @@
 // models/PerformanceReview.js
-const { pool } = require("../config/db");
+import { pool } from "../config/db.js";
 
 async function getAll() {
   const [rows] = await pool.query("SELECT * FROM performance_reviews ORDER BY review_date DESC");
@@ -26,4 +26,4 @@ async function create(data) {
   return rows[0];
 }
 
-module.exports = { getAll, getByEmployee, create };
+export { getAll, getByEmployee, create };

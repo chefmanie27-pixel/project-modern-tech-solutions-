@@ -1,4 +1,4 @@
-const { pool } = require("../config/db");
+import { pool } from "../config/db.js";
 
 async function findByEmail(email) {
   const [rows] = await pool.execute(
@@ -41,7 +41,7 @@ async function create({ employeeId, email, passwordHash, role }) {
   return findById(result.insertId);
 }
 
-module.exports = {
+export {
   findByEmail,
   findById,
   updateLastLogin,

@@ -1,15 +1,15 @@
 // routes/dashboard.routes.js
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const {
+import {
   getKpis,
   getAttendanceChart,
   getDepartmentHeadcount,
   getPayrollTrend,
-} = require("../controllers/dashboard.controller");
+} from "../controllers/dashboard.controller.js";
 
-const authMiddleware = require("../middleware/authMiddleware");
+import authMiddleware from "../middleware/authMiddleware.js";
 
 router.use(authMiddleware);
 
@@ -18,4 +18,4 @@ router.get("/attendance-chart", getAttendanceChart);
 router.get("/department-headcount", getDepartmentHeadcount);
 router.get("/payroll-trend", getPayrollTrend);
 
-module.exports = router;
+export default router;

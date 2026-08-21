@@ -1,10 +1,10 @@
 // controllers/payroll.controller.js
 // Request-handling logic for /api/v1/payroll.
 
-const Payroll = require("../models/Payroll");
-const Employee = require("../models/Employee");
-const payrollCalc = require("../services/payrollCalc.service");
-const payrollApi = require("../services/payrollApi.service");
+import * as Payroll from "../models/Payroll.js";
+import * as Employee from "../models/Employee.js";
+import * as payrollCalc from "../services/payrollCalc.service.js";
+import * as payrollApi from "../services/payrollApi.service.js";
 
 // GET /api/v1/payroll — all payroll runs, optionally filtered by period
 async function listPayroll(req, res, next) {
@@ -145,7 +145,7 @@ async function getPayslip(req, res, next) {
   }
 }
 
-module.exports = {
+export {
   listPayroll,
   getEmployeePayroll,
   runPayroll,

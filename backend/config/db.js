@@ -1,6 +1,6 @@
 // config/db.js
-const mysql = require("mysql2/promise");
-const env = require("./env");
+import mysql from "mysql2/promise";
+import env from "./env.js";
 
 const pool = mysql.createPool({
   host: env.db.host,
@@ -31,8 +31,4 @@ async function query(sql, params = []) {
   return rows;
 }
 
-module.exports = {
-  pool,
-  testDatabaseConnection,
-  query,
-};
+export { pool, testDatabaseConnection, query };

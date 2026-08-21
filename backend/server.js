@@ -1,22 +1,22 @@
 // server.js
 // App entry point. Wires up middleware, routes, and error handling.
 
-const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
 
-const env = require("./config/env");
-const { testDatabaseConnection } = require("./config/db");
-const errorHandler = require("./middleware/errorHandler");
+import env from "./config/env.js";
+import { testDatabaseConnection } from "./config/db.js";
+import errorHandler from "./middleware/errorHandler.js";
 
 // Route files
-const employeesRoutes = require("./routes/employees.routes");
-const payrollRoutes = require("./routes/payroll.routes");
-const dashboardRoutes = require("./routes/dashboard.routes");
-const performanceRoutes = require("./routes/performance.routes");
-const authRoutes = require("./routes/auth.routes");
-const timeoffRoutes = require("./routes/timeoff.routes");
-const attendanceRoutes = require("./routes/attendance.routes");
+import employeesRoutes from "./routes/employees.routes.js";
+import payrollRoutes from "./routes/payroll.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
+import performanceRoutes from "./routes/performance.routes.js";
+import authRoutes from "./routes/auth.routes.js";
+import timeoffRoutes from "./routes/timeoff.routes.js";
+import attendanceRoutes from "./routes/attendance.routes.js";
 
 const app = express();
 const PORT = env.port;

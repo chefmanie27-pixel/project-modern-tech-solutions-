@@ -2,7 +2,7 @@
 // Raw SQL queries for the payroll_runs table. Controllers call these —
 // keeps SQL out of route/controller files. Mirrors the style of Employee.js.
 
-const { pool } = require("../config/db");
+import { pool } from "../config/db.js";
 
 async function getAll({ periodStart, periodEnd } = {}) {
   let sql = `SELECT p.*, e.name AS employee_name
@@ -95,4 +95,4 @@ async function updateStatus(id, status) {
   return getById(id);
 }
 
-module.exports = { getAll, getByEmployeeId, getById, findExistingRun, create, updateStatus };
+export { getAll, getByEmployeeId, getById, findExistingRun, create, updateStatus };

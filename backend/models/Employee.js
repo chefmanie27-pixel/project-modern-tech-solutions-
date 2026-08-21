@@ -2,7 +2,7 @@
 // Raw SQL queries for the employees table. Controllers call these —
 // keeps SQL out of route/controller files.
 
-const { pool } = require("../config/db");
+import { pool } from "../config/db.js";
 
 // employees.html's form collects a free-text department name, not an id,
 // so resolve/create the matching departments row here rather than forcing
@@ -67,4 +67,4 @@ async function remove(id) {
   return result.affectedRows > 0;
 }
 
-module.exports = { getAll, getById, create, update, remove, findOrCreateDepartmentId };
+export { getAll, getById, create, update, remove, findOrCreateDepartmentId };

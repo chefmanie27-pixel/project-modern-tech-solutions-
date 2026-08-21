@@ -1,9 +1,9 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const timeoffController = require("../controllers/timeoff.controller");
-const authMiddleware = require("../middleware/authMiddleware");
-const requireRole = require("../middleware/roleMiddleware");
+import * as timeoffController from "../controllers/timeoff.controller.js";
+import authMiddleware from "../middleware/authMiddleware.js";
+import requireRole from "../middleware/roleMiddleware.js";
 
 router.use(authMiddleware);
 
@@ -20,4 +20,4 @@ router.patch(
   timeoffController.updateStatus,
 );
 
-module.exports = router;
+export default router;

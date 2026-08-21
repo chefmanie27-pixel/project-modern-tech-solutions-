@@ -1,5 +1,5 @@
-const LeaveRequest = require("../models/LeaveRequest");
-const emailService = require("../services/email.service");
+import * as LeaveRequest from "../models/LeaveRequest.js";
+import * as emailService from "../services/email.service.js";
 
 const VALID_LEAVE_TYPES = [
   "Annual Leave",
@@ -236,7 +236,7 @@ async function updateStatus(req, res) {
   }
 }
 
-module.exports = {
+export {
   getAll,
   getById,
   create,

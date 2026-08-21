@@ -1,16 +1,16 @@
 // routes/employees.routes.js
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const {
+import {
   listEmployees,
   getEmployee,
   createEmployee,
   updateEmployee,
   deleteEmployee,
-} = require("../controllers/employees.controller");
+} from "../controllers/employees.controller.js";
 
-const authMiddleware = require("../middleware/authMiddleware");
+import authMiddleware from "../middleware/authMiddleware.js";
 
 // All employee routes require a logged-in user
 router.use(authMiddleware);
@@ -21,4 +21,4 @@ router.post("/", createEmployee);
 router.put("/:id", updateEmployee);
 router.delete("/:id", deleteEmployee);
 
-module.exports = router;
+export default router;

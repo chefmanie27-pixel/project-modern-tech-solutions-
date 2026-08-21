@@ -1,5 +1,5 @@
-const nodemailer = require("nodemailer");
-const env = require("../config/env");
+import nodemailer from "nodemailer";
+import env from "../config/env.js";
 
 // Lazily created so importing this file never fails if SMTP creds aren't
 // set yet (e.g. local dev before the team has real credentials).
@@ -63,7 +63,7 @@ async function sendLeaveStatusNotification(request) {
   });
 }
 
-module.exports = {
+export {
   sendMail,
   sendLeaveStatusNotification,
 };

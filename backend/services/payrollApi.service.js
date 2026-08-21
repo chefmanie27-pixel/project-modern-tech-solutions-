@@ -48,4 +48,4 @@ async function disburse({ payrollRun, employee }) {
   );
 }
 
-module.exports = { disburse };
+export { disburse };

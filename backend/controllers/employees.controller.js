@@ -3,7 +3,7 @@
 // Field names match employees.html's form fields (newName, newPosition, etc.)
 // mapped to their snake_case DB equivalents.
 
-const Employee = require("../models/Employee");
+import * as Employee from "../models/Employee.js";
 
 async function listEmployees(req, res, next) {
   try {
@@ -96,4 +96,4 @@ async function deleteEmployee(req, res, next) {
   }
 }
 
-module.exports = { listEmployees, getEmployee, createEmployee, updateEmployee, deleteEmployee };
+export { listEmployees, getEmployee, createEmployee, updateEmployee, deleteEmployee };

@@ -1,4 +1,4 @@
-const { pool } = require("../config/db");
+import { pool } from "../config/db.js";
 
 async function getAll() {
   const [rows] = await pool.query(`
@@ -107,7 +107,7 @@ async function updateStatus(leaveId, status, reviewedBy) {
   return getById(leaveId);
 }
 
-module.exports = {
+export {
   getAll,
   getById,
   create,

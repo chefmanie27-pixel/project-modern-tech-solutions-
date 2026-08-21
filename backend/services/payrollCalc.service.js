@@ -53,4 +53,4 @@ function calculatePayroll({
   };
 }
 
-module.exports = { calculatePayroll, STANDARD_HOURS, TAX_RATE };
+export { calculatePayroll, STANDARD_HOURS, TAX_RATE };

@@ -1,5 +1,5 @@
 // controllers/attendance.controller.js
-const Attendance = require('../models/Attendance');
+import * as Attendance from '../models/Attendance.js';
 
 const VALID_STATUSES = ['Present', 'Absent', 'Late', 'Half-Day'];
 
@@ -86,7 +86,7 @@ async function getSummary(req, res, next) {
   }
 }
 
-module.exports = {
+export {
   getAllAttendance,
   getAttendanceByEmployee,
   createAttendance,

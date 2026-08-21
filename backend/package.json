@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "Backend API for ModernTech Solutions HR system",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
     "hash-password": "node scripts/hash-password.js",
+    "seed-recent-data": "node scripts/seed-recent-data.js",
     "setup": "node scripts/setup-data.js",
     "seed": "mysql -u root -p moderntech < db/seed.sql"
   },

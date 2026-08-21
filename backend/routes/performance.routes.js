@@ -1,14 +1,14 @@
 // routes/performance.routes.js
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const {
+import {
   listReviews,
   getReviewsForEmployee,
   createReview,
-} = require("../controllers/performance.controller");
+} from "../controllers/performance.controller.js";
 
-const authMiddleware = require("../middleware/authMiddleware");
+import authMiddleware from "../middleware/authMiddleware.js";
 
 router.use(authMiddleware);
 
@@ -16,4 +16,4 @@ router.get("/", listReviews);
 router.get("/:employeeId", getReviewsForEmployee);
 router.post("/", createReview);
 
-module.exports = router;
+export default router;

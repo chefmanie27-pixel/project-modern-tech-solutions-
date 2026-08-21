@@ -1,7 +1,7 @@
-const express = require("express");
-const { login, register, logout, getMe } = require("../controllers/auth.controller");
-const authenticateToken = require("../middleware/authMiddleware");
-const requireRole = require("../middleware/roleMiddleware");
+import express from "express";
+import { login, register, logout, getMe } from "../controllers/auth.controller.js";
+import authenticateToken from "../middleware/authMiddleware.js";
+import requireRole from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
@@ -12,4 +12,4 @@ router.post("/register", authenticateToken, requireRole("admin"), register);
 router.post("/logout", authenticateToken, logout);
 router.get("/me", authenticateToken, getMe);
 
-module.exports = router;
+export default router;

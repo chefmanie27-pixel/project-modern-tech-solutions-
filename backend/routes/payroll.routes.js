@@ -1,17 +1,17 @@
 // routes/payroll.routes.js
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const {
+import {
   listPayroll,
   getEmployeePayroll,
   runPayroll,
   disbursePayroll,
   getPayslip,
-} = require("../controllers/payroll.controller");
+} from "../controllers/payroll.controller.js";
 
-const authMiddleware = require("../middleware/authMiddleware");
-const requireRole = require("../middleware/roleMiddleware");
+import authMiddleware from "../middleware/authMiddleware.js";
+import requireRole from "../middleware/roleMiddleware.js";
 
 // All payroll routes require a logged-in user
 router.use(authMiddleware);
@@ -27,4 +27,4 @@ router.post("/:id/disburse", requireRole("admin", "hr"), disbursePayroll);
 // Payslip — admin/hr/manager for now; revisit if employees should view their own
 router.get("/:id/payslip", requireRole("admin", "hr", "manager"), getPayslip);
 
-module.exports = router;
+export default router;

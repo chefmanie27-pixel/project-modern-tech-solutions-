@@ -1,17 +1,17 @@
 // routes/attendance.routes.js
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const {
+import {
   getAllAttendance,
   getAttendanceByEmployee,
   createAttendance,
   updateAttendance,
   getSummary,
-} = require("../controllers/attendance.controller");
+} from "../controllers/attendance.controller.js";
 
-const authMiddleware = require("../middleware/authMiddleware");
-const requireRole = require("../middleware/roleMiddleware");
+import authMiddleware from "../middleware/authMiddleware.js";
+import requireRole from "../middleware/roleMiddleware.js";
 
 // All attendance routes require authentication
 router.use(authMiddleware);
@@ -31,4 +31,4 @@ router.post("/", createAttendance);
 // PATCH /api/v1/attendance/:id
 router.patch("/:id", requireRole("admin", "hr"), updateAttendance);
 
-module.exports = router;
+export default router;

@@ -2,7 +2,7 @@
 // One-off helper: generates a bcrypt hash so you can seed a real admin login.
 // Usage: node scripts/hash-password.js "admin123"
 
-const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
 
 const plainPassword = process.argv[2];
 
