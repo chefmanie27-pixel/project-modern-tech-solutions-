@@ -1,5 +1,6 @@
 // js/api.js - Updated to work with your auth system
-const API_BASE = "http://localhost:3000/api/v1";
+// API_BASE comes from js/config.js, which must be loaded before this file.
+const API_BASE = window.API_BASE;
 const TOKEN_KEY = "moderntech_token";
 
 // Global API object

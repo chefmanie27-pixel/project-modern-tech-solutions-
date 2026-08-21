@@ -100,11 +100,11 @@ const attendanceData = {
             employeeId: 1,
             name: "Sibongile Nkosi",
             attendance: [
-                { date: "2025-07-25", status: "Present" },
-                { date: "2025-07-26", status: "Absent" },
-                { date: "2025-07-27", status: "Present" },
-                { date: "2025-07-28", status: "Present" },
-                { date: "2025-07-29", status: "Present" }
+                { date: "2026-08-17", status: "Present" },
+                { date: "2026-08-18", status: "Absent" },
+                { date: "2026-08-19", status: "Present" },
+                { date: "2026-08-20", status: "Present" },
+                { date: "2026-08-21", status: "Present" }
             ],
             leaveRequests: [
                 { date: "2025-07-22", reason: "Sick Leave", status: "Approved" },
@@ -115,11 +115,11 @@ const attendanceData = {
             employeeId: 2,
             name: "Lungile Moyo",
             attendance: [
-                { date: "2025-07-25", status: "Present" },
-                { date: "2025-07-26", status: "Present" },
-                { date: "2025-07-27", status: "Absent" },
-                { date: "2025-07-28", status: "Present" },
-                { date: "2025-07-29", status: "Present" }
+                { date: "2026-08-17", status: "Present" },
+                { date: "2026-08-18", status: "Present" },
+                { date: "2026-08-19", status: "Absent" },
+                { date: "2026-08-20", status: "Present" },
+                { date: "2026-08-21", status: "Present" }
             ],
             leaveRequests: [
                 { date: "2025-07-15", reason: "Family Responsibility", status: "Denied" },
@@ -130,11 +130,11 @@ const attendanceData = {
             employeeId: 3,
             name: "Thabo Molefe",
             attendance: [
-                { date: "2025-07-25", status: "Present" },
-                { date: "2025-07-26", status: "Present" },
-                { date: "2025-07-27", status: "Present" },
-                { date: "2025-07-28", status: "Absent" },
-                { date: "2025-07-29", status: "Present" }
+                { date: "2026-08-17", status: "Present" },
+                { date: "2026-08-18", status: "Present" },
+                { date: "2026-08-19", status: "Present" },
+                { date: "2026-08-20", status: "Absent" },
+                { date: "2026-08-21", status: "Present" }
             ],
             leaveRequests: [
                 { date: "2025-07-10", reason: "Medical Appointment", status: "Approved" },
@@ -145,11 +145,11 @@ const attendanceData = {
             employeeId: 4,
             name: "Keshav Naidoo",
             attendance: [
-                { date: "2025-07-25", status: "Absent" },
-                { date: "2025-07-26", status: "Present" },
-                { date: "2025-07-27", status: "Present" },
-                { date: "2025-07-28", status: "Present" },
-                { date: "2025-07-29", status: "Present" }
+                { date: "2026-08-17", status: "Absent" },
+                { date: "2026-08-18", status: "Present" },
+                { date: "2026-08-19", status: "Present" },
+                { date: "2026-08-20", status: "Present" },
+                { date: "2026-08-21", status: "Present" }
             ],
             leaveRequests: [
                 { date: "2025-07-20", reason: "Bereavement", status: "Approved" }
@@ -159,11 +159,11 @@ const attendanceData = {
             employeeId: 5,
             name: "Zanele Khumalo",
             attendance: [
-                { date: "2025-07-25", status: "Present" },
-                { date: "2025-07-26", status: "Present" },
-                { date: "2025-07-27", status: "Absent" },
-                { date: "2025-07-28", status: "Present" },
-                { date: "2025-07-29", status: "Present" }
+                { date: "2026-08-17", status: "Present" },
+                { date: "2026-08-18", status: "Present" },
+                { date: "2026-08-19", status: "Absent" },
+                { date: "2026-08-20", status: "Present" },
+                { date: "2026-08-21", status: "Present" }
             ],
             leaveRequests: [
                 { date: "2024-12-01", reason: "Childcare", status: "Pending" }
@@ -173,11 +173,11 @@ const attendanceData = {
             employeeId: 6,
             name: "Sipho Zulu",
             attendance: [
-                { date: "2025-07-25", status: "Present" },
-                { date: "2025-07-26", status: "Present" },
-                { date: "2025-07-27", status: "Absent" },
-                { date: "2025-07-28", status: "Present" },
-                { date: "2025-07-29", status: "Present" }
+                { date: "2026-08-17", status: "Present" },
+                { date: "2026-08-18", status: "Present" },
+                { date: "2026-08-19", status: "Absent" },
+                { date: "2026-08-20", status: "Present" },
+                { date: "2026-08-21", status: "Present" }
             ],
             leaveRequests: [
                 { date: "2025-07-18", reason: "Sick Leave", status: "Approved" }
@@ -187,11 +187,11 @@ const attendanceData = {
             employeeId: 7,
             name: "Naledi Moeketsi",
             attendance: [
-                { date: "2025-07-25", status: "Present" },
-                { date: "2025-07-26", status: "Present" },
-                { date: "2025-07-27", status: "Present" },
-                { date: "2025-07-28", status: "Absent" },
-                { date: "2025-07-29", status: "Present" }
+                { date: "2026-08-17", status: "Present" },
+                { date: "2026-08-18", status: "Present" },
+                { date: "2026-08-19", status: "Present" },
+                { date: "2026-08-20", status: "Absent" },
+                { date: "2026-08-21", status: "Present" }
             ],
             leaveRequests: [
                 { date: "2025-07-22", reason: "Vacation", status: "Pending" }
@@ -201,11 +201,11 @@ const attendanceData = {
             employeeId: 8,
             name: "Farai Gumbo",
             attendance: [
-                { date: "2025-07-25", status: "Present" },
-                { date: "2025-07-26", status: "Absent" },
-                { date: "2025-07-27", status: "Present" },
-                { date: "2025-07-28", status: "Present" },
-                { date: "2025-07-29", status: "Present" }
+                { date: "2026-08-17", status: "Present" },
+                { date: "2026-08-18", status: "Absent" },
+                { date: "2026-08-19", status: "Present" },
+                { date: "2026-08-20", status: "Present" },
+                { date: "2026-08-21", status: "Present" }
             ],
             leaveRequests: [
                 { date: "2024-12-02", reason: "Medical Appointment", status: "Approved" }
@@ -215,11 +215,11 @@ const attendanceData = {
             employeeId: 9,
             name: "Karabo Dlamini",
             attendance: [
-                { date: "2025-07-25", status: "Present" },
-                { date: "2025-07-26", status: "Present" },
-                { date: "2025-07-27", status: "Present" },
-                { date: "2025-07-28", status: "Absent" },
-                { date: "2025-07-29", status: "Present" }
+                { date: "2026-08-17", status: "Present" },
+                { date: "2026-08-18", status: "Present" },
+                { date: "2026-08-19", status: "Present" },
+                { date: "2026-08-20", status: "Absent" },
+                { date: "2026-08-21", status: "Present" }
             ],
             leaveRequests: [
                 { date: "2025-07-19", reason: "Childcare", status: "Denied" }
@@ -229,11 +229,11 @@ const attendanceData = {
             employeeId: 10,
             name: "Fatima Patel",
             attendance: [
-                { date: "2025-07-25", status: "Present" },
-                { date: "2025-07-26", status: "Present" },
-                { date: "2025-07-27", status: "Absent" },
-                { date: "2025-07-28", status: "Present" },
-                { date: "2025-07-29", status: "Present" }
+                { date: "2026-08-17", status: "Present" },
+                { date: "2026-08-18", status: "Present" },
+                { date: "2026-08-19", status: "Absent" },
+                { date: "2026-08-20", status: "Present" },
+                { date: "2026-08-21", status: "Present" }
             ],
             leaveRequests: [
                 { date: "2024-12-03", reason: "Vacation", status: "Pending" }

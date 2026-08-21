@@ -1,7 +1,8 @@
 // js/auth-guard.js - Updated
 (function () {
   const TOKEN_KEY = "moderntech_token";
-  const API_BASE = "http://localhost:3000/api/v1";
+  // API_BASE comes from js/config.js, which must be loaded before this file.
+  const API_BASE = window.API_BASE;
 
   const scriptEl = document.currentScript;
   const base = scriptEl.src.replace(/js\/auth-guard\.js.*$/, "");

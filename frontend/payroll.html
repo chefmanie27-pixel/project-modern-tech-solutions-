@@ -3,10 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="js/config.js"></script>
     <script src="js/auth-guard.js"></script>
     <script src="js/api.js"></script>
     <title>ModernTech | Payroll</title>
     <link rel="stylesheet" href="css/combined-styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -82,6 +87,14 @@
           <option value="deductions">Has Active Leave Deductions</option>
           <option value="perfect">Perfect Attendance (0 Deductions)</option>
         </select>
+        <div class="export-group">
+          <button type="button" class="btn export-btn" id="export-csv-btn">
+            <i class="bi bi-filetype-csv"></i> Export CSV
+          </button>
+          <button type="button" class="btn export-btn" id="export-pdf-btn">
+            <i class="bi bi-file-earmark-pdf"></i> Export PDF
+          </button>
+        </div>
       </div>
 
       <!-- Main Spreadsheet Grid -->
@@ -198,6 +211,8 @@
 
     <!-- Application Controller Logic -->
     <!-- In payroll.html, replace the inline script with this -->
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
     <script>
       let employees = [];
       let runsByEmployeeId = {};
@@ -358,8 +373,14 @@
           const leaveDeductions = Number(figures.leave_deductions);
           const hoursWorked = run ? run.hours_worked : meta.hoursWorked;
 
+          const statusBadge = run
+            ? run.status === "paid"
+              ? `<span class="badge badge-success">Paid</span>`
+              : `<span class="badge badge-warning">Processed</span>`
+            : `<span class="badge badge-preview">Not Run</span>`;
+
           mainRow.innerHTML = `
-            <td class="emp-name">${emp.name}</td>
+            <td class="emp-name">${emp.name} ${statusBadge}</td>
             <td>${hoursWorked != null ? hoursWorked : "—"}</td>
             <td>${leaveDeductions}</td>
             <td class="salary-cell">${netPay}</td>
@@ -369,12 +390,6 @@
           const detailRow = document.createElement("tr");
           detailRow.className = "detail-row";
           detailRow.style.display = "none";
-
-          const statusBadge = run
-            ? run.status === "paid"
-              ? `<span class="badge badge-success">Paid</span>`
-              : `<span class="badge badge-warning">Processed</span>`
-            : `<span class="badge badge-warning">Preview — not run yet</span>`;
 
           detailRow.innerHTML = `
             <td colspan="5">
@@ -459,6 +474,164 @@
       document
         .getElementById("table-filter")
         .addEventListener("change", renderTable);
+
+      // ---- Export (CSV / PDF) ----
+      // Builds the same row data the table renders, respecting whatever
+      // search/filter is currently active, so exports match what's on screen.
+      function getExportRows() {
+        return getFilteredEmployees().map((emp) => {
+          const run = runsByEmployeeId[emp.employee_id];
+          const meta = draftMeta[emp.employee_id] || {
+            hoursWorked: STANDARD_HOURS,
+            leaveDeductions: 0,
+          };
+          const figures =
+            run || previewPayroll(emp.salary, meta.hoursWorked, meta.leaveDeductions);
+          const hoursWorked = run ? run.hours_worked : meta.hoursWorked;
+          const status = run
+            ? run.status === "paid"
+              ? "Paid"
+              : "Processed"
+            : "Not Run";
+
+          return {
+            employeeId: emp.employee_id,
+            name: emp.name,
+            hoursWorked: hoursWorked != null ? hoursWorked : "",
+            grossPay: Number(figures.gross_pay),
+            leaveDeductions: Number(figures.leave_deductions),
+            taxDeductions: Number(figures.tax_deductions),
+            netPay: Number(figures.net_pay),
+            status,
+          };
+        });
+      }
+
+      function downloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      function csvEscape(value) {
+        const str = String(value ?? "");
+        if (/[",\n]/.test(str)) {
+          return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+      }
+
+      function exportCSV() {
+        const rows = getExportRows();
+        if (rows.length === 0) {
+          alert("No payroll records to export for the current search/filter.");
+          return;
+        }
+
+        const headers = [
+          "Employee ID",
+          "Employee",
+          "Hours Worked",
+          "Gross Pay",
+          "Leave Deductions",
+          "Tax Deductions",
+          "Net Pay",
+          "Status",
+        ];
+
+        const lines = [headers.join(",")];
+        rows.forEach((r) => {
+          lines.push(
+            [
+              r.employeeId,
+              csvEscape(r.name),
+              r.hoursWorked,
+              r.grossPay,
+              r.leaveDeductions,
+              r.taxDeductions,
+              r.netPay,
+              csvEscape(r.status),
+            ].join(","),
+          );
+        });
+
+        const blob = new Blob([lines.join("\n")], {
+          type: "text/csv;charset=utf-8;",
+        });
+        downloadBlob(blob, `payroll_${period.start}_to_${period.end}.csv`);
+      }
+
+      function exportPDF() {
+        const rows = getExportRows();
+        if (rows.length === 0) {
+          alert("No payroll records to export for the current search/filter.");
+          return;
+        }
+        if (!window.jspdf) {
+          alert("PDF export library failed to load. Check your connection and try again.");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: "landscape" });
+
+        doc.setFontSize(16);
+        doc.setTextColor(11, 46, 89);
+        doc.text("ModernTech — Payroll Report", 14, 18);
+
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Pay period: ${period.start} to ${period.end}`, 14, 25);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30);
+
+        const body = rows.map((r) => [
+          r.employeeId,
+          r.name,
+          r.hoursWorked,
+          `R ${r.grossPay.toLocaleString()}`,
+          `R ${r.leaveDeductions.toLocaleString()}`,
+          `R ${r.taxDeductions.toLocaleString()}`,
+          `R ${r.netPay.toLocaleString()}`,
+          r.status,
+        ]);
+
+        doc.autoTable({
+          startY: 36,
+          head: [[
+            "ID",
+            "Employee",
+            "Hours",
+            "Gross Pay",
+            "Leave Ded.",
+            "Tax Ded.",
+            "Net Pay",
+            "Status",
+          ]],
+          body,
+          headStyles: { fillColor: [11, 46, 89] },
+          styles: { fontSize: 9 },
+        });
+
+        const totalNet = rows.reduce((sum, r) => sum + r.netPay, 0);
+        const finalY = doc.lastAutoTable.finalY || 36;
+        doc.setFontSize(10);
+        doc.setTextColor(11, 46, 89);
+        doc.text(
+          `Total net pay (${rows.length} employee${rows.length === 1 ? "" : "s"}): R ${Math.round(totalNet).toLocaleString()}`,
+          14,
+          finalY + 10,
+        );
+
+        doc.save(`payroll_${period.start}_to_${period.end}.pdf`);
+      }
+
+      document.getElementById("export-csv-btn").addEventListener("click", exportCSV);
+      document.getElementById("export-pdf-btn").addEventListener("click", exportPDF);
 
       async function runPayroll(employeeId) {
         const hoursInput = document.getElementById(`hours-${employeeId}`);

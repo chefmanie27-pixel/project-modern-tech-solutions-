@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="../js/config.js"></script>
     <script src="../js/auth-guard.js"></script>
     <script src="../js/api.js"></script>
     <title>ModernTech HR | Attendance Tracker</title>
@@ -28,6 +29,9 @@
   </head>
   <body class="page-attendance">
     <div id="app">
+      <div v-if="toast" class="attendance-toast" :class="'attendance-toast-' + toast.type">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ toast.message }}
+      </div>
       <div class="nav">
         <div class="logo">Modern<span>Tech</span></div>
         <button
@@ -74,8 +78,12 @@
           >
             Attendance Logs
           </h1>
-          <p style="color: var(--text-muted); font-size: 1.05rem; margin: 0">
+          <p style="color: var(--text-muted); font-size: 1.05rem; margin: 0 0 6px 0">
             Track daily active statuses and rolling weekly presence indicators.
+          </p>
+          <p class="current-date-line">
+            <i class="bi bi-calendar-event me-1"></i>
+            Today is {{ realTodayLabel }}
           </p>
         </div>
 
@@ -85,7 +93,10 @@
               class="stat-card d-flex align-items-center justify-content-between"
             >
               <div>
-                <div class="stat-label">Present Today</div>
+                <div class="stat-label">
+                  Present Today
+                  <span v-if="latestDateLabel" class="stat-label-date">{{ latestDateLabel }}</span>
+                </div>
                 <div class="stat-number text-success">{{ presentToday }}</div>
               </div>
               <i class="bi bi-check-circle-fill text-success stat-icon"></i>
@@ -96,7 +107,10 @@
               class="stat-card d-flex align-items-center justify-content-between"
             >
               <div>
-                <div class="stat-label">Absent Today</div>
+                <div class="stat-label">
+                  Absent Today
+                  <span v-if="latestDateLabel" class="stat-label-date">{{ latestDateLabel }}</span>
+                </div>
                 <div class="stat-number text-danger">{{ absentToday }}</div>
               </div>
               <i class="bi bi-x-circle-fill text-danger stat-icon"></i>
@@ -126,7 +140,10 @@
                   <th>Employee</th>
                   <th>Position</th>
                   <th>Department</th>
-                  <th class="text-center">Today</th>
+                  <th class="text-center">
+                    Today
+                    <span v-if="latestDateLabel" class="th-subtext">{{ latestDateLabel }}</span>
+                  </th>
                   <th class="text-center">Pending Leave</th>
                 </tr>
               </thead>
@@ -143,12 +160,28 @@
                     >
                   </td>
                   <td class="text-center">
-                    <span
-                      class="badge-status"
-                      :class="getTodayStatusClass(emp.employeeId)"
-                    >
-                      {{ getTodayStatus(emp.employeeId) }}
-                    </span>
+                    <div class="attendance-toggle" role="group" aria-label="Mark attendance">
+                      <button
+                        type="button"
+                        class="status-btn status-btn-present"
+                        :class="{ active: getTodayStatus(emp.employeeId) === 'Present' }"
+                        :disabled="isUpdatingStatus(emp.employeeId)"
+                        title="Mark Present"
+                        @click="setTodayStatus(emp.employeeId, 'Present')"
+                      >
+                        <i class="bi bi-check-lg"></i> Present
+                      </button>
+                      <button
+                        type="button"
+                        class="status-btn status-btn-absent"
+                        :class="{ active: getTodayStatus(emp.employeeId) === 'Absent' }"
+                        :disabled="isUpdatingStatus(emp.employeeId)"
+                        title="Mark Absent"
+                        @click="setTodayStatus(emp.employeeId, 'Absent')"
+                      >
+                        <i class="bi bi-x-lg"></i> Absent
+                      </button>
+                    </div>
                   </td>
                   <td class="text-center">
                     <span
@@ -186,8 +219,9 @@
                 <tr>
                   <th>Employee</th>
                   <th>Department</th>
-                  <th v-for="day in weekDays" :key="day" class="text-center">
-                    {{ day }}
+                  <th v-for="col in weekColumns" :key="col.iso" class="text-center">
+                    <div class="day-col-weekday">{{ col.weekday }}</div>
+                    <div class="day-col-date">{{ col.dateLabel }}</div>
                   </th>
                   <th class="text-center">Summary</th>
                 </tr>
@@ -203,12 +237,12 @@
                       >{{ emp.department }}</span
                     >
                   </td>
-                  <td v-for="day in weekDays" :key="day" class="text-center">
+                  <td v-for="col in weekColumns" :key="col.iso" class="text-center">
                     <span
                       class="day-status"
-                      :class="getDayStatusClass(emp.employeeId, day)"
+                      :class="getDayStatusClass(emp.employeeId, col.iso)"
                     >
-                      {{ getDayStatusLetter(emp.employeeId, day) }}
+                      {{ getDayStatusLetter(emp.employeeId, col.iso) }}
                     </span>
                   </td>
                   <td class="text-center">

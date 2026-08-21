@@ -174,11 +174,32 @@ function renderPayrollTrend(rows) {
     })
     .sort((a, b) => a.month.localeCompare(b.month));
 
-  // Scale setup: 150k step size up to a 900k ceiling (0k to 900k)
-  const stepSize = 150000;
-  const peakTotal = parsedRows.reduce((max, r) => Math.max(max, r.total), 0) || 1;
-  const maxTotal = Math.max(900000, Math.ceil(peakTotal / stepSize) * stepSize);
-  const minFloor = 0;
+  // Scale setup: fit the axis to the actual spread of the data instead of
+  // a fixed 0k-900k range. A fixed wide range flattens small (but real)
+  // month-to-month variation into what looks like a straight line.
+  const totals = parsedRows.map((r) => r.total);
+  const rawMin = Math.min(...totals);
+  const rawMax = Math.max(...totals);
+  const spread = rawMax - rawMin;
+
+  // Pad above/below the data so the line doesn't hug the chart edges.
+  // Use a minimum padding so a near-flat series (small spread) still gets
+  // some breathing room instead of an almost-zero-height range.
+  const padding = Math.max(spread * 0.3, rawMax * 0.08, 5000);
+  let paddedMin = Math.max(0, rawMin - padding);
+  let paddedMax = rawMax + padding;
+
+  // Round the range to "nice" step sizes (1/2/2.5/5 x a power of ten) so
+  // the Y-axis labels look like real tick marks rather than odd numbers.
+  const rawStep = (paddedMax - paddedMin) / 4 || 1;
+  const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+  const niceMultiples = [1, 2, 2.5, 5, 10];
+  const stepSize =
+    magnitude * (niceMultiples.find((m) => magnitude * m >= rawStep) || 10);
+
+  const minFloor = Math.floor(paddedMin / stepSize) * stepSize;
+  const stepCount = Math.max(1, Math.ceil((paddedMax - minFloor) / stepSize));
+  const maxTotal = minFloor + stepCount * stepSize;
 
   // Dimensions matching SVG viewBox (0 0 600 220)
   const svgWidth = 600;
@@ -192,7 +213,7 @@ function renderPayrollTrend(rows) {
   // Exact 1:1 mapping from data values to Y pixel coordinates
   const coordinates = parsedRows.map((row, i) => {
     const x = parsedRows.length > 1 ? i * stepX : svgWidth / 2;
-    const pct = Math.min(1, Math.max(0, (row.total - minFloor) / maxTotal));
+    const pct = Math.min(1, Math.max(0, (row.total - minFloor) / (maxTotal - minFloor)));
     // SVG origin (0,0) is top-left, so higher values move UP (smaller Y)
     const y = svgHeight - paddingBottom - pct * usableHeight;
     return { x, y, row };
@@ -235,12 +256,11 @@ function renderPayrollTrend(rows) {
     }
   });
 
-  // Render Y-Axis labels (R 900k down to R 0k in 150k steps)
+  // Render Y-Axis labels, top (maxTotal) to bottom (minFloor)
   if (yAxisEl) {
-    const stepCount = maxTotal / stepSize;
     const labels = [];
     for (let i = stepCount; i >= 0; i--) {
-      labels.push(`R ${Math.round((i * stepSize) / 1000)}k`);
+      labels.push(`R ${Math.round((minFloor + i * stepSize) / 1000)}k`);
     }
     yAxisEl.innerHTML = labels.map((n) => `<span>${n}</span>`).join("");
   }

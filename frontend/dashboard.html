@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="js/config.js"></script>
     <script src="js/auth-guard.js"></script>
     <script src="js/api.js"></script>
     <title>ModernTech HR | Dashboard</title>
@@ -13,8 +14,7 @@
     />
   </head>
   <body class="page-dashboard">
-    <header class="header">
-      <div class="nav">
+    <div class="nav">
         <div class="logo">Modern<span>Tech</span></div>
         <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -31,7 +31,8 @@
                 localStorage.removeItem('moderntech_user'); window.location.href='index.html'; return false;">Logout</a></li>
           </ul>
         </div>
-      </div>
+    </div>
+    <header class="header">
       <div>
         <h1>Dashboard</h1>
         <p class="subtitle">Overview of your analytics</p>
