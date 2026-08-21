@@ -9,7 +9,7 @@
 //    your real Railway URL (e.g. "https://moderntech-backend-production.up.railway.app/api/v1").
 (function () {
   const LOCAL_API_BASE = "http://localhost:3000/api/v1";
-  const PRODUCTION_API_BASE = "https://REPLACE-WITH-YOUR-RAILWAY-URL.up.railway.app/api/v1";
+  const PRODUCTION_API_BASE = "https://project-modern-tech-solutions-production.up.railway.app/api/v1";
 
   const isLocal =
     window.location.hostname === "localhost" ||
